@@ -1,0 +1,4 @@
+# Default model: small enough for GRPO on a free Colab T4.
+hf_id: Qwen/Qwen2.5-1.5B-Instruct
+load_in_4bit: true
+context_length: 4096

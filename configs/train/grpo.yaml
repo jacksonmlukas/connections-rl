@@ -1,0 +1,32 @@
+# M1/M2: GRPO from the SFT checkpoint. Low LR + KL penalty for stability.
+model_config: configs/model/qwen2.5-1.5b.yaml
+split_dir: data/splits
+init_adapter: artifacts/sft   # warm start; comment out to train LoRA from scratch
+output_dir: artifacts/grpo
+seed: 0
+
+lora:            # used only if init_adapter is unset
+  r: 16
+  alpha: 32
+
+reward:          # RewardConfig overrides (defaults in connections_rl/reward/reward.py)
+  format_reward: 0.1
+  grouping_weight: 1.0
+  solve_bonus: 0.5
+  one_away_credit: 0.05
+  invalid_penalty: -0.1
+
+num_generations: 8          # K completions per puzzle (group-relative advantage)
+temperature: 0.9
+kl_beta: 0.04               # KL penalty to the reference (SFT) policy
+lr: 1.0e-6
+batch_size: 2
+grad_accum: 8
+epochs: 1
+max_prompt_length: 512
+max_completion_length: 512
+logging_steps: 5
+save_steps: 50              # checkpoint often: free-GPU sessions die
+wandb: true
+run_name: connections-rl-grpo-qwen1.5b
+# push_to_hub: jacksonmlukas/connections-rl-grpo

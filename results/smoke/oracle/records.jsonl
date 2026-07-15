@@ -1,0 +1,10 @@
+{"puzzle_id": 1, "date": "2023-06-12", "strata": "wordplay", "solved": true, "groups_correct": 4, "one_away": false, "invalid_format": false, "reward": 1.6, "latency_ms": 0.03933301195502281}
+{"puzzle_id": 2, "date": "2023-06-13", "strata": "wordplay", "solved": true, "groups_correct": 4, "one_away": false, "invalid_format": false, "reward": 1.6, "latency_ms": 0.025542001822032034}
+{"puzzle_id": 3, "date": "2023-06-14", "strata": "category", "solved": true, "groups_correct": 4, "one_away": false, "invalid_format": false, "reward": 1.6, "latency_ms": 0.02245799987576902}
+{"puzzle_id": 4, "date": "2023-06-15", "strata": "tag-fillin", "solved": true, "groups_correct": 4, "one_away": false, "invalid_format": false, "reward": 1.6, "latency_ms": 0.021624990040436387}
+{"puzzle_id": 5, "date": "2023-06-16", "strata": "cultural", "solved": true, "groups_correct": 4, "one_away": false, "invalid_format": false, "reward": 1.6, "latency_ms": 0.021375002688728273}
+{"puzzle_id": 6, "date": "2023-06-17", "strata": "category", "solved": true, "groups_correct": 4, "one_away": false, "invalid_format": false, "reward": 1.6, "latency_ms": 0.021375002688728273}
+{"puzzle_id": 7, "date": "2023-06-18", "strata": "tag-fillin", "solved": true, "groups_correct": 4, "one_away": false, "invalid_format": false, "reward": 1.6, "latency_ms": 0.020749997929669917}
+{"puzzle_id": 14, "date": "2023-06-25", "strata": "cultural", "solved": true, "groups_correct": 4, "one_away": false, "invalid_format": false, "reward": 1.6, "latency_ms": 0.02029100141953677}
+{"puzzle_id": 90, "date": "2023-09-09", "strata": "silent-letter", "solved": true, "groups_correct": 4, "one_away": false, "invalid_format": false, "reward": 1.6, "latency_ms": 0.020417006453499198}
+{"puzzle_id": 165, "date": "2023-11-23", "strata": "silent-letter", "solved": true, "groups_correct": 4, "one_away": false, "invalid_format": false, "reward": 1.6, "latency_ms": 0.02112500078510493}

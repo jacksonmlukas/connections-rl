@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+
+# Tooling caches
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+
+# Experiment artifacts (checkpoints/adapters live on HF Hub, not in git)
+artifacts/
+wandb/
+*.safetensors
+*.bin
+*.pt
+
+# Local data derived from the puzzle DB (rebuild with `make data`)
+data/splits/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+
+# Secrets
+.env

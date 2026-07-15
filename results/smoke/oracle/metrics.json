@@ -1,0 +1,176 @@
+{
+  "arm": "oracle",
+  "n": 10,
+  "n_resamples": 1000,
+  "summary": {
+    "OVERALL": {
+      "solve_rate": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "groups_correct": [
+        4.0,
+        4.0,
+        4.0
+      ],
+      "one_away_rate": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "invalid_rate": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "reward": [
+        1.5999999999999999,
+        1.5999999999999999,
+        1.5999999999999999
+      ]
+    },
+    "wordplay": {
+      "solve_rate": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "groups_correct": [
+        4.0,
+        4.0,
+        4.0
+      ],
+      "one_away_rate": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "invalid_rate": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "reward": [
+        1.6,
+        1.6,
+        1.6
+      ]
+    },
+    "category": {
+      "solve_rate": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "groups_correct": [
+        4.0,
+        4.0,
+        4.0
+      ],
+      "one_away_rate": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "invalid_rate": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "reward": [
+        1.6,
+        1.6,
+        1.6
+      ]
+    },
+    "tag-fillin": {
+      "solve_rate": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "groups_correct": [
+        4.0,
+        4.0,
+        4.0
+      ],
+      "one_away_rate": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "invalid_rate": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "reward": [
+        1.6,
+        1.6,
+        1.6
+      ]
+    },
+    "cultural": {
+      "solve_rate": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "groups_correct": [
+        4.0,
+        4.0,
+        4.0
+      ],
+      "one_away_rate": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "invalid_rate": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "reward": [
+        1.6,
+        1.6,
+        1.6
+      ]
+    },
+    "silent-letter": {
+      "solve_rate": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "groups_correct": [
+        4.0,
+        4.0,
+        4.0
+      ],
+      "one_away_rate": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "invalid_rate": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "reward": [
+        1.6,
+        1.6,
+        1.6
+      ]
+    }
+  },
+  "groups_correct_distribution": {
+    "0": 0,
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 10
+  }
+}

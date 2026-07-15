@@ -1,0 +1,31 @@
+# Local demo stack: vLLM (GPU) + the connections-rl API.
+# vLLM serves the base model plus both LoRA adapters under distinct names.
+services:
+  vllm:
+    image: vllm/vllm-openai:latest
+    command: >
+      --model Qwen/Qwen2.5-1.5B-Instruct
+      --enable-lora
+      --lora-modules connections-rl-sft=/adapters/sft connections-rl-grpo=/adapters/grpo
+    volumes:
+      - ./artifacts:/adapters
+    ports:
+      - "8000:8000"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  api:
+    build: .
+    environment:
+      CRL_BASE_URL: http://vllm:8000/v1
+      CRL_BASE_MODEL: Qwen/Qwen2.5-1.5B-Instruct
+      CRL_GRPO_MODEL: connections-rl-grpo
+    ports:
+      - "8080:8080"
+    depends_on:
+      - vllm

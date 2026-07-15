@@ -1,0 +1,21 @@
+# M1 warm start: LoRA SFT on the chronological train split.
+model_config: configs/model/qwen2.5-1.5b.yaml
+train_data: data/splits/train.jsonl
+output_dir: artifacts/sft
+seed: 0
+
+lora:
+  r: 16
+  alpha: 32
+  dropout: 0.05
+  target_modules: all-linear
+
+epochs: 3
+batch_size: 4
+grad_accum: 4
+lr: 1.0e-4
+logging_steps: 10
+save_steps: 100
+wandb: true
+run_name: connections-rl-sft-qwen1.5b
+# push_to_hub: jacksonmlukas/connections-rl-sft

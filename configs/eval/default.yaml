@@ -1,0 +1,19 @@
+# M3 offline eval: every arm runs on the SAME held-out test split, served
+# from an OpenAI-compatible endpoint (vLLM). Multi-agent baseline numbers
+# come from gvc-local and are included in the report as a reference row.
+puzzles: data/splits/puzzles_test.json
+out_dir: results
+n_resamples: 1000
+seed: 0
+# per_stratum: 30   # uncomment for stratified subsampling on slow endpoints
+
+arms:
+  - name: base
+    model: Qwen/Qwen2.5-1.5B-Instruct
+    temperature: 0.0
+  - name: sft
+    model: connections-rl-sft      # vLLM --lora-modules connections-rl-sft=artifacts/sft
+    temperature: 0.0
+  - name: grpo
+    model: connections-rl-grpo     # vLLM --lora-modules connections-rl-grpo=artifacts/grpo
+    temperature: 0.0

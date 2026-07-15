@@ -1,0 +1,482 @@
+[
+ {
+  "id": 3,
+  "date": "2023-06-14",
+  "answers": [
+   {
+    "level": 0,
+    "group": "FACIAL FEATURES",
+    "members": [
+     "CHEEK",
+     "EYE",
+     "MOUTH",
+     "NOSE"
+    ]
+   },
+   {
+    "level": 1,
+    "group": "SYNONYMS FOR EAT",
+    "members": [
+     "CHOW",
+     "GOBBLE",
+     "SCARF",
+     "WOLF"
+    ]
+   },
+   {
+    "level": 2,
+    "group": "DOG BREEDS, INFORMALLY",
+    "members": [
+     "LAB",
+     "PEKE",
+     "PIT",
+     "POM"
+    ]
+   },
+   {
+    "level": 3,
+    "group": "MEMBERS OF A TRIO",
+    "members": [
+     "AMIGO",
+     "KING",
+     "STOOGE",
+     "TENOR"
+    ]
+   }
+  ],
+  "puzzle_id": 3,
+  "category": "category"
+ },
+ {
+  "id": 6,
+  "date": "2023-06-17",
+  "answers": [
+   {
+    "level": 0,
+    "group": "MONOPOLY SQUARES",
+    "members": [
+     "BOARDWALK",
+     "CHANCE",
+     "GO",
+     "JAIL"
+    ]
+   },
+   {
+    "level": 1,
+    "group": "SHADES OF BLUE",
+    "members": [
+     "BABY",
+     "MIDNIGHT",
+     "POWDER",
+     "ROYAL"
+    ]
+   },
+   {
+    "level": 2,
+    "group": "RAPPERS",
+    "members": [
+     "COMMON",
+     "FUTURE",
+     "ICE CUBE",
+     "Q-TIP"
+    ]
+   },
+   {
+    "level": 3,
+    "group": "MEMBERS OF A SEPTET",
+    "members": [
+     "SEA",
+     "SIN",
+     "SISTER",
+     "WONDER"
+    ]
+   }
+  ],
+  "puzzle_id": 6,
+  "category": "category"
+ },
+ {
+  "id": 5,
+  "date": "2023-06-16",
+  "answers": [
+   {
+    "level": 0,
+    "group": "STREAMING SERVICES",
+    "members": [
+     "HULU",
+     "NETFLIX",
+     "PEACOCK",
+     "PRIME"
+    ]
+   },
+   {
+    "level": 1,
+    "group": "CONDIMENTS",
+    "members": [
+     "KETCHUP",
+     "MAYO",
+     "RELISH",
+     "TARTAR"
+    ]
+   },
+   {
+    "level": 2,
+    "group": "SYNONYMS FOR SAD",
+    "members": [
+     "BLUE",
+     "DOWN",
+     "GLUM",
+     "LOW"
+    ]
+   },
+   {
+    "level": 3,
+    "group": "CLUE CHARACTERS",
+    "members": [
+     "GREEN",
+     "MUSTARD",
+     "PLUM",
+     "SCARLET"
+    ]
+   }
+  ],
+  "puzzle_id": 5,
+  "category": "cultural"
+ },
+ {
+  "id": 14,
+  "date": "2023-06-25",
+  "answers": [
+   {
+    "level": 0,
+    "group": "BEDS",
+    "members": [
+     "BUNK",
+     "CANOPY",
+     "MURPHY",
+     "TRUNDLE"
+    ]
+   },
+   {
+    "level": 1,
+    "group": "FAMOUS BROTHERS",
+    "members": [
+     "JONAS",
+     "MARX",
+     "WARNER",
+     "WRIGHT"
+    ]
+   },
+   {
+    "level": 2,
+    "group": "HONDAS",
+    "members": [
+     "ACCORD",
+     "CIVIC",
+     "PASSPORT",
+     "PILOT"
+    ]
+   },
+   {
+    "level": 3,
+    "group": "VIDEO GAME CHARACTERS",
+    "members": [
+     "CRASH",
+     "LINK",
+     "MARIO",
+     "SONIC"
+    ]
+   }
+  ],
+  "puzzle_id": 14,
+  "category": "cultural"
+ },
+ {
+  "id": 90,
+  "date": "2023-09-09",
+  "answers": [
+   {
+    "level": 0,
+    "group": "BASEBALL CALLS",
+    "members": [
+     "BALL",
+     "OUT",
+     "SAFE",
+     "STRIKE"
+    ]
+   },
+   {
+    "level": 1,
+    "group": "HEAT SOURCES",
+    "members": [
+     "FORGE",
+     "FURNACE",
+     "KILN",
+     "OVEN"
+    ]
+   },
+   {
+    "level": 2,
+    "group": "FISH THAT ARE VERBS",
+    "members": [
+     "CARP",
+     "CATFISH",
+     "FLOUNDER",
+     "SMELT"
+    ]
+   },
+   {
+    "level": 3,
+    "group": "SILENT \u201cL\u201d",
+    "members": [
+     "COLONEL",
+     "SALMON",
+     "WALK",
+     "YOLK"
+    ]
+   }
+  ],
+  "puzzle_id": 90,
+  "category": "silent-letter"
+ },
+ {
+  "id": 165,
+  "date": "2023-11-23",
+  "answers": [
+   {
+    "level": 0,
+    "group": "FOODS WITH CRUSTS",
+    "members": [
+     "PASTY",
+     "PIE",
+     "TART",
+     "TURNOVER"
+    ]
+   },
+   {
+    "level": 1,
+    "group": "ENDING IN A SILENT \u201cT\u201d",
+    "members": [
+     "BOUQUET",
+     "PARFAIT",
+     "RAGOUT",
+     "RAPPORT"
+    ]
+   },
+   {
+    "level": 2,
+    "group": "COUNTRIES WITH RED AND WHITE FLAGS",
+    "members": [
+     "JAPAN",
+     "POLAND",
+     "TUNISIA",
+     "TURKEY"
+    ]
+   },
+   {
+    "level": 3,
+    "group": "N.B.A. GREATS",
+    "members": [
+     "BIRD",
+     "CURRY",
+     "JAMES",
+     "JORDAN"
+    ]
+   }
+  ],
+  "puzzle_id": 165,
+  "category": "silent-letter"
+ },
+ {
+  "id": 4,
+  "date": "2023-06-15",
+  "answers": [
+   {
+    "level": 0,
+    "group": "SNEAKER BRANDS",
+    "members": [
+     "ADIDAS",
+     "NIKE",
+     "PUMA",
+     "REEBOK"
+    ]
+   },
+   {
+    "level": 1,
+    "group": "MUSICALS BEGINNING WITH \u201cC\u201d",
+    "members": [
+     "CABARET",
+     "CAROUSEL",
+     "CATS",
+     "CHICAGO"
+    ]
+   },
+   {
+    "level": 2,
+    "group": "CLEANING VERBS",
+    "members": [
+     "DUST",
+     "MOP",
+     "SWEEP",
+     "VACUUM"
+    ]
+   },
+   {
+    "level": 3,
+    "group": "___ MAN SUPERHEROES",
+    "members": [
+     "BAT",
+     "IRON",
+     "SPIDER",
+     "SUPER"
+    ]
+   }
+  ],
+  "puzzle_id": 4,
+  "category": "tag-fillin"
+ },
+ {
+  "id": 7,
+  "date": "2023-06-18",
+  "answers": [
+   {
+    "level": 0,
+    "group": "LEG PARTS",
+    "members": [
+     "ANKLE",
+     "KNEE",
+     "SHIN",
+     "THIGH"
+    ]
+   },
+   {
+    "level": 1,
+    "group": "BABY ANIMALS",
+    "members": [
+     "CALF",
+     "CUB",
+     "JOEY",
+     "KID"
+    ]
+   },
+   {
+    "level": 2,
+    "group": "SLANG FOR TOILET",
+    "members": [
+     "CAN",
+     "HEAD",
+     "JOHN",
+     "THRONE"
+    ]
+   },
+   {
+    "level": 3,
+    "group": "___ FISH THAT AREN\u2019T FISH",
+    "members": [
+     "CRAY",
+     "JELLY",
+     "SILVER",
+     "STAR"
+    ]
+   }
+  ],
+  "puzzle_id": 7,
+  "category": "tag-fillin"
+ },
+ {
+  "id": 1,
+  "date": "2023-06-12",
+  "answers": [
+   {
+    "level": 0,
+    "group": "WET WEATHER",
+    "members": [
+     "HAIL",
+     "RAIN",
+     "SLEET",
+     "SNOW"
+    ]
+   },
+   {
+    "level": 1,
+    "group": "NBA TEAMS",
+    "members": [
+     "BUCKS",
+     "HEAT",
+     "JAZZ",
+     "NETS"
+    ]
+   },
+   {
+    "level": 2,
+    "group": "KEYBOARD KEYS",
+    "members": [
+     "OPTION",
+     "RETURN",
+     "SHIFT",
+     "TAB"
+    ]
+   },
+   {
+    "level": 3,
+    "group": "PALINDROMES",
+    "members": [
+     "KAYAK",
+     "LEVEL",
+     "MOM",
+     "RACECAR"
+    ]
+   }
+  ],
+  "puzzle_id": 1,
+  "category": "wordplay"
+ },
+ {
+  "id": 2,
+  "date": "2023-06-13",
+  "answers": [
+   {
+    "level": 0,
+    "group": "FOOTWEAR",
+    "members": [
+     "BOOT",
+     "LOAFER",
+     "PUMP",
+     "SNEAKER"
+    ]
+   },
+   {
+    "level": 1,
+    "group": "UNITS OF LENGTH",
+    "members": [
+     "FOOT",
+     "LEAGUE",
+     "MILE",
+     "YARD"
+    ]
+   },
+   {
+    "level": 2,
+    "group": "MAGAZINES",
+    "members": [
+     "ESSENCE",
+     "PEOPLE",
+     "TIME",
+     "US"
+    ]
+   },
+   {
+    "level": 3,
+    "group": "LETTER HOMOPHONES",
+    "members": [
+     "ARE",
+     "QUEUE",
+     "SEA",
+     "WHY"
+    ]
+   }
+  ],
+  "puzzle_id": 2,
+  "category": "wordplay"
+ }
+]
