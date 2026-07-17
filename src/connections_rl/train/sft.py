@@ -50,18 +50,25 @@ def main(argv: list[str] | None = None) -> None:
         target_modules=cfg["lora"].get("target_modules", "all-linear"),
         task_type="CAUSAL_LM",
     )
+    from connections_rl.train.grpo import compatible_config_kwargs
+
     sft_config = SFTConfig(
-        output_dir=cfg["output_dir"],
-        num_train_epochs=cfg.get("epochs", 3),
-        per_device_train_batch_size=cfg.get("batch_size", 4),
-        gradient_accumulation_steps=cfg.get("grad_accum", 4),
-        learning_rate=float(cfg.get("lr", 1e-4)),
-        logging_steps=cfg.get("logging_steps", 10),
-        save_steps=cfg.get("save_steps", 100),
-        bf16=torch.cuda.is_available() and torch.cuda.is_bf16_supported(),
-        report_to=["wandb"] if cfg.get("wandb") else [],
-        run_name=cfg.get("run_name", "connections-rl-sft"),
-        seed=cfg.get("seed", 0),
+        **compatible_config_kwargs(
+            SFTConfig,
+            dict(
+                output_dir=cfg["output_dir"],
+                num_train_epochs=cfg.get("epochs", 3),
+                per_device_train_batch_size=cfg.get("batch_size", 4),
+                gradient_accumulation_steps=cfg.get("grad_accum", 4),
+                learning_rate=float(cfg.get("lr", 1e-4)),
+                logging_steps=cfg.get("logging_steps", 10),
+                save_steps=cfg.get("save_steps", 100),
+                bf16=torch.cuda.is_available() and torch.cuda.is_bf16_supported(),
+                report_to=["wandb"] if cfg.get("wandb") else [],
+                run_name=cfg.get("run_name", "connections-rl-sft"),
+                seed=cfg.get("seed", 0),
+            ),
+        )
     )
     trainer = SFTTrainer(
         model=model,

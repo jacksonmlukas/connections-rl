@@ -14,11 +14,30 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 
 from connections_rl.data.formatting import SYSTEM_PROMPT
 from connections_rl.reward.reward import RewardConfig
 from connections_rl.reward.reward import reward as reward_fn
 from connections_rl.train.common import load_config, load_puzzle_split, set_seed
+
+
+def compatible_config_kwargs(config_cls: type, kwargs: dict) -> dict:
+    """Drop kwargs the installed TRL version's config doesn't accept.
+
+    TRL's GRPO API moves fast (e.g. ``max_prompt_length`` was removed in favor
+    of dataset-level truncation). Filtering against the actual dataclass
+    fields keeps this script working across versions; anything dropped is
+    printed so the run log shows exactly what was ignored.
+    """
+    import dataclasses
+
+    valid = {f.name for f in dataclasses.fields(config_cls)}
+    kept = {k: v for k, v in kwargs.items() if k in valid}
+    dropped = sorted(set(kwargs) - set(kept))
+    if dropped:
+        print(f"[grpo] ignoring args unsupported by this TRL version: {dropped}")
+    return kept
 
 
 def make_reward_func(reward_config: RewardConfig):
@@ -95,22 +114,29 @@ def main(argv: list[str] | None = None) -> None:
     reward_config = RewardConfig(**cfg.get("reward", {}))
 
     grpo_config = GRPOConfig(
-        output_dir=cfg["output_dir"],
-        num_generations=cfg.get("num_generations", 8),  # K completions per puzzle
-        max_prompt_length=cfg.get("max_prompt_length", 512),
-        max_completion_length=cfg.get("max_completion_length", 512),
-        temperature=cfg.get("temperature", 0.9),
-        beta=cfg.get("kl_beta", 0.04),  # KL penalty to the reference policy
-        learning_rate=float(cfg.get("lr", 1e-6)),
-        per_device_train_batch_size=cfg.get("batch_size", 2),
-        gradient_accumulation_steps=cfg.get("grad_accum", 8),
-        num_train_epochs=cfg.get("epochs", 1),
-        logging_steps=cfg.get("logging_steps", 5),
-        save_steps=cfg.get("save_steps", 50),
-        bf16=torch.cuda.is_available() and torch.cuda.is_bf16_supported(),
-        report_to=["wandb"] if cfg.get("wandb") else [],
-        run_name=cfg.get("run_name", "connections-rl-grpo"),
-        seed=cfg.get("seed", 0),
+        **compatible_config_kwargs(
+            GRPOConfig,
+            dict(
+                output_dir=cfg["output_dir"],
+                num_generations=cfg.get("num_generations", 8),  # K completions per puzzle
+                # Removed in newer TRL (dataset-level truncation); harmless here — our
+                # prompts are ~150 tokens. Kept for older versions.
+                max_prompt_length=cfg.get("max_prompt_length", 512),
+                max_completion_length=cfg.get("max_completion_length", 512),
+                temperature=cfg.get("temperature", 0.9),
+                beta=cfg.get("kl_beta", 0.04),  # KL penalty to the reference policy
+                learning_rate=float(cfg.get("lr", 1e-6)),
+                per_device_train_batch_size=cfg.get("batch_size", 2),
+                gradient_accumulation_steps=cfg.get("grad_accum", 8),
+                num_train_epochs=cfg.get("epochs", 1),
+                logging_steps=cfg.get("logging_steps", 5),
+                save_steps=cfg.get("save_steps", 50),
+                bf16=torch.cuda.is_available() and torch.cuda.is_bf16_supported(),
+                report_to=["wandb"] if cfg.get("wandb") else [],
+                run_name=cfg.get("run_name", "connections-rl-grpo"),
+                seed=cfg.get("seed", 0),
+            ),
+        )
     )
     trainer = GRPOTrainer(
         model=model,
@@ -120,7 +146,13 @@ def main(argv: list[str] | None = None) -> None:
         processing_class=tokenizer,
         peft_config=peft_config,
     )
-    trainer.train()
+    # Auto-resume if a previous session left checkpoints in output_dir.
+    from transformers.trainer_utils import get_last_checkpoint
+
+    last_ckpt = get_last_checkpoint(cfg["output_dir"]) if os.path.isdir(cfg["output_dir"]) else None
+    if last_ckpt:
+        print(f"[grpo] resuming from {last_ckpt}")
+    trainer.train(resume_from_checkpoint=last_ckpt)
     trainer.save_model(cfg["output_dir"])
     if cfg.get("push_to_hub"):
         trainer.push_to_hub(cfg["push_to_hub"])
