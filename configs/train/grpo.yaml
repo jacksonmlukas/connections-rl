@@ -16,17 +16,19 @@ reward:          # RewardConfig overrides (defaults in connections_rl/reward/rew
   one_away_credit: 0.05
   invalid_penalty: -0.1
 
+# v2 settings: v1 (lr 1e-6, kl 0.04, 1 epoch) left greedy outputs identical to
+# SFT — KL stayed ~0.001, i.e. the policy barely moved. More learning power:
 num_generations: 8          # K completions per puzzle (group-relative advantage)
 temperature: 0.9
-kl_beta: 0.04               # KL penalty to the reference (SFT) policy
-lr: 1.0e-6
+kl_beta: 0.001              # DeepSeek-R1 value; v1's 0.04 over-constrained the policy
+lr: 5.0e-6
 batch_size: 2
 grad_accum: 8
-epochs: 1
+epochs: 2
 max_prompt_length: 512
 max_completion_length: 512
 logging_steps: 5
 save_steps: 50              # checkpoint often: free-GPU sessions die
 wandb: true
-run_name: connections-rl-grpo-qwen1.5b
+run_name: connections-rl-grpo-qwen1.5b-v2
 # push_to_hub: jacksonmlukas/connections-rl-grpo
