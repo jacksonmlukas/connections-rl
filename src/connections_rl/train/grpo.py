@@ -96,7 +96,12 @@ def main(argv: list[str] | None = None) -> None:
     model_cfg = cfg["model"]
     model_id = model_cfg["hf_id"]
     tokenizer = AutoTokenizer.from_pretrained(model_id)
-    model = AutoModelForCausalLM.from_pretrained(model_id, torch_dtype="auto", device_map="auto")
+    # device_map="auto" only for single-process runs; under accelerate/FSDP each
+    # rank loads the full model and FSDP shards it — device_map would fight that.
+    world_size = int(os.environ.get("WORLD_SIZE", "1"))
+    model = AutoModelForCausalLM.from_pretrained(
+        model_id, torch_dtype="auto", device_map="auto" if world_size == 1 else None
+    )
     if cfg.get("init_adapter"):
         # Warm-start from the SFT LoRA, then continue training the adapter.
         model = PeftModel.from_pretrained(model, cfg["init_adapter"], is_trainable=True)
