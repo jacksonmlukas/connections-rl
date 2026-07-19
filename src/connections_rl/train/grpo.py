@@ -96,11 +96,16 @@ def main(argv: list[str] | None = None) -> None:
     model_cfg = cfg["model"]
     model_id = model_cfg["hf_id"]
     tokenizer = AutoTokenizer.from_pretrained(model_id)
-    # device_map="auto" only for single-process runs; under accelerate/FSDP each
-    # rank loads the full model and FSDP shards it — device_map would fight that.
+    # Under accelerate/FSDP: no device_map (each rank loads the full model and
+    # FSDP shards it), and load in fp32 — PEFT creates LoRA layers in fp32, and
+    # FSDP requires a uniform dtype to flatten. Mixed precision (fp16 in the
+    # accelerate config) handles compute speed. Single-GPU keeps auto/auto.
     world_size = int(os.environ.get("WORLD_SIZE", "1"))
+    single = world_size == 1
     model = AutoModelForCausalLM.from_pretrained(
-        model_id, torch_dtype="auto", device_map="auto" if world_size == 1 else None
+        model_id,
+        torch_dtype="auto" if single else torch.float32,
+        device_map="auto" if single else None,
     )
     if cfg.get("init_adapter"):
         # Warm-start from the SFT LoRA, then continue training the adapter.
