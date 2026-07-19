@@ -141,7 +141,10 @@ def main(argv: list[str] | None = None) -> None:
                 num_train_epochs=cfg.get("epochs", 1),
                 logging_steps=cfg.get("logging_steps", 5),
                 save_steps=cfg.get("save_steps", 50),
-                bf16=torch.cuda.is_available() and torch.cuda.is_bf16_supported(),
+                # is_bf16_supported() lies on T4s (bf16 is emulated, and mixing it
+                # with fp32/fp16 under FSDP crashes). Real bf16 needs sm80+.
+                bf16=torch.cuda.is_available() and torch.cuda.get_device_capability()[0] >= 8,
+                fp16=torch.cuda.is_available() and torch.cuda.get_device_capability()[0] < 8,
                 report_to=["wandb"] if cfg.get("wandb") else [],
                 run_name=cfg.get("run_name", "connections-rl-grpo"),
                 seed=cfg.get("seed", 0),
