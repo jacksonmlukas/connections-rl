@@ -38,9 +38,7 @@ def main(argv: list[str] | None = None) -> None:
         # GradScaler cannot unscale bf16 grads ("_amp_foreach_non_finite_
         # check_and_unscale_cuda not implemented for BFloat16"), and bf16
         # compute is emulated/slow on T4 anyway.
-        half = (
-            torch.bfloat16 if torch.cuda.get_device_capability()[0] >= 8 else torch.float16
-        )
+        half = torch.bfloat16 if torch.cuda.get_device_capability()[0] >= 8 else torch.float16
         quant_kwargs["quantization_config"] = BitsAndBytesConfig(
             load_in_4bit=True,
             bnb_4bit_compute_dtype=half,
