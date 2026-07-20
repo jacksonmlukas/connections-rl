@@ -171,9 +171,16 @@ def main(argv: list[str] | None = None) -> None:
             bnb_4bit_quant_type="nf4",
             bnb_4bit_use_double_quant=True,
         )
+    # QLoRA on pre-Ampere: keep bf16 out of the ENTIRE graph. torch_dtype
+    # "auto" would load norms/embeddings in bf16 (Qwen's config dtype), which
+    # poisons the fp16 GradScaler and matmul dtype checks on T4.
+    pre_ampere = torch.cuda.is_available() and torch.cuda.get_device_capability()[0] < 8
+    model_dtype = "auto" if single else torch.float32
+    if use_4bit and pre_ampere:
+        model_dtype = torch.float16
     model = AutoModelForCausalLM.from_pretrained(
         model_id,
-        torch_dtype="auto" if single else torch.float32,
+        torch_dtype=model_dtype,
         device_map="auto" if single else None,
         **quant_kwargs,
     )
@@ -218,18 +225,25 @@ def main(argv: list[str] | None = None) -> None:
                 logging_steps=cfg.get("logging_steps", 5),
                 save_steps=cfg.get("save_steps", 50),
                 gradient_checkpointing=bool(cfg.get("gradient_checkpointing", False)),
-                # Single GPU: exact v1 recipe (bf16 flag, emulated on T4 — proven).
-                # Distributed: bf16 only on real sm80+ hardware, fp16 otherwise
-                # (mixed emulated-bf16 + FSDP flat params crashes).
+                # Precision flags, one regime per hardware/path:
+                # - Single GPU, full-precision base (proven 1.5B recipe):
+                #   bf16 flag, emulated on T4 — works with TRL rollouts.
+                # - QLoRA (use_4bit) or distributed on pre-Ampere: pure fp16 —
+                #   bf16 anywhere in the graph breaks the fp16 GradScaler
+                #   and matmul dtype checks.
+                # - sm80+: real bf16 everywhere.
                 bf16=(
-                    torch.cuda.is_available() and torch.cuda.is_bf16_supported()
-                    if world_size == 1
-                    else torch.cuda.is_available() and torch.cuda.get_device_capability()[0] >= 8
+                    torch.cuda.is_available()
+                    and (
+                        torch.cuda.is_bf16_supported()
+                        if single and not use_4bit
+                        else torch.cuda.get_device_capability()[0] >= 8
+                    )
                 ),
                 fp16=(
-                    world_size > 1
-                    and torch.cuda.is_available()
+                    torch.cuda.is_available()
                     and torch.cuda.get_device_capability()[0] < 8
+                    and (world_size > 1 or use_4bit)
                 ),
                 report_to=["wandb"] if cfg.get("wandb") else [],
                 run_name=cfg.get("run_name", "connections-rl-grpo"),

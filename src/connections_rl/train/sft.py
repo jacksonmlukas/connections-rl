@@ -30,14 +30,26 @@ def main(argv: list[str] | None = None) -> None:
     tokenizer = AutoTokenizer.from_pretrained(model_id)
 
     quant_kwargs = {}
+    model_dtype = "auto"
     if model_cfg.get("load_in_4bit") and torch.cuda.is_available():
         from transformers import BitsAndBytesConfig
 
-        quant_kwargs["quantization_config"] = BitsAndBytesConfig(
-            load_in_4bit=True, bnb_4bit_compute_dtype=torch.bfloat16
+        # Pre-Ampere (T4): keep bf16 out of the graph entirely. The fp16
+        # GradScaler cannot unscale bf16 grads ("_amp_foreach_non_finite_
+        # check_and_unscale_cuda not implemented for BFloat16"), and bf16
+        # compute is emulated/slow on T4 anyway.
+        half = (
+            torch.bfloat16 if torch.cuda.get_device_capability()[0] >= 8 else torch.float16
         )
+        quant_kwargs["quantization_config"] = BitsAndBytesConfig(
+            load_in_4bit=True,
+            bnb_4bit_compute_dtype=half,
+            bnb_4bit_quant_type="nf4",
+            bnb_4bit_use_double_quant=True,
+        )
+        model_dtype = half
     model = AutoModelForCausalLM.from_pretrained(
-        model_id, torch_dtype="auto", device_map="auto", **quant_kwargs
+        model_id, torch_dtype=model_dtype, device_map="auto", **quant_kwargs
     )
 
     rows = read_jsonl(cfg["train_data"])
