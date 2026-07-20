@@ -41,6 +41,31 @@ def set_seed(seed: int) -> None:
         pass
 
 
+def fix_qlora_adapter_dtype_for_pre_ampere(model: Any) -> None:
+    """Undo TRL's unconditional bf16 cast of QLoRA adapter params on pre-Ampere GPUs.
+
+    Newer TRL casts all trainable params of quantized models to bf16 inside
+    SFTTrainer/GRPOTrainer.__init__ (QLoRA-paper recommendation, no opt-out:
+    huggingface/peft#2889). On pre-Ampere GPUs (T4) training runs under fp16
+    AMP, whose GradScaler cannot unscale bf16 grads
+    ("_amp_foreach_non_finite_check_and_unscale_cuda not implemented for
+    BFloat16"). Re-cast trainable params to fp32 — the standard fp16-AMP
+    master-weight dtype. Call AFTER trainer construction, BEFORE train()
+    (the optimizer is created lazily in train(), so it picks up fp32 params).
+    """
+    import torch
+
+    if not (torch.cuda.is_available() and torch.cuda.get_device_capability()[0] < 8):
+        return
+    n = 0
+    for param in model.parameters():
+        if param.requires_grad and param.dtype == torch.bfloat16:
+            param.data = param.data.float()
+            n += 1
+    if n:
+        print(f"[train] re-cast {n} bf16 trainable params to fp32 (pre-Ampere fp16 AMP)")
+
+
 def read_jsonl(path: str | Path) -> list[dict]:
     out = []
     with open(path, encoding="utf-8") as f:

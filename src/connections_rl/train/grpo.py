@@ -19,7 +19,12 @@ import os
 from connections_rl.data.formatting import SYSTEM_PROMPT
 from connections_rl.reward.reward import RewardConfig
 from connections_rl.reward.reward import reward as reward_fn
-from connections_rl.train.common import load_config, load_puzzle_split, set_seed
+from connections_rl.train.common import (
+    fix_qlora_adapter_dtype_for_pre_ampere,
+    load_config,
+    load_puzzle_split,
+    set_seed,
+)
 
 
 def compatible_config_kwargs(config_cls: type, kwargs: dict) -> dict:
@@ -272,6 +277,7 @@ def main(argv: list[str] | None = None) -> None:
         peft_config=peft_config,
         callbacks=callbacks or None,
     )
+    fix_qlora_adapter_dtype_for_pre_ampere(trainer.model)
     # Auto-resume if a previous session left checkpoints in output_dir.
     from transformers.trainer_utils import get_last_checkpoint
 

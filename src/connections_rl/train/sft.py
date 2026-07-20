@@ -9,7 +9,12 @@ from __future__ import annotations
 
 import argparse
 
-from connections_rl.train.common import load_config, read_jsonl, set_seed
+from connections_rl.train.common import (
+    fix_qlora_adapter_dtype_for_pre_ampere,
+    load_config,
+    read_jsonl,
+    set_seed,
+)
 
 
 def main(argv: list[str] | None = None) -> None:
@@ -93,6 +98,7 @@ def main(argv: list[str] | None = None) -> None:
         processing_class=tokenizer,
         peft_config=peft_config,
     )
+    fix_qlora_adapter_dtype_for_pre_ampere(trainer.model)
     trainer.train()
     trainer.save_model(cfg["output_dir"])
     if cfg.get("push_to_hub"):
