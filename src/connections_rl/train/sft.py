@@ -57,6 +57,11 @@ def main(argv: list[str] | None = None) -> None:
             SFTConfig,
             dict(
                 output_dir=cfg["output_dir"],
+                # Newer TRL defaults to loss_type="chunked_nll", which patches
+                # lm_head.forward and crashes on 4-bit models (forward is a
+                # functools.partial from accelerate hooks); it's also unsupported
+                # with target_modules="all-linear". Plain NLL is what we want.
+                loss_type="nll",
                 num_train_epochs=cfg.get("epochs", 3),
                 per_device_train_batch_size=cfg.get("batch_size", 4),
                 gradient_accumulation_steps=cfg.get("grad_accum", 4),
