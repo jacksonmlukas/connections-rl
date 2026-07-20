@@ -1,0 +1,41 @@
+{
+  "base_vs_sft": {
+    "n_paired": 162,
+    "a_solve_rate": 0.0,
+    "b_solve_rate": 0.0,
+    "mcnemar_p": 1.0,
+    "solve_rate_diff_ci": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "discordant_a_only": 0,
+    "discordant_b_only": 0
+  },
+  "base_vs_grpo": {
+    "n_paired": 162,
+    "a_solve_rate": 0.0,
+    "b_solve_rate": 0.0,
+    "mcnemar_p": 1.0,
+    "solve_rate_diff_ci": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "discordant_a_only": 0,
+    "discordant_b_only": 0
+  },
+  "sft_vs_grpo": {
+    "n_paired": 162,
+    "a_solve_rate": 0.0,
+    "b_solve_rate": 0.0,
+    "mcnemar_p": 1.0,
+    "solve_rate_diff_ci": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "discordant_a_only": 0,
+    "discordant_b_only": 0
+  }
+}

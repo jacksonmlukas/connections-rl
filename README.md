@@ -6,15 +6,17 @@ My [ACL 2025 paper](https://aclanthology.org/) showed a multi-agent GPT-4o loop 
 
 ## Results
 
-*Pending first training runs — table below is populated by `make report` from committed `results/`.*
+Held-out test set: 162 puzzles, strictly *after* every training date (2025-12-15 → 2026-05-29).
 
-| Arm | n | Solve rate (95% CI) | Invalid rate | Groups correct (mean) | One-away rate |
-|---|---|---|---|---|---|
-| gvc-local basic (8B, reference) | 10 | 20.0% [0.0, 50.0] | — | — | — |
-| gvc-local GVC multi-agent (8B, reference) | 10 | 60.0% [30.0, 90.0] | — | — | — |
-| base (Qwen2.5-1.5B) | | | | | |
-| SFT (LoRA) | | | | | |
-| **GRPO** | | | | | |
+| Arm | n | Solve rate (95% CI) | Invalid rate (95% CI) | Mean reward |
+|---|---|---|---|---|
+| gvc-local basic (8B, reference) | 10 | 20.0% [0.0, 50.0] | — | — |
+| gvc-local GVC multi-agent (8B, reference) | 10 | 60.0% [30.0, 90.0] | — | — |
+| base (Qwen2.5-1.5B) | 162 | 0.0% [0.0, 0.0] | 32.1% [24.7, 38.9] | 0.049 |
+| SFT (LoRA) | 162 | 0.0% [0.0, 0.0] | 74.1% [67.3, 80.2] | −0.038 |
+| **GRPO** | 162 | 0.0% [0.0, 0.0] | **2.5% [0.6, 5.6]** | **0.113** |
+
+**Headline finding (honest negative result):** at 1.5B, no arm solves any held-out puzzle — but GRPO transfers exactly what the verifiable reward can verify. Training reward saturated at the theoretical maximum (1.6: perfect format + all four groups + solve bonus) with policy entropy collapsing to ~0, i.e. the model *memorized* the 807 training answers. On unseen boards the grouping ability doesn't transfer, but the format/board-grounding discipline does: invalid outputs (hallucinated words, malformed answers) drop from 74.1% (SFT) and 32.1% (base) to **2.5%**, and the paired per-puzzle reward gain is significant (+0.152 vs SFT, 95% CI [0.133, 0.169]; +0.064 vs base, [0.046, 0.082]). Full narrative in [`report/`](report/).
 
 All arms are evaluated on the same **leakage-aware, date-split held-out test set** with bootstrap CIs, McNemar significance tests between arms, and per-stratum breakdowns. CI re-runs the eval smoke and a release gate (GRPO must not regress vs. SFT beyond the CI) on every push.
 
