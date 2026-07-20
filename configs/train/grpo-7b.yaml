@@ -1,0 +1,37 @@
+# 7B GRPO (QLoRA): v2's proven hypers (lr 5e-6, kl 0.001), 1 epoch.
+# ~403 steps at ~2-3x the 1.5B step time may exceed Kaggle's 12h batch limit,
+# so checkpoints sync to the Hub every save and training resumes from the
+# latest Hub checkpoint on a fresh run (ckpt_hub_repo below).
+model_config: configs/model/qwen2.5-7b.yaml
+split_dir: data/splits
+init_adapter: artifacts/sft-7b
+output_dir: artifacts/grpo-7b
+seed: 0
+load_in_4bit: true            # QLoRA: 4-bit base + fp LoRA (required on T4)
+gradient_checkpointing: true
+
+lora:            # used only if init_adapter is unset
+  r: 16
+  alpha: 32
+
+reward:
+  format_reward: 0.1
+  grouping_weight: 1.0
+  solve_bonus: 0.5
+  one_away_credit: 0.05
+  invalid_penalty: -0.1
+
+num_generations: 8
+temperature: 0.9
+kl_beta: 0.001
+lr: 5.0e-6
+batch_size: 2                 # OOM fallback: batch_size 1 / grad_accum 16
+grad_accum: 8
+epochs: 1
+max_prompt_length: 512
+max_completion_length: 512
+logging_steps: 5
+save_steps: 50
+ckpt_hub_repo: connections-rl-grpo-7b-ckpt   # under HF_USER; cross-session resume
+wandb: true
+run_name: connections-rl-grpo-qwen7b-v1

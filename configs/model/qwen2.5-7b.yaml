@@ -1,0 +1,7 @@
+# Scale ablation: does the 1.5B memorization finding hold at 7B?
+# gvc-local shows 8B has nonzero single-model competence (20% basic prompting),
+# so this is the size where a solve-rate signal is plausible. 4-bit (QLoRA)
+# required to fit a free T4.
+hf_id: Qwen/Qwen2.5-7B-Instruct
+load_in_4bit: true
+context_length: 4096

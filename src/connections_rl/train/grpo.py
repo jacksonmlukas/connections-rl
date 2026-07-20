@@ -59,6 +59,60 @@ def make_reward_func(reward_config: RewardConfig):
     return connections_reward
 
 
+def resume_from_hub(repo: str, output_dir: str, token: str | None = None) -> None:
+    """Pull the latest checkpoint from a Hub repo so `get_last_checkpoint` finds it.
+
+    Free-GPU batch sessions (Kaggle ~12h) die with local disk; syncing
+    checkpoints to the Hub makes training resumable across fresh VMs.
+    """
+    from huggingface_hub import HfApi, snapshot_download
+
+    api = HfApi(token=token)
+    if not api.repo_exists(repo):
+        api.create_repo(repo, private=True)
+        print(f"[grpo] created checkpoint repo {repo}")
+        return
+    steps = {
+        int(f.split("/")[0].rsplit("-", 1)[1])
+        for f in api.list_repo_files(repo)
+        if f.startswith("checkpoint-") and "/" in f
+    }
+    if steps:
+        latest = max(steps)
+        snapshot_download(
+            repo,
+            allow_patterns=[f"checkpoint-{latest}/*"],
+            local_dir=output_dir,
+            token=token,
+        )
+        print(f"[grpo] downloaded checkpoint-{latest} from {repo}")
+
+
+def make_hub_sync_callback(repo: str, token: str | None = None):
+    """TrainerCallback that mirrors each saved checkpoint to the Hub."""
+    from transformers import TrainerCallback
+
+    class HubCheckpointSync(TrainerCallback):
+        def on_save(self, args, state, control, **kwargs):
+            import os as _os
+
+            from huggingface_hub import HfApi
+
+            ckpt = _os.path.join(args.output_dir, f"checkpoint-{state.global_step}")
+            if _os.path.isdir(ckpt):
+                try:
+                    HfApi(token=token).upload_folder(
+                        folder_path=ckpt,
+                        repo_id=repo,
+                        path_in_repo=f"checkpoint-{state.global_step}",
+                    )
+                    print(f"[grpo] synced checkpoint-{state.global_step} -> {repo}")
+                except Exception as e:  # never kill training over a sync hiccup
+                    print(f"[grpo] hub sync failed (continuing): {e}")
+
+    return HubCheckpointSync()
+
+
 def build_dataset(puzzle_records: list[dict]):
     """Prompt-only dataset for GRPO rollouts, with reward-lookup columns."""
     from datasets import Dataset
@@ -102,11 +156,33 @@ def main(argv: list[str] | None = None) -> None:
     # accelerate config) handles compute speed. Single-GPU keeps auto/auto.
     world_size = int(os.environ.get("WORLD_SIZE", "1"))
     single = world_size == 1
+    # QLoRA path (7B on a T4): 4-bit base, fp LoRA on top. Opt-in via the
+    # *train* config so the proven 1.5B recipe is unchanged. Single-GPU only.
+    use_4bit = bool(cfg.get("load_in_4bit")) and single and torch.cuda.is_available()
+    quant_kwargs = {}
+    if use_4bit:
+        from transformers import BitsAndBytesConfig
+
+        quant_kwargs["quantization_config"] = BitsAndBytesConfig(
+            load_in_4bit=True,
+            bnb_4bit_compute_dtype=(
+                torch.bfloat16 if torch.cuda.get_device_capability()[0] >= 8 else torch.float16
+            ),
+            bnb_4bit_quant_type="nf4",
+            bnb_4bit_use_double_quant=True,
+        )
     model = AutoModelForCausalLM.from_pretrained(
         model_id,
         torch_dtype="auto" if single else torch.float32,
         device_map="auto" if single else None,
+        **quant_kwargs,
     )
+    if use_4bit:
+        from peft import prepare_model_for_kbit_training
+
+        model = prepare_model_for_kbit_training(
+            model, use_gradient_checkpointing=bool(cfg.get("gradient_checkpointing"))
+        )
     if cfg.get("init_adapter"):
         # Warm-start from the SFT LoRA, then continue training the adapter.
         model = PeftModel.from_pretrained(model, cfg["init_adapter"], is_trainable=True)
@@ -141,6 +217,7 @@ def main(argv: list[str] | None = None) -> None:
                 num_train_epochs=cfg.get("epochs", 1),
                 logging_steps=cfg.get("logging_steps", 5),
                 save_steps=cfg.get("save_steps", 50),
+                gradient_checkpointing=bool(cfg.get("gradient_checkpointing", False)),
                 # Single GPU: exact v1 recipe (bf16 flag, emulated on T4 — proven).
                 # Distributed: bf16 only on real sm80+ hardware, fp16 otherwise
                 # (mixed emulated-bf16 + FSDP flat params crashes).
@@ -160,6 +237,18 @@ def main(argv: list[str] | None = None) -> None:
             ),
         )
     )
+    # Cross-session resume: pull the latest checkpoint from the Hub before
+    # looking locally, and mirror every new checkpoint back to the Hub.
+    callbacks = []
+    ckpt_repo = cfg.get("ckpt_hub_repo")
+    if ckpt_repo and single:
+        if "/" not in ckpt_repo:
+            from huggingface_hub import HfApi
+
+            ckpt_repo = f"{HfApi().whoami()['name']}/{ckpt_repo}"
+        resume_from_hub(ckpt_repo, cfg["output_dir"])
+        callbacks.append(make_hub_sync_callback(ckpt_repo))
+
     trainer = GRPOTrainer(
         model=model,
         args=grpo_config,
@@ -167,6 +256,7 @@ def main(argv: list[str] | None = None) -> None:
         train_dataset=train_ds,
         processing_class=tokenizer,
         peft_config=peft_config,
+        callbacks=callbacks or None,
     )
     # Auto-resume if a previous session left checkpoints in output_dir.
     from transformers.trainer_utils import get_last_checkpoint

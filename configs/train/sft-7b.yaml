@@ -1,0 +1,20 @@
+# 7B SFT warm start (QLoRA). Same recipe as 1.5B, smaller batch for T4 memory.
+model_config: configs/model/qwen2.5-7b.yaml
+train_data: data/splits/train.jsonl
+output_dir: artifacts/sft-7b
+seed: 0
+
+lora:
+  r: 16
+  alpha: 32
+  dropout: 0.05
+  target_modules: all-linear
+
+epochs: 3
+batch_size: 2
+grad_accum: 8
+lr: 1.0e-4
+logging_steps: 10
+save_steps: 100
+wandb: true
+run_name: connections-rl-sft-qwen7b

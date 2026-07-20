@@ -1,0 +1,16 @@
+# 7B scale-ablation eval: same held-out test split, same protocol as default.yaml.
+puzzles: data/splits/puzzles_test.json
+out_dir: results-7b
+n_resamples: 1000
+seed: 0
+
+arms:
+  - name: base
+    model: Qwen/Qwen2.5-7B-Instruct
+    temperature: 0.0
+  - name: sft
+    model: connections-rl-sft-7b   # vLLM --lora-modules connections-rl-sft-7b=adapters/sft-7b
+    temperature: 0.0
+  - name: grpo
+    model: connections-rl-grpo-7b  # vLLM --lora-modules connections-rl-grpo-7b=adapters/grpo-7b
+    temperature: 0.0
