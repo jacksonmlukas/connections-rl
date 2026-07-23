@@ -1,22 +1,28 @@
 # connections-rl
 
+**GRPO post-training a small open model on NYT Connections, measured with leakage-aware evaluation.**
+
+**Key finding: verifiable-reward RL transfers exactly what the reward can verify.** Invalid outputs fell **74.1% → 2.5%** on held-out puzzles and paired reward gains were significant. Grouping ability did not transfer (0% solve at 1.5B): training reward saturated at its theoretical maximum, policy entropy collapsed to ~0, and the model memorized its 807 training answers. A measured case study in reward over-optimization: bootstrap CIs, McNemar paired tests, and a strictly chronological held-out test set.
+
+![Invalid-output rate by arm](invalid_rate.png)
+
 **How much of a multi-agent system's gain can a single small open model recover with RL post-training?**
 
-My [ACL 2025 paper](https://aclanthology.org/) showed a multi-agent GPT-4o loop solves NYT Connections at 98%, and [gvc-local](https://github.com/jacksonmlukas/gvc-local) pushed an open 8B model to 60% with multi-agent prompting. This repo answers the follow-up: post-train a **1.5–3B open model directly with GRPO** (verifiable-reward RL, DeepSeek-R1 style) and measure it against those baselines with a production-grade evaluation stack.
+My [ACL 2025 paper](https://aclanthology.org/2025.realm-1.16/) (REALM Workshop; equal-contribution co-author) showed a multi-agent GPT-4o loop solves NYT Connections at 98%, and [gvc-local](https://github.com/jacksonmlukas/gvc-local) pushed an open 8B model to 60% with multi-agent prompting. This repo answers the follow-up: post-train a **1.5–3B open model directly with GRPO** (verifiable-reward RL, DeepSeek-R1 style) and measure it against those baselines with a production-grade evaluation stack.
 
 ## Results
 
 Held-out test set: 162 puzzles, strictly *after* every training date (2025-12-15 → 2026-05-29).
 
 | Arm | n | Solve rate (95% CI) | Invalid rate (95% CI) | Mean reward |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | gvc-local basic (8B, reference) | 10 | 20.0% [0.0, 50.0] | — | — |
 | gvc-local GVC multi-agent (8B, reference) | 10 | 60.0% [30.0, 90.0] | — | — |
 | base (Qwen2.5-1.5B) | 162 | 0.0% [0.0, 0.0] | 32.1% [24.7, 38.9] | 0.049 |
 | SFT (LoRA) | 162 | 0.0% [0.0, 0.0] | 74.1% [67.3, 80.2] | −0.038 |
 | **GRPO** | 162 | 0.0% [0.0, 0.0] | **2.5% [0.6, 5.6]** | **0.113** |
 
-**Headline finding (honest negative result):** at 1.5B, no arm solves any held-out puzzle — but GRPO transfers exactly what the verifiable reward can verify. Training reward saturated at the theoretical maximum (1.6: perfect format + all four groups + solve bonus) with policy entropy collapsing to ~0, i.e. the model *memorized* the 807 training answers. On unseen boards the grouping ability doesn't transfer, but the format/board-grounding discipline does: invalid outputs (hallucinated words, malformed answers) drop from 74.1% (SFT) and 32.1% (base) to **2.5%**, and the paired per-puzzle reward gain is significant (+0.152 vs SFT, 95% CI [0.133, 0.169]; +0.064 vs base, [0.046, 0.082]). Full narrative in [`report/`](report/).
+**Headline finding (honest negative result):** at 1.5B, no arm solves any held-out puzzle. GRPO transfers exactly what the verifiable reward can verify. Training reward saturated at the theoretical maximum (1.6: perfect format + all four groups + solve bonus) with policy entropy collapsing to ~0, i.e. the model *memorized* the 807 training answers. On unseen boards the grouping ability doesn't transfer, but the format/board-grounding discipline does: invalid outputs (hallucinated words, malformed answers) drop from 74.1% (SFT) and 32.1% (base) to **2.5%**, and the paired per-puzzle reward gain is significant (+0.152 vs SFT, 95% CI [0.133, 0.169]; +0.064 vs base, [0.046, 0.082]). Full narrative in [`report/`](https://github.com/jacksonmlukas/connections-rl/blob/main/report).
 
 All arms are evaluated on the same **leakage-aware, date-split held-out test set** with bootstrap CIs, McNemar significance tests between arms, and per-stratum breakdowns. CI re-runs the eval smoke and a release gate (GRPO must not regress vs. SFT beyond the CI) on every push.
 
@@ -31,7 +37,7 @@ All arms are evaluated on the same **leakage-aware, date-split held-out test set
 
 ## Quickstart
 
-```bash
+```
 git clone https://github.com/jacksonmlukas/connections-rl && cd connections-rl
 make setup                 # pip install -e ".[dev]"
 export CONNECTIONS_PUZZLES=path/to/gvc-local/data/puzzles/tagged_connections.json
@@ -42,14 +48,14 @@ make eval-smoke            # end-to-end harness check, no GPU needed
 
 Training (GPU): open `notebooks/colab_grpo.ipynb` on Colab, or:
 
-```bash
+```
 pip install -e ".[train]"
 make train-sft && make train-grpo
 ```
 
 Serving:
 
-```bash
+```
 docker compose up          # vLLM + API
 curl -X POST localhost:8080/compare -H 'content-type: application/json' \
   -d '{"words": ["HAIL","RAIN","SLEET","SNOW","BUCKS","HEAT","JAZZ","NETS","OPTION","RETURN","SHIFT","TAB","KAYAK","LEVEL","MOM","RACECAR"]}'
@@ -74,6 +80,6 @@ report/         technical writeup
 ## Related
 
 - [gvc-local](https://github.com/jacksonmlukas/gvc-local) — multi-agent prompting predecessor; source of the puzzle DB and the 60% baseline.
-- ACL 2025 paper — multi-agent GPT-4o loop at 98%.
+- [Snap Out of It (ACL 2025, REALM Workshop)](https://aclanthology.org/2025.realm-1.16/) — multi-agent GPT-4o loop at 98%; equal-contribution co-author.
 
 MIT license.
