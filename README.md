@@ -2,13 +2,13 @@
 
 **GRPO post-training a small open model on NYT Connections, measured with leakage-aware evaluation.**
 
-**Key finding: verifiable-reward RL transfers exactly what the reward can verify.** Invalid outputs fell **74.1% → 2.5%** on held-out puzzles and paired reward gains were significant. Grouping ability did not transfer (0% solve at 1.5B): training reward saturated at its theoretical maximum, policy entropy collapsed to ~0, and the model memorized its 807 training answers. A measured case study in reward over-optimization: bootstrap CIs, McNemar paired tests, and a strictly chronological held-out test set.
+**Key finding: verifiable-reward RL transfers exactly what the reward can verify — and whether that helps depends on model scale.** At 1.5B, GRPO cut invalid outputs **74.1% → 2.5%** on held-out puzzles (pure gain: the model had no grouping ability to lose). At 7B, the *same* training flipped net-harmful: best format validity of any arm (0.6% invalid) but grouping collapsed below the untrained base, while SFT alone delivered the first held-out solves. In both cases training reward saturated at its theoretical maximum with policy entropy → 0 — memorization of the 807 training answers. A measured, two-scale case study in reward over-optimization: bootstrap CIs, McNemar paired tests, and a strictly chronological held-out test set.
 
 ![Invalid-output rate by arm](invalid_rate.png)
 
 **How much of a multi-agent system's gain can a single small open model recover with RL post-training?**
 
-My [ACL 2025 paper](https://aclanthology.org/2025.realm-1.16/) (REALM Workshop; equal-contribution co-author) showed a multi-agent GPT-4o loop solves NYT Connections at 98%, and [gvc-local](https://github.com/jacksonmlukas/gvc-local) pushed an open 8B model to 60% with multi-agent prompting. This repo answers the follow-up: post-train a **1.5–3B open model directly with GRPO** (verifiable-reward RL, DeepSeek-R1 style) and measure it against those baselines with a production-grade evaluation stack.
+My [ACL 2025 paper](https://aclanthology.org/2025.realm-1.16/) (REALM Workshop; equal-contribution co-author) showed a multi-agent GPT-4o loop solves NYT Connections at 98%, and [gvc-local](https://github.com/jacksonmlukas/gvc-local) pushed an open 8B model to 60% with multi-agent prompting. This repo answers the follow-up: post-train small open models (**Qwen2.5-1.5B and 7B**) directly with GRPO (verifiable-reward RL, DeepSeek-R1 style) and measure them against those baselines with a production-grade evaluation stack.
 
 ## Results
 
