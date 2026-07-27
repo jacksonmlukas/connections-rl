@@ -1,0 +1,92 @@
+[
+ {
+  "arm": "connections-rl-sft-7b",
+  "step": 0,
+  "n": 108,
+  "structural_valid_rate": 0.7870370370370371,
+  "semantic_groups_correct": 0.10185185185185185,
+  "solve_rate": 0.0,
+  "mean_reward": 0.20740740740740732
+ },
+ {
+  "arm": "ckpt-50",
+  "step": 50,
+  "n": 108,
+  "structural_valid_rate": 0.9259259259259259,
+  "semantic_groups_correct": 0.1388888888888889,
+  "solve_rate": 0.0,
+  "mean_reward": 0.2893518518518517
+ },
+ {
+  "arm": "ckpt-100",
+  "step": 100,
+  "n": 108,
+  "structural_valid_rate": 0.8611111111111112,
+  "semantic_groups_correct": 0.12037037037037036,
+  "solve_rate": 0.009259259259259259,
+  "mean_reward": 0.25601851851851826
+ },
+ {
+  "arm": "ckpt-150",
+  "step": 150,
+  "n": 108,
+  "structural_valid_rate": 0.9722222222222222,
+  "semantic_groups_correct": 0.011574074074074073,
+  "solve_rate": 0.0,
+  "mean_reward": 0.12916666666666657
+ },
+ {
+  "arm": "ckpt-200",
+  "step": 200,
+  "n": 108,
+  "structural_valid_rate": 0.9629629629629629,
+  "semantic_groups_correct": 0.011574074074074073,
+  "solve_rate": 0.0,
+  "mean_reward": 0.12453703703703696
+ },
+ {
+  "arm": "ckpt-250",
+  "step": 250,
+  "n": 108,
+  "structural_valid_rate": 0.9629629629629629,
+  "semantic_groups_correct": 0.011574074074074073,
+  "solve_rate": 0.0,
+  "mean_reward": 0.12453703703703696
+ },
+ {
+  "arm": "ckpt-300",
+  "step": 300,
+  "n": 108,
+  "structural_valid_rate": 0.9722222222222222,
+  "semantic_groups_correct": 0.011574074074074073,
+  "solve_rate": 0.0,
+  "mean_reward": 0.1263888888888888
+ },
+ {
+  "arm": "ckpt-350",
+  "step": 350,
+  "n": 108,
+  "structural_valid_rate": 0.9722222222222222,
+  "semantic_groups_correct": 0.009259259259259259,
+  "solve_rate": 0.0,
+  "mean_reward": 0.12314814814814806
+ },
+ {
+  "arm": "ckpt-400",
+  "step": 400,
+  "n": 108,
+  "structural_valid_rate": 0.9722222222222222,
+  "semantic_groups_correct": 0.009259259259259259,
+  "solve_rate": 0.0,
+  "mean_reward": 0.12314814814814806
+ },
+ {
+  "arm": "ckpt-403",
+  "step": 403,
+  "n": 108,
+  "structural_valid_rate": 0.9722222222222222,
+  "semantic_groups_correct": 0.009259259259259259,
+  "solve_rate": 0.0,
+  "mean_reward": 0.12314814814814806
+ }
+]

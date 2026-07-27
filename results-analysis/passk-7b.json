@@ -1,0 +1,4449 @@
+{
+ "k": 16,
+ "temperature": 0.9,
+ "arms": {
+  "base": {
+   "summary": {
+    "k": 16,
+    "n": 162,
+    "pass_at_k_solve": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "pass_at_k_valid": [
+     0.9938271604938271,
+     0.9753086419753086,
+     1.0
+    ],
+    "best_of_k_groups_correct": [
+     0.11419753086419752,
+     0.09259259259259259,
+     0.13734567901234568
+    ]
+   },
+   "records": [
+    {
+     "puzzle_id": 917,
+     "date": "2025-12-15",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 918,
+     "date": "2025-12-16",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.44999999999999996,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 919,
+     "date": "2025-12-17",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 920,
+     "date": "2025-12-18",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 921,
+     "date": "2025-12-19",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 922,
+     "date": "2025-12-20",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 923,
+     "date": "2025-12-21",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 924,
+     "date": "2025-12-22",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 925,
+     "date": "2025-12-23",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 926,
+     "date": "2025-12-24",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.25,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 927,
+     "date": "2025-12-25",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 928,
+     "date": "2025-12-26",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 929,
+     "date": "2025-12-27",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.25,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 930,
+     "date": "2025-12-28",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 2,
+     "best_reward": 0.7,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 931,
+     "date": "2025-12-29",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 932,
+     "date": "2025-12-30",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.25,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 933,
+     "date": "2025-12-31",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.35,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 934,
+     "date": "2026-01-01",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 935,
+     "date": "2026-01-02",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 936,
+     "date": "2026-01-03",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.35,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 937,
+     "date": "2026-01-04",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 938,
+     "date": "2026-01-05",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 939,
+     "date": "2026-01-06",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 940,
+     "date": "2026-01-07",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 941,
+     "date": "2026-01-08",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.44999999999999996,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 942,
+     "date": "2026-01-09",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 943,
+     "date": "2026-01-10",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.25,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 944,
+     "date": "2026-01-11",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.44999999999999996,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 945,
+     "date": "2026-01-12",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 2,
+     "best_reward": 0.7,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 946,
+     "date": "2026-01-13",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 947,
+     "date": "2026-01-14",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 948,
+     "date": "2026-01-15",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.35,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 949,
+     "date": "2026-01-16",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 950,
+     "date": "2026-01-17",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.25,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 951,
+     "date": "2026-01-18",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.25,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 952,
+     "date": "2026-01-19",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 953,
+     "date": "2026-01-20",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.5,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 954,
+     "date": "2026-01-21",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 955,
+     "date": "2026-01-22",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.44999999999999996,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 956,
+     "date": "2026-01-23",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.5,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 957,
+     "date": "2026-01-24",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.35,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 958,
+     "date": "2026-01-25",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 959,
+     "date": "2026-01-26",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 960,
+     "date": "2026-01-27",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 961,
+     "date": "2026-01-28",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.5,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 962,
+     "date": "2026-01-29",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 963,
+     "date": "2026-01-30",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.30000000000000004,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 964,
+     "date": "2026-01-31",
+     "any_solved": false,
+     "any_valid": false,
+     "max_groups_correct": 0,
+     "best_reward": -0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 965,
+     "date": "2026-02-01",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.25,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 966,
+     "date": "2026-02-02",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 967,
+     "date": "2026-02-03",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.44999999999999996,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 968,
+     "date": "2026-02-04",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 969,
+     "date": "2026-02-05",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.44999999999999996,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 970,
+     "date": "2026-02-06",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 971,
+     "date": "2026-02-08",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 972,
+     "date": "2026-02-09",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.44999999999999996,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 973,
+     "date": "2026-02-10",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 974,
+     "date": "2026-02-11",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.5,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 975,
+     "date": "2026-02-12",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.25,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 976,
+     "date": "2026-02-13",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 977,
+     "date": "2026-02-14",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.44999999999999996,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 978,
+     "date": "2026-02-15",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 979,
+     "date": "2026-02-16",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 980,
+     "date": "2026-02-17",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 981,
+     "date": "2026-02-18",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 982,
+     "date": "2026-02-19",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 983,
+     "date": "2026-02-20",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 984,
+     "date": "2026-02-21",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 985,
+     "date": "2026-02-22",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 986,
+     "date": "2026-02-23",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 987,
+     "date": "2026-02-24",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.35,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 988,
+     "date": "2026-02-25",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 989,
+     "date": "2026-02-26",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 2,
+     "best_reward": 0.7,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 990,
+     "date": "2026-02-27",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 2,
+     "best_reward": 0.7,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 991,
+     "date": "2026-02-28",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.44999999999999996,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 992,
+     "date": "2026-03-01",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 993,
+     "date": "2026-03-02",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 994,
+     "date": "2026-03-03",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 995,
+     "date": "2026-03-04",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 996,
+     "date": "2026-03-05",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 997,
+     "date": "2026-03-06",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 998,
+     "date": "2026-03-08",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.35,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 999,
+     "date": "2026-03-09",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1000,
+     "date": "2026-03-10",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.25,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1001,
+     "date": "2026-03-11",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1002,
+     "date": "2026-03-12",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1003,
+     "date": "2026-03-13",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1004,
+     "date": "2026-03-14",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1005,
+     "date": "2026-03-15",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1006,
+     "date": "2026-03-16",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1007,
+     "date": "2026-03-17",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.5,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1008,
+     "date": "2026-03-18",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1009,
+     "date": "2026-03-19",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1010,
+     "date": "2026-03-20",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.25,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1011,
+     "date": "2026-03-21",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.25,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1012,
+     "date": "2026-03-22",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1013,
+     "date": "2026-03-23",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1014,
+     "date": "2026-03-24",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1015,
+     "date": "2026-03-25",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1016,
+     "date": "2026-03-26",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1017,
+     "date": "2026-03-27",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1018,
+     "date": "2026-03-28",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1019,
+     "date": "2026-03-29",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1020,
+     "date": "2026-03-30",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1021,
+     "date": "2026-03-31",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1022,
+     "date": "2026-04-02",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1023,
+     "date": "2026-04-03",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.30000000000000004,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1024,
+     "date": "2026-04-04",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1025,
+     "date": "2026-04-05",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 2,
+     "best_reward": 0.6,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1026,
+     "date": "2026-04-06",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1027,
+     "date": "2026-04-07",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.5,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1028,
+     "date": "2026-04-08",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1029,
+     "date": "2026-04-09",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.44999999999999996,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1030,
+     "date": "2026-04-10",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.35,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1031,
+     "date": "2026-04-11",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.30000000000000004,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1032,
+     "date": "2026-04-12",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1033,
+     "date": "2026-04-13",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.44999999999999996,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1034,
+     "date": "2026-04-14",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1035,
+     "date": "2026-04-15",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.25,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1036,
+     "date": "2026-04-16",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1037,
+     "date": "2026-04-17",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.25,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1038,
+     "date": "2026-04-18",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.25,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1039,
+     "date": "2026-04-19",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.25,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1040,
+     "date": "2026-04-20",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1041,
+     "date": "2026-04-21",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1042,
+     "date": "2026-04-22",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.35,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1043,
+     "date": "2026-04-23",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1044,
+     "date": "2026-04-24",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 2,
+     "best_reward": 0.7,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1045,
+     "date": "2026-04-25",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.25,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1046,
+     "date": "2026-04-26",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1047,
+     "date": "2026-04-27",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1048,
+     "date": "2026-04-28",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.25,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1049,
+     "date": "2026-04-29",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1050,
+     "date": "2026-04-30",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.25,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1051,
+     "date": "2026-05-01",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.35,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1052,
+     "date": "2026-05-02",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.25,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1053,
+     "date": "2026-05-03",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.35,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1054,
+     "date": "2026-05-04",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1055,
+     "date": "2026-05-05",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.30000000000000004,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1056,
+     "date": "2026-05-07",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.35,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1057,
+     "date": "2026-05-08",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1058,
+     "date": "2026-05-09",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.44999999999999996,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1059,
+     "date": "2026-05-10",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1060,
+     "date": "2026-05-11",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1061,
+     "date": "2026-05-12",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.35,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1062,
+     "date": "2026-05-13",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1063,
+     "date": "2026-05-14",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1064,
+     "date": "2026-05-15",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1065,
+     "date": "2026-05-16",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.30000000000000004,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1066,
+     "date": "2026-05-17",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1067,
+     "date": "2026-05-18",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.25,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1068,
+     "date": "2026-05-19",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.35,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1069,
+     "date": "2026-05-20",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1070,
+     "date": "2026-05-21",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1071,
+     "date": "2026-05-22",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.44999999999999996,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1072,
+     "date": "2026-05-23",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 2,
+     "best_reward": 0.7,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1073,
+     "date": "2026-05-24",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.44999999999999996,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1074,
+     "date": "2026-05-25",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1075,
+     "date": "2026-05-26",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1076,
+     "date": "2026-05-27",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.35,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1077,
+     "date": "2026-05-28",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.44999999999999996,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1078,
+     "date": "2026-05-29",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.44999999999999996,
+     "n_samples": 16
+    }
+   ]
+  },
+  "sft": {
+   "summary": {
+    "k": 16,
+    "n": 162,
+    "pass_at_k_solve": [
+     0.043209876543209874,
+     0.012345679012345678,
+     0.07407407407407407
+    ],
+    "pass_at_k_valid": [
+     1.0,
+     1.0,
+     1.0
+    ],
+    "best_of_k_groups_correct": [
+     0.2515432098765432,
+     0.21604938271604937,
+     0.28703703703703703
+    ]
+   },
+   "records": [
+    {
+     "puzzle_id": 917,
+     "date": "2025-12-15",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.44999999999999996,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 918,
+     "date": "2025-12-16",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 2,
+     "best_reward": 0.7,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 919,
+     "date": "2025-12-17",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 2,
+     "best_reward": 0.7,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 920,
+     "date": "2025-12-18",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.5,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 921,
+     "date": "2025-12-19",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 2,
+     "best_reward": 0.7,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 922,
+     "date": "2025-12-20",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 2,
+     "best_reward": 0.7,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 923,
+     "date": "2025-12-21",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.5,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 924,
+     "date": "2025-12-22",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.35,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 925,
+     "date": "2025-12-23",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.25,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 926,
+     "date": "2025-12-24",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 927,
+     "date": "2025-12-25",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 928,
+     "date": "2025-12-26",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 929,
+     "date": "2025-12-27",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.25,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 930,
+     "date": "2025-12-28",
+     "any_solved": true,
+     "any_valid": true,
+     "max_groups_correct": 4,
+     "best_reward": 1.6,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 931,
+     "date": "2025-12-29",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 2,
+     "best_reward": 0.7,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 932,
+     "date": "2025-12-30",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.35,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 933,
+     "date": "2025-12-31",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 934,
+     "date": "2026-01-01",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.44999999999999996,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 935,
+     "date": "2026-01-02",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.25,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 936,
+     "date": "2026-01-03",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 937,
+     "date": "2026-01-04",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.44999999999999996,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 938,
+     "date": "2026-01-05",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.35,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 939,
+     "date": "2026-01-06",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.44999999999999996,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 940,
+     "date": "2026-01-07",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.5,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 941,
+     "date": "2026-01-08",
+     "any_solved": true,
+     "any_valid": true,
+     "max_groups_correct": 4,
+     "best_reward": 1.6,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 942,
+     "date": "2026-01-09",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 943,
+     "date": "2026-01-10",
+     "any_solved": true,
+     "any_valid": true,
+     "max_groups_correct": 4,
+     "best_reward": 1.6,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 944,
+     "date": "2026-01-11",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 2,
+     "best_reward": 0.6,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 945,
+     "date": "2026-01-12",
+     "any_solved": true,
+     "any_valid": true,
+     "max_groups_correct": 4,
+     "best_reward": 1.6,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 946,
+     "date": "2026-01-13",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.25,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 947,
+     "date": "2026-01-14",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.5,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 948,
+     "date": "2026-01-15",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 949,
+     "date": "2026-01-16",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.30000000000000004,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 950,
+     "date": "2026-01-17",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 951,
+     "date": "2026-01-18",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 952,
+     "date": "2026-01-19",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 953,
+     "date": "2026-01-20",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 954,
+     "date": "2026-01-21",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 955,
+     "date": "2026-01-22",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 2,
+     "best_reward": 0.7,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 956,
+     "date": "2026-01-23",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.5,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 957,
+     "date": "2026-01-24",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 958,
+     "date": "2026-01-25",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.25,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 959,
+     "date": "2026-01-26",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 960,
+     "date": "2026-01-27",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.25,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 961,
+     "date": "2026-01-28",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.5,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 962,
+     "date": "2026-01-29",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.44999999999999996,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 963,
+     "date": "2026-01-30",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 964,
+     "date": "2026-01-31",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 965,
+     "date": "2026-02-01",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.5,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 966,
+     "date": "2026-02-02",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.44999999999999996,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 967,
+     "date": "2026-02-03",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 2,
+     "best_reward": 0.7,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 968,
+     "date": "2026-02-04",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 2,
+     "best_reward": 0.6,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 969,
+     "date": "2026-02-05",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.35,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 970,
+     "date": "2026-02-06",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 971,
+     "date": "2026-02-08",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 2,
+     "best_reward": 0.7,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 972,
+     "date": "2026-02-09",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 2,
+     "best_reward": 0.7,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 973,
+     "date": "2026-02-10",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 974,
+     "date": "2026-02-11",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 2,
+     "best_reward": 0.7,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 975,
+     "date": "2026-02-12",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 976,
+     "date": "2026-02-13",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 977,
+     "date": "2026-02-14",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.44999999999999996,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 978,
+     "date": "2026-02-15",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 979,
+     "date": "2026-02-16",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 980,
+     "date": "2026-02-17",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 981,
+     "date": "2026-02-18",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 2,
+     "best_reward": 0.6,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 982,
+     "date": "2026-02-19",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 983,
+     "date": "2026-02-20",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 984,
+     "date": "2026-02-21",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.44999999999999996,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 985,
+     "date": "2026-02-22",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 2,
+     "best_reward": 0.7,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 986,
+     "date": "2026-02-23",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.5,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 987,
+     "date": "2026-02-24",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.30000000000000004,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 988,
+     "date": "2026-02-25",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 989,
+     "date": "2026-02-26",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 2,
+     "best_reward": 0.7,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 990,
+     "date": "2026-02-27",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.5,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 991,
+     "date": "2026-02-28",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 992,
+     "date": "2026-03-01",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 993,
+     "date": "2026-03-02",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.5,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 994,
+     "date": "2026-03-03",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.35,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 995,
+     "date": "2026-03-04",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.44999999999999996,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 996,
+     "date": "2026-03-05",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 2,
+     "best_reward": 0.7,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 997,
+     "date": "2026-03-06",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 2,
+     "best_reward": 0.7,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 998,
+     "date": "2026-03-08",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.35,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 999,
+     "date": "2026-03-09",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.5,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1000,
+     "date": "2026-03-10",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1001,
+     "date": "2026-03-11",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.44999999999999996,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1002,
+     "date": "2026-03-12",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.30000000000000004,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1003,
+     "date": "2026-03-13",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.25,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1004,
+     "date": "2026-03-14",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.44999999999999996,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1005,
+     "date": "2026-03-15",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.44999999999999996,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1006,
+     "date": "2026-03-16",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1007,
+     "date": "2026-03-17",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.5,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1008,
+     "date": "2026-03-18",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1009,
+     "date": "2026-03-19",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1010,
+     "date": "2026-03-20",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1011,
+     "date": "2026-03-21",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.5,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1012,
+     "date": "2026-03-22",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1013,
+     "date": "2026-03-23",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.44999999999999996,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1014,
+     "date": "2026-03-24",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.35,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1015,
+     "date": "2026-03-25",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.44999999999999996,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1016,
+     "date": "2026-03-26",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.35,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1017,
+     "date": "2026-03-27",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1018,
+     "date": "2026-03-28",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.44999999999999996,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1019,
+     "date": "2026-03-29",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1020,
+     "date": "2026-03-30",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.5,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1021,
+     "date": "2026-03-31",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1022,
+     "date": "2026-04-02",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 2,
+     "best_reward": 0.6,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1023,
+     "date": "2026-04-03",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1024,
+     "date": "2026-04-04",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1025,
+     "date": "2026-04-05",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 2,
+     "best_reward": 0.6,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1026,
+     "date": "2026-04-06",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 2,
+     "best_reward": 0.7,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1027,
+     "date": "2026-04-07",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.35,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1028,
+     "date": "2026-04-08",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.5,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1029,
+     "date": "2026-04-09",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.44999999999999996,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1030,
+     "date": "2026-04-10",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.25,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1031,
+     "date": "2026-04-11",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 2,
+     "best_reward": 0.7,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1032,
+     "date": "2026-04-12",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.44999999999999996,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1033,
+     "date": "2026-04-13",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 2,
+     "best_reward": 0.7,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1034,
+     "date": "2026-04-14",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1035,
+     "date": "2026-04-15",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.35,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1036,
+     "date": "2026-04-16",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1037,
+     "date": "2026-04-17",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.44999999999999996,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1038,
+     "date": "2026-04-18",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.35,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1039,
+     "date": "2026-04-19",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.44999999999999996,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1040,
+     "date": "2026-04-20",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 2,
+     "best_reward": 0.7,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1041,
+     "date": "2026-04-21",
+     "any_solved": true,
+     "any_valid": true,
+     "max_groups_correct": 4,
+     "best_reward": 1.6,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1042,
+     "date": "2026-04-22",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1043,
+     "date": "2026-04-23",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.35,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1044,
+     "date": "2026-04-24",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1045,
+     "date": "2026-04-25",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.5,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1046,
+     "date": "2026-04-26",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1047,
+     "date": "2026-04-27",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.44999999999999996,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1048,
+     "date": "2026-04-28",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.25,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1049,
+     "date": "2026-04-29",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.5,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1050,
+     "date": "2026-04-30",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.25,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1051,
+     "date": "2026-05-01",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.44999999999999996,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1052,
+     "date": "2026-05-02",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1053,
+     "date": "2026-05-03",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 2,
+     "best_reward": 0.7,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1054,
+     "date": "2026-05-04",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.30000000000000004,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1055,
+     "date": "2026-05-05",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.25,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1056,
+     "date": "2026-05-07",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1057,
+     "date": "2026-05-08",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.44999999999999996,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1058,
+     "date": "2026-05-09",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1059,
+     "date": "2026-05-10",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.5,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1060,
+     "date": "2026-05-11",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1061,
+     "date": "2026-05-12",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.35,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1062,
+     "date": "2026-05-13",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.35,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1063,
+     "date": "2026-05-14",
+     "any_solved": true,
+     "any_valid": true,
+     "max_groups_correct": 4,
+     "best_reward": 1.6,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1064,
+     "date": "2026-05-15",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1065,
+     "date": "2026-05-16",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.25,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1066,
+     "date": "2026-05-17",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1067,
+     "date": "2026-05-18",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.35,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1068,
+     "date": "2026-05-19",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.5,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1069,
+     "date": "2026-05-20",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.30000000000000004,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1070,
+     "date": "2026-05-21",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 2,
+     "best_reward": 0.7,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1071,
+     "date": "2026-05-22",
+     "any_solved": true,
+     "any_valid": true,
+     "max_groups_correct": 4,
+     "best_reward": 1.6,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1072,
+     "date": "2026-05-23",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 2,
+     "best_reward": 0.7,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1073,
+     "date": "2026-05-24",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.25,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1074,
+     "date": "2026-05-25",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1075,
+     "date": "2026-05-26",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1076,
+     "date": "2026-05-27",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1077,
+     "date": "2026-05-28",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.25,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1078,
+     "date": "2026-05-29",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 2,
+     "best_reward": 0.7,
+     "n_samples": 16
+    }
+   ]
+  },
+  "grpo": {
+   "summary": {
+    "k": 16,
+    "n": 162,
+    "pass_at_k_solve": [
+     0.012345679012345678,
+     0.0,
+     0.030864197530864196
+    ],
+    "pass_at_k_valid": [
+     1.0,
+     1.0,
+     1.0
+    ],
+    "best_of_k_groups_correct": [
+     0.021604938271604937,
+     0.006172839506172839,
+     0.043209876543209874
+    ]
+   },
+   "records": [
+    {
+     "puzzle_id": 917,
+     "date": "2025-12-15",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 918,
+     "date": "2025-12-16",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 919,
+     "date": "2025-12-17",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 920,
+     "date": "2025-12-18",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 921,
+     "date": "2025-12-19",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 922,
+     "date": "2025-12-20",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 923,
+     "date": "2025-12-21",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 924,
+     "date": "2025-12-22",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 925,
+     "date": "2025-12-23",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 926,
+     "date": "2025-12-24",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 927,
+     "date": "2025-12-25",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 928,
+     "date": "2025-12-26",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 929,
+     "date": "2025-12-27",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 930,
+     "date": "2025-12-28",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 931,
+     "date": "2025-12-29",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 932,
+     "date": "2025-12-30",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 933,
+     "date": "2025-12-31",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 934,
+     "date": "2026-01-01",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 935,
+     "date": "2026-01-02",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 936,
+     "date": "2026-01-03",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 937,
+     "date": "2026-01-04",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 938,
+     "date": "2026-01-05",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 939,
+     "date": "2026-01-06",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 940,
+     "date": "2026-01-07",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 941,
+     "date": "2026-01-08",
+     "any_solved": true,
+     "any_valid": true,
+     "max_groups_correct": 4,
+     "best_reward": 1.6,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 942,
+     "date": "2026-01-09",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 943,
+     "date": "2026-01-10",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 944,
+     "date": "2026-01-11",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.5,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 945,
+     "date": "2026-01-12",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 946,
+     "date": "2026-01-13",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 947,
+     "date": "2026-01-14",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 948,
+     "date": "2026-01-15",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 949,
+     "date": "2026-01-16",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 950,
+     "date": "2026-01-17",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 951,
+     "date": "2026-01-18",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 952,
+     "date": "2026-01-19",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 953,
+     "date": "2026-01-20",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 954,
+     "date": "2026-01-21",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 955,
+     "date": "2026-01-22",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 956,
+     "date": "2026-01-23",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 957,
+     "date": "2026-01-24",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 958,
+     "date": "2026-01-25",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 959,
+     "date": "2026-01-26",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 960,
+     "date": "2026-01-27",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 961,
+     "date": "2026-01-28",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 962,
+     "date": "2026-01-29",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 963,
+     "date": "2026-01-30",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 964,
+     "date": "2026-01-31",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 965,
+     "date": "2026-02-01",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 966,
+     "date": "2026-02-02",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 967,
+     "date": "2026-02-03",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 968,
+     "date": "2026-02-04",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 969,
+     "date": "2026-02-05",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 970,
+     "date": "2026-02-06",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 971,
+     "date": "2026-02-08",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 972,
+     "date": "2026-02-09",
+     "any_solved": true,
+     "any_valid": true,
+     "max_groups_correct": 4,
+     "best_reward": 1.6,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 973,
+     "date": "2026-02-10",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 974,
+     "date": "2026-02-11",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 975,
+     "date": "2026-02-12",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 976,
+     "date": "2026-02-13",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 977,
+     "date": "2026-02-14",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 978,
+     "date": "2026-02-15",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 979,
+     "date": "2026-02-16",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 980,
+     "date": "2026-02-17",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 981,
+     "date": "2026-02-18",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 982,
+     "date": "2026-02-19",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 983,
+     "date": "2026-02-20",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 984,
+     "date": "2026-02-21",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 985,
+     "date": "2026-02-22",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 986,
+     "date": "2026-02-23",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 987,
+     "date": "2026-02-24",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 988,
+     "date": "2026-02-25",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 989,
+     "date": "2026-02-26",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 990,
+     "date": "2026-02-27",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 991,
+     "date": "2026-02-28",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.44999999999999996,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 992,
+     "date": "2026-03-01",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 993,
+     "date": "2026-03-02",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 994,
+     "date": "2026-03-03",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 995,
+     "date": "2026-03-04",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 996,
+     "date": "2026-03-05",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 997,
+     "date": "2026-03-06",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 998,
+     "date": "2026-03-08",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 999,
+     "date": "2026-03-09",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1000,
+     "date": "2026-03-10",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1001,
+     "date": "2026-03-11",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1002,
+     "date": "2026-03-12",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1003,
+     "date": "2026-03-13",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1004,
+     "date": "2026-03-14",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1005,
+     "date": "2026-03-15",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1006,
+     "date": "2026-03-16",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1007,
+     "date": "2026-03-17",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1008,
+     "date": "2026-03-18",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1009,
+     "date": "2026-03-19",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1010,
+     "date": "2026-03-20",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1011,
+     "date": "2026-03-21",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1012,
+     "date": "2026-03-22",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1013,
+     "date": "2026-03-23",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1014,
+     "date": "2026-03-24",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1015,
+     "date": "2026-03-25",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1016,
+     "date": "2026-03-26",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1017,
+     "date": "2026-03-27",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1018,
+     "date": "2026-03-28",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1019,
+     "date": "2026-03-29",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1020,
+     "date": "2026-03-30",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1021,
+     "date": "2026-03-31",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1022,
+     "date": "2026-04-02",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1023,
+     "date": "2026-04-03",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1024,
+     "date": "2026-04-04",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1025,
+     "date": "2026-04-05",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1026,
+     "date": "2026-04-06",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1027,
+     "date": "2026-04-07",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1028,
+     "date": "2026-04-08",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1029,
+     "date": "2026-04-09",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1030,
+     "date": "2026-04-10",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1031,
+     "date": "2026-04-11",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1032,
+     "date": "2026-04-12",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1033,
+     "date": "2026-04-13",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1034,
+     "date": "2026-04-14",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1035,
+     "date": "2026-04-15",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1036,
+     "date": "2026-04-16",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1037,
+     "date": "2026-04-17",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1038,
+     "date": "2026-04-18",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1039,
+     "date": "2026-04-19",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1040,
+     "date": "2026-04-20",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1041,
+     "date": "2026-04-21",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1042,
+     "date": "2026-04-22",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1043,
+     "date": "2026-04-23",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1044,
+     "date": "2026-04-24",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1045,
+     "date": "2026-04-25",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1046,
+     "date": "2026-04-26",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1047,
+     "date": "2026-04-27",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1048,
+     "date": "2026-04-28",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1049,
+     "date": "2026-04-29",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1050,
+     "date": "2026-04-30",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1051,
+     "date": "2026-05-01",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1052,
+     "date": "2026-05-02",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1053,
+     "date": "2026-05-03",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1054,
+     "date": "2026-05-04",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1055,
+     "date": "2026-05-05",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1056,
+     "date": "2026-05-07",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1057,
+     "date": "2026-05-08",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1058,
+     "date": "2026-05-09",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1059,
+     "date": "2026-05-10",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1060,
+     "date": "2026-05-11",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1061,
+     "date": "2026-05-12",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1062,
+     "date": "2026-05-13",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1063,
+     "date": "2026-05-14",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1064,
+     "date": "2026-05-15",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1065,
+     "date": "2026-05-16",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1066,
+     "date": "2026-05-17",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.35,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1067,
+     "date": "2026-05-18",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1068,
+     "date": "2026-05-19",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.15000000000000002,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1069,
+     "date": "2026-05-20",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1070,
+     "date": "2026-05-21",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1071,
+     "date": "2026-05-22",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.2,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1072,
+     "date": "2026-05-23",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1073,
+     "date": "2026-05-24",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1074,
+     "date": "2026-05-25",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1075,
+     "date": "2026-05-26",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1076,
+     "date": "2026-05-27",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1077,
+     "date": "2026-05-28",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 1,
+     "best_reward": 0.39999999999999997,
+     "n_samples": 16
+    },
+    {
+     "puzzle_id": 1078,
+     "date": "2026-05-29",
+     "any_solved": false,
+     "any_valid": true,
+     "max_groups_correct": 0,
+     "best_reward": 0.1,
+     "n_samples": 16
+    }
+   ]
+  }
+ }
+}
