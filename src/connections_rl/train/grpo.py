@@ -143,8 +143,23 @@ def build_dataset(puzzle_records: list[dict]):
 def main(argv: list[str] | None = None) -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--config", default="configs/train/grpo.yaml")
+    # Seed-replicate overrides: same config, different RNG + separate artifacts,
+    # so multi-seed runs never collide on output_dir / checkpoint repo / W&B run.
+    ap.add_argument("--seed", type=int, help="override cfg seed")
+    ap.add_argument("--output-dir", help="override cfg output_dir")
+    ap.add_argument("--ckpt-hub-repo", help="override cfg ckpt_hub_repo")
+    ap.add_argument("--run-name", help="override cfg run_name")
     args = ap.parse_args(argv)
     cfg = load_config(args.config)
+    for key, val in [
+        ("seed", args.seed),
+        ("output_dir", args.output_dir),
+        ("ckpt_hub_repo", args.ckpt_hub_repo),
+        ("run_name", args.run_name),
+    ]:
+        if val is not None:
+            cfg[key] = val
+            print(f"[grpo] override {key}={val}")
     set_seed(cfg.get("seed", 0))
 
     import torch

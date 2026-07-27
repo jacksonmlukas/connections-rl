@@ -1,0 +1,20 @@
+# Multi-seed 7B eval: seed 0 (published) vs seeds 1-2, same held-out test split.
+# Serve all three GRPO adapters plus SFT as vLLM --lora-modules under these names.
+puzzles: data/splits/puzzles_test.json
+out_dir: results-seeds-7b
+n_resamples: 1000
+seed: 0
+
+arms:
+  - name: sft
+    model: connections-rl-sft-7b
+    temperature: 0.0
+  - name: grpo-seed0
+    model: connections-rl-grpo-7b
+    temperature: 0.0
+  - name: grpo-seed1
+    model: connections-rl-grpo-7b-seed1
+    temperature: 0.0
+  - name: grpo-seed2
+    model: connections-rl-grpo-7b-seed2
+    temperature: 0.0
