@@ -1,0 +1,33 @@
+modules: 196   (LoRA rank r=16, effective updates compared without materializing dense dW)
+
+=== magnitude of RL-induced change (Frobenius over all modules) ===
+SFT update  (base -> SFT)   ||dW|| = 3.0886
+seed0: RL update ||dW|| = 0.2727   (0.09x SFT update)
+seed1: RL update ||dW|| = 0.2673   (0.09x SFT update)
+seed2: RL update ||dW|| = 0.2774   (0.09x SFT update)
+
+=== cosine similarity between independent seeds RL-update directions ===
+cos(seed0, seed1) = +0.6794
+cos(seed0, seed2) = +0.6747
+cos(seed1, seed2) = +0.6882
+
+=== control: cos(RL update, SFT update) ===
+cos(seed0_RL, SFT) = +0.0016
+cos(seed1_RL, SFT) = -0.0071
+cos(seed2_RL, SFT) = -0.0007
+
+parameter dim of dW space = 6,525,288,448;  E[|cos|] for random directions ~ 9.88e-06
+
+=== per-module cos(seed0, seed1), 10 largest-change modules ===
+  L13.mlp.up_proj                    cos=+0.839  ||dW||=0.0445
+  L15.mlp.up_proj                    cos=+0.860  ||dW||=0.0444
+  L14.mlp.up_proj                    cos=+0.832  ||dW||=0.0422
+  L11.mlp.up_proj                    cos=+0.819  ||dW||=0.0421
+  L16.mlp.up_proj                    cos=+0.835  ||dW||=0.0419
+  L12.mlp.up_proj                    cos=+0.815  ||dW||=0.0416
+  L17.mlp.up_proj                    cos=+0.840  ||dW||=0.0412
+  L16.mlp.gate_proj                  cos=+0.815  ||dW||=0.0405
+  L10.mlp.up_proj                    cos=+0.822  ||dW||=0.0404
+  L9.mlp.up_proj                     cos=+0.797  ||dW||=0.0396
+
+per-module cos(seed0,seed1): median=+0.644  mean=+0.621  min=-0.039  max=+0.876
