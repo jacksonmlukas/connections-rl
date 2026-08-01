@@ -53,6 +53,31 @@ Three observations. First, scale unlocks genuine partial competence: base 7B get
 
 The cross-scale conclusion is cleaner than either run alone: GRPO against a structurally-verifiable reward optimizes exactly what the reward can verify, at the expense of what it can't. At 1.5B the starting policy had no semantic ability to lose, so the trade was pure gain (hallucination fixed). At 7B it had real ability, and the same optimization destroyed it. The failure is not model scale — it is that the reward's cheap-to-verify component (structure) and expensive-to-verify component (semantics) decouple under optimization pressure with only 807 training boards.
 
+## Is it one bad seed? No: three levels of replication
+
+The obvious objection to a single RL run is variance. Two extra GRPO seeds per scale (six runs total, each re-run from the *same* SFT warm start so that only RL run-to-run variance varies) answer it three ways.
+
+**Behavioral (held-out test, greedy, n=162).**
+
+| Scale | Metric | seed 0 | seed 1 | seed 2 | mean ± sd |
+|---|---|---|---|---|---|
+| 7B | groups correct | 0.025 | 0.043 | 0.068 | 0.045 ± 0.022 |
+| 7B | invalid rate | 0.006 | 0.019 | 0.012 | 0.012 ± 0.006 |
+| 7B | mean reward | 0.125 | 0.129 | 0.141 | 0.132 ± 0.008 |
+| 1.5B | groups correct | 0.006 | 0.000 | 0.000 | 0.002 ± 0.004 |
+| 1.5B | invalid rate | 0.025 | 0.031 | 0.037 | 0.031 ± 0.006 |
+| 1.5B | mean reward | 0.113 | 0.110 | 0.109 | 0.111 ± 0.002 |
+
+Every 7B seed lands below base on grouping (max 0.068 vs 0.160) and below base on reward (max 0.141 vs 0.165); paired bootstrap of SFT − GRPO on groups correct yields +0.296 [0.191, 0.407], +0.278 [0.173, 0.389], +0.253 [0.142, 0.370]. Every 1.5B seed holds invalid near 3% with reward above base. Seed 0 — the originally published run — is the least favorable 7B draw on grouping, so the headline table understates GRPO rather than flattering it.
+
+**Dynamical.** The checkpoint decomposition (7B, val split) shows the mechanism rather than only the endpoint: through step 100 GRPO improves *both* components (structure 0.79 → 0.93, semantics 0.102 → 0.139, reward peaking at 0.289); between steps 100 and 150 semantics collapses an order of magnitude (0.120 → 0.012) while structure locks at 0.97 and never moves again. Mean reward *falls* from its step-50 peak and plateaus below it, so the collapse is not even reward-optimal on held-out data — the policy found a structural local optimum on the training distribution and stopped exploring.
+
+**Parametric.** Independent seeds move the policy in the *same direction* in weight space. Cosine similarity between seeds' RL-induced effective LoRA updates (dW = B_grpo A_grpo − B_sft A_sft) is +0.68 to +0.69 at 7B and +0.78 to +0.80 at 1.5B, against a random-direction expectation of ~1e−5 in a 6.5-billion-dimensional update space. The control cos(dW_RL, dW_SFT) is ≈0 at both scales, so the agreement is not inherited from the shared warm start. Update magnitudes agree within 4%, and the largest per-module changes concentrate in the same mid-layer MLP `up_proj`/`gate_proj` blocks (layers 9-18) at both scales, with per-module cosines of 0.80-0.91.
+
+Taken together: the semantic collapse is a systematic attractor of this reward under this optimizer, reproducible across seeds and scales, localized to the same parameters, and visible as a phase transition during training. Remaining limitations are one task and one reward design, not one run.
+
+**Reproducibility note.** Independent of seeds, the published 1.5B eval was re-run end-to-end on a fresh VM and reproduced byte-identically (greedy decoding).
+
 ## What would move solve rate
 
 Larger base model (7–8B, where gvc-local shows nonzero single-model competence), reasoning-style completions (current outputs are ~75 tokens — near-zero deliberation; reward shaping or length incentives could force chain-of-thought), and more training signal per board (paraphrased/shuffled board augmentation to break memorization).

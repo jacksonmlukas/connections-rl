@@ -2,7 +2,7 @@
 
 **GRPO post-training a small open model on NYT Connections, measured with leakage-aware evaluation.**
 
-**Key finding: verifiable-reward RL transfers exactly what the reward can verify — and whether that helps depends on model scale.** At 1.5B, GRPO cut invalid outputs **74.1% → 2.5%** on held-out puzzles (pure gain: the model had no grouping ability to lose). At 7B, the *same* training flipped net-harmful: best format validity of any arm (0.6% invalid) but grouping collapsed below the untrained base, while SFT alone delivered the first held-out solves. In both cases training reward saturated at its theoretical maximum with policy entropy → 0 — memorization of the 807 training answers. A measured, two-scale case study in reward over-optimization: bootstrap CIs, McNemar paired tests, and a strictly chronological held-out test set.
+**Key finding: verifiable-reward RL transfers exactly what the reward can verify — and whether that helps depends on model scale.** At 1.5B, GRPO cut invalid outputs **74.1% → 2.5%** on held-out puzzles (pure gain: the model had no grouping ability to lose). At 7B, the *same* training flipped net-harmful: best format validity of any arm (0.6% invalid) but grouping collapsed below the untrained base, while SFT alone delivered the first held-out solves. In both cases training reward saturated at its theoretical maximum with policy entropy → 0 — memorization of the 807 training answers. **Replicated over 3 GRPO seeds per scale**, with the direction of the effect identical in all six runs. A measured, two-scale case study in reward over-optimization: bootstrap CIs, McNemar paired tests, per-seed variance, and a strictly chronological held-out test set.
 
 ![Invalid-output rate by arm](invalid_rate.png)
 
@@ -33,6 +33,23 @@ Held-out test set: 162 puzzles, strictly *after* every training date (2025-12-15
 | GRPO | 162 | 0.0% | 0.025 | **0.6% [0.0, 1.9]** | 0.125 |
 
 Scale unlocks real competence (base gets 16% of groups; SFT doubles it and produces the first held-out solves), but **GRPO flips from net-positive to net-harmful**: it achieves the best format validity of any arm at any scale (0.6% invalid) while collapsing grouping ability *below the untrained base* — mean reward drops under base. Same memorization mechanism as 1.5B; at 7B there was actual semantic ability to trade away. The cross-scale conclusion: GRPO against this reward optimizes exactly what the reward verifies (structure) at the expense of what it can't (semantics), and whether that trade helps or hurts depends on how much semantic ability the starting policy had.
+
+### Seed replication (3 GRPO seeds per scale)
+
+Each seed re-runs GRPO from the same SFT warm start, isolating RL run-to-run variance. Held-out test split, greedy decoding, n=162.
+
+| Scale | Metric | seed 0 | seed 1 | seed 2 | mean ± sd |
+|---|---|---|---|---|---|
+| 7B | groups correct | 0.025 | 0.043 | 0.068 | 0.045 ± 0.022 |
+| 7B | invalid rate | 0.006 | 0.019 | 0.012 | 0.012 ± 0.006 |
+| 7B | mean reward | 0.125 | 0.129 | 0.141 | 0.132 ± 0.008 |
+| 1.5B | groups correct | 0.006 | 0.000 | 0.000 | 0.002 ± 0.004 |
+| 1.5B | invalid rate | 0.025 | 0.031 | 0.037 | 0.031 ± 0.006 |
+| 1.5B | mean reward | 0.113 | 0.110 | 0.109 | 0.111 ± 0.002 |
+
+Both headline effects replicate in every run. At 7B, all three seeds fall below base on grouping (max 0.068 vs base 0.160) and below base on reward (max 0.141 vs 0.165); paired bootstrap of SFT − GRPO on groups correct gives +0.296 [0.191, 0.407], +0.278 [0.173, 0.389], +0.253 [0.142, 0.370] — three independent CIs excluding zero. At 1.5B, all three seeds hold invalid rate near 3% (vs SFT 74.1%) with reward above base. Seed 0, the originally published run, is the *least* favorable 7B draw on grouping, so the headline table understates GRPO rather than cherry-picking.
+
+**Weight-space convergence.** Independent seeds do not merely agree behaviorally — they move the policy in the same direction. Cosine similarity between seeds' RL-induced LoRA updates is **+0.68 to +0.69 at 7B** and **+0.78 to +0.80 at 1.5B**, against a random-direction expectation of ~1e−5 and a near-zero control against the SFT update direction (so this is not an artifact of the shared warm start). Update magnitudes agree within 4%, and the largest changes concentrate in the same mid-layer MLP `up_proj`/`gate_proj` modules at both scales. The collapse is a systematic attractor of this reward under this optimizer, not seed noise. See [`results-seeds/`](https://github.com/jacksonmlukas/connections-rl/tree/main/results-seeds).
 
 All arms are evaluated on the same **leakage-aware, date-split held-out test set** with bootstrap CIs, McNemar significance tests between arms, and per-stratum breakdowns. CI re-runs the eval smoke and a release gate (GRPO must not regress vs. SFT beyond the CI) on every push.
 
