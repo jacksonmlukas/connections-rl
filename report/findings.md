@@ -1,6 +1,10 @@
-# GRPO on NYT Connections at 1.5B: what verifiable-reward RL actually transfers
+# GRPO on NYT Connections: what verifiable-reward RL actually transfers
 
-**TL;DR.** Post-training Qwen2.5-1.5B-Instruct with GRPO on 807 Connections puzzles drives training reward to its theoretical maximum, but held-out solve rate stays at 0%. What *does* transfer is everything the reward could verify structurally: invalid outputs (hallucinated words, malformed answer blocks) fall from 74.1% (SFT) to 2.5%, a significant paired reward gain. The grouping ability itself was memorized, not learned. At this scale, verifiable-reward RL is a format-and-grounding teacher, not a reasoning teacher.
+*A two-scale (1.5B / 7B), three-seed study on free-tier GPUs. Sections below run
+in the order the work was done: the 1.5B result first, then the 7B ablation that
+inverts it, then the replication evidence.*
+
+**TL;DR.** Post-training Qwen2.5 models with GRPO on 807 Connections puzzles drives training reward to its theoretical maximum, but held-out solve rate stays at 0%. What *does* transfer is everything the reward could verify structurally: at 1.5B, invalid outputs (hallucinated words, malformed answer blocks) fall from 74.1% (SFT) to 2.5%, a significant paired reward gain, while grouping ability is memorized rather than learned. At 7B the same recipe reaches the best structural validity in the study (0.6% invalid) but collapses grouping *below the untrained base*, so the trade turns net-harmful. Verifiable-reward RL here is a format-and-grounding teacher, not a reasoning teacher — and whether that is worth having depends on how much semantic ability the starting policy had. Replicated over 3 seeds per scale, with behavioral, dynamical, and weight-space evidence.
 
 ## Setup
 
@@ -36,7 +40,7 @@ Reference points from gvc-local (8B, multi-agent prompting): 20% basic, 60% mult
 
 ## Negative results worth keeping
 
-- **FSDP on 2×T4 with TRL GRPO:** three distinct dtype failures documented (bf16/fp32 flatten mismatch from fp32 PEFT layers; emulated-bf16 `is_bf16_supported()` trap on T4; fp16 mixed precision vs `generate()` rollouts). Single-GPU was the only stable path on pre-Ampere hardware.
+- **Pre-Ampere dtype failures with TRL GRPO:** four distinct modes documented — FSDP bf16/fp32 flatten mismatch from fp32 PEFT layers; the emulated-bf16 `is_bf16_supported()` trap on T4 (returns True, then fails); fp16 mixed precision vs `generate()` rollouts under FSDP; and TRL's *unconditional* cast of QLoRA trainable params to bf16 inside `SFTTrainer`/`GRPOTrainer.__init__` (no opt-out, per peft#2889), which breaks the fp16 GradScaler on any pre-Ampere GPU. Single-GPU with a post-construction re-cast to fp32 was the only stable path. See `src/connections_rl/train/common.py::fix_qlora_adapter_dtype_for_pre_ampere`.
 - **SFT alone is harmful here:** it teaches the format but not board-grounding, raising invalid rate from 32% → 74%. RL against the verifiable reward is what repairs it.
 
 ## Scale ablation: the finding sharpens at 7B
@@ -76,7 +80,7 @@ Every 7B seed lands below base on grouping (max 0.068 vs 0.160) and below base o
 
 Taken together: the semantic collapse is a systematic attractor of this reward under this optimizer, reproducible across seeds and scales, localized to the same parameters, and visible as a phase transition during training. Remaining limitations are one task and one reward design, not one run.
 
-**Reproducibility note.** Independent of seeds, the published 1.5B eval was re-run end-to-end on a fresh VM and reproduced byte-identically (greedy decoding).
+**Reproducibility note.** Independent of seeds, the published 1.5B eval was re-run end-to-end on a fresh VM under the same serving configuration and reproduced byte-identically (greedy decoding). Under a *different* vLLM configuration (four adapters served at once), greedy results drift slightly for SFT arms (Δ groups correct ≈ 0.025 at 7B) but not at all for GRPO arms, which reproduce exactly — an independent corroboration of entropy collapse, since a policy at entropy ~3e−4 has no borderline token decisions left to flip. Measurement noise is an order of magnitude below the effects claimed. Details in [`results.md`](results.md).
 
 ## What would move solve rate
 

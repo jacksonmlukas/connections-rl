@@ -28,7 +28,9 @@ Part of [**connections-rl**](https://github.com/jacksonmlukas/connections-rl): a
 | Invalid outputs | 32.1% | **74.1%** | 2.5% |
 | Mean reward | 0.049 | −0.038 | 0.113 |
 
-**Honest caveat: this adapter makes hallucination *worse*.** SFT teaches the answer format without board-grounding — it more than doubles the rate of answers containing words not on the board. That failure mode is what the GRPO stage repairs. Full analysis in the [technical report](https://github.com/jacksonmlukas/connections-rl/blob/main/report/findings.md).
+**Honest caveat: this adapter makes hallucination *worse*.** SFT teaches the answer format without board-grounding — it more than doubles the rate of answers containing words not on the board. That failure mode is what the GRPO stage repairs, reproducibly across all three seeds tested. Full analysis in the [technical report](https://github.com/jacksonmlukas/connections-rl/blob/main/report/findings.md).
+
+This adapter is the shared warm start for all three 1.5B GRPO seed replicates, which isolates RL run-to-run variance from SFT variance.
 
 ## Usage
 

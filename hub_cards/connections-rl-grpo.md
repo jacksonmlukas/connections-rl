@@ -30,6 +30,8 @@ TRL `GRPOTrainer`, K=8 completions/puzzle, group-relative advantage, KL penalty 
 
 **Key finding: RL transferred exactly what the reward could verify.** Grouping ability did not generalize (memorization), but format discipline and board-grounding did — invalid outputs dropped 74.1% → 2.5% vs SFT, a significant paired reward gain (+0.152, 95% CI [0.133, 0.169]). See the [technical report](https://github.com/jacksonmlukas/connections-rl/blob/main/report/findings.md) — including the 7B ablation where this same trade turns net-harmful.
 
+**Replicated across seeds.** Two further GRPO seeds ([seed1](https://huggingface.co/jacksonlukas/connections-rl-grpo-1.5b-seed1), [seed2](https://huggingface.co/jacksonlukas/connections-rl-grpo-1.5b-seed2)) hold invalid rate at 0.031 ± 0.006 and reward at 0.111 ± 0.002, both far better than SFT (74.1% invalid) and above base on reward. Independent seeds converge in weight space (update cosine +0.78 to +0.80 versus a ~1e−5 random baseline).
+
 ## Usage
 
 ```python
