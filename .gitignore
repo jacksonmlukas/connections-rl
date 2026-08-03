@@ -23,6 +23,9 @@ wandb/
 # Local data derived from the puzzle DB (rebuild with `make data`)
 data/splits/
 
+# Stale nested clone of this repo (redundant; safe to delete)
+/connections-rl/
+
 # OS / editor
 .DS_Store
 .idea/
