@@ -4,7 +4,7 @@
 in the order the work was done: the 1.5B result first, then the 7B ablation that
 inverts it, then the replication evidence.*
 
-**TL;DR.** Post-training Qwen2.5 models with GRPO on 807 Connections puzzles drives training reward to its theoretical maximum, but held-out solve rate stays at 0%. What *does* transfer is everything the reward could verify structurally: at 1.5B, invalid outputs (hallucinated words, malformed answer blocks) fall from 74.1% (SFT) to 2.5%, a significant paired reward gain, while grouping ability is memorized rather than learned. At 7B the same recipe reaches the best structural validity in the study (0.6% invalid) but collapses grouping *below the untrained base*, so the trade turns net-harmful. Verifiable-reward RL here is a format-and-grounding teacher, not a reasoning teacher — and whether that is worth having depends on how much semantic ability the starting policy had. Replicated over 3 seeds per scale, with behavioral, dynamical, and weight-space evidence.
+**TL;DR.** Post-training Qwen2.5 models with GRPO on 807 Connections puzzles drives training reward to its theoretical maximum, but held-out solve rate stays at 0%. What *does* transfer is everything the reward could verify structurally: at 1.5B, invalid outputs (hallucinated words, malformed answer blocks) fall from 74.1% (SFT) to 2.5%, a significant paired reward gain, while grouping ability is memorized rather than learned. At 7B the same recipe reaches the best structural validity in the study (0.6% invalid) but collapses grouping *below the untrained base*, so the trade turns net-harmful. Verifiable-reward RL here is a format-and-grounding teacher, not a reasoning teacher — and whether that is worth having depends on how much semantic ability the starting policy had. Replicated over 3 seeds per scale, with behavioral, dynamical, and weight-space evidence. The mechanism is measured rather than inferred: policy entropy collapses 30-fold inside a single 50-step window, and plotting held-out task score against KL from the RL initialization produces the classic inverted-U over-optimization curve, with the entire useful budget spent below roughly 10 nats per sequence.
 
 ## Setup
 
@@ -27,7 +27,7 @@ Paired per-puzzle reward differences: GRPO−SFT = +0.152 [0.133, 0.169]; GRPO�
 
 **v1 (lr 1e-6, KL β=0.04, 1 epoch):** the policy never moved. KL stayed ≈0.001 for 403 steps; greedy decoding produced outputs byte-identical to SFT. Diagnosis: the KL penalty and LR jointly over-constrained the update — a common silent failure when copying "safe" PPO-era defaults into GRPO.
 
-**v2 (lr 5e-6, KL β=0.001 — the DeepSeek-R1 value — 2 epochs):** training reward climbed from ≈0 to the 1.6 maximum by step ~270 and pinned there; reward std → 0; entropy → 3e-4. The policy became a deterministic lookup table over training boards. Held-out grouping accuracy: 0.6% of groups.
+**v2 (lr 5e-6, KL β=0.001 — the DeepSeek-R1 value — 2 epochs):** training reward climbed from ≈0 to the 1.6 maximum by step ~270 and pinned there; reward std → 0; the training-log entropy on train prompts fell to 3e-4. The policy became a deterministic lookup table over training boards. Held-out grouping accuracy: 0.6% of groups.
 
 ## Interpretation
 
@@ -74,14 +74,94 @@ The obvious objection to a single RL run is variance. Two extra GRPO seeds per s
 
 Every 7B seed lands below base on grouping (max 0.068 vs 0.160) and below base on reward (max 0.141 vs 0.165); paired bootstrap of SFT − GRPO on groups correct yields +0.296 [0.191, 0.407], +0.278 [0.173, 0.389], +0.253 [0.142, 0.370]. Every 1.5B seed holds invalid near 3% with reward above base. Seed 0 — the originally published run — is the least favorable 7B draw on grouping, so the headline table understates GRPO rather than flattering it.
 
-**Dynamical.** The checkpoint decomposition (7B, val split) shows the mechanism rather than only the endpoint: through step 100 GRPO improves *both* components (structure 0.79 → 0.93, semantics 0.102 → 0.139, reward peaking at 0.289); between steps 100 and 150 semantics collapses an order of magnitude (0.120 → 0.012) while structure locks at 0.97 and never moves again. Mean reward *falls* from its step-50 peak and plateaus below it, so the collapse is not even reward-optimal on held-out data — the policy found a structural local optimum on the training distribution and stopped exploring.
+**Dynamical.** The checkpoint decomposition (7B, val split) shows the mechanism rather than only the endpoint: through step 100 GRPO improves *both* components (structure 0.79 → 0.93, semantics 0.102 → 0.139, reward peaking at 0.289); between steps 100 and 150 semantics collapses an order of magnitude (0.120 → 0.012) while structure locks at 0.97 and never moves again. Mean reward *falls* from its step-50 peak and plateaus below it, so the collapse is not even reward-optimal on held-out data — the policy found a structural local optimum on the training distribution and stopped exploring. The section after next measures the entropy and KL dynamics underneath this transition.
 
 **Parametric.** Independent seeds move the policy in the *same direction* in weight space. Cosine similarity between seeds' RL-induced effective LoRA updates (dW = B_grpo A_grpo − B_sft A_sft) is +0.68 to +0.69 at 7B and +0.78 to +0.80 at 1.5B, against a random-direction expectation of ~1e−5 in a 6.5-billion-dimensional update space. The control cos(dW_RL, dW_SFT) is ≈0 at both scales, so the agreement is not inherited from the shared warm start. Update magnitudes agree within 4%, and the largest per-module changes concentrate in the same mid-layer MLP `up_proj`/`gate_proj` blocks (layers 9-18) at both scales, with per-module cosines of 0.80-0.91.
 
 Taken together: the semantic collapse is a systematic attractor of this reward under this optimizer, reproducible across seeds and scales, localized to the same parameters, and visible as a phase transition during training. Remaining limitations are one task and one reward design, not one run.
 
-**Reproducibility note.** Independent of seeds, the published 1.5B eval was re-run end-to-end on a fresh VM under the same serving configuration and reproduced byte-identically (greedy decoding). Under a *different* vLLM configuration (four adapters served at once), greedy results drift slightly for SFT arms (Δ groups correct ≈ 0.025 at 7B) but not at all for GRPO arms, which reproduce exactly — an independent corroboration of entropy collapse, since a policy at entropy ~3e−4 has no borderline token decisions left to flip. Measurement noise is an order of magnitude below the effects claimed. Details in [`results.md`](results.md).
+## The mechanism: entropy collapse and the over-optimization curve
+
+The sections above establish *that* semantics collapses. This one measures *why*,
+by reading policy entropy and KL from the reference policies off the same forward
+passes on every 7B checkpoint. Val split, n=100, sampling at the training
+temperature (0.9). Entropy is the mean per-token entropy of the policy's own
+distribution on its own samples; KL is the sample-based estimate
+E_{y~pi}[log pi(y|x) − log ref(y|x)].
+
+| Step | Entropy (nats/token) | KL from SFT init (nats/seq) | Structural | Semantic |
+|---|---|---|---|---|
+| base (untrained) | 0.258 | 42.60 | 0.69 | 0.013 |
+| 0 (SFT init) | 0.303 | 0.00 | 0.37 | 0.033 |
+| 50 | 0.211 | 2.70 | 0.68 | **0.095** |
+| 100 | 0.200 | 8.12 | 0.64 | 0.088 |
+| 150 | 0.016 | 46.42 | 0.95 | 0.008 |
+| 200 | 0.011 | 46.88 | 0.95 | 0.010 |
+| 250-403 | 0.0099-0.0102 | 46.96-47.05 | 0.96 | 0.010 |
+
+![Entropy collapse and the over-optimization curve](../results-analysis/entropy-kl-7b.png)
+
+**The entropy collapse and the semantic collapse are the same event.** Entropy
+falls 12.7x in the single interval from step 100 to step 150 (0.200 to 0.016),
+and every other interval moves it by less than 0.1 nats. That is precisely the
+interval in which the greedy checkpoint decomposition shows semantics falling
+from 0.120 to 0.012. The two measurements use different decoding (greedy versus
+temperature 0.9), different splits sizes, and different code paths, so their
+agreement on *which* 50 steps destroyed the capability is independent
+corroboration rather than one number restated. Over the whole run entropy falls
+30.6x from the SFT init, ending 26x below the untrained base.
+
+**Optimization stops long before training does.** 98.7% of the total KL
+displacement from the SFT init is spent by step 150; the remaining 253 steps move
+the policy 1.4% further (46.42 to 47.05 nats). Generated token counts are
+*identical* (7928 across 100 puzzles) at every checkpoint from step 200 onward.
+Combined with `frac_reward_zero_std` reaching 1.0 by step 270 in the training
+logs, the final 60% of the run is not optimization at all. It is a fixed point
+that the KL penalty (beta=0.001) was far too weak to prevent the policy reaching.
+
+**The over-optimization curve is the textbook inverted U.** Held-out semantic
+score rises from 0.033 at the SFT init to a peak of 0.095 at KL 2.70 nats/sequence
+(step 50), then falls 9.5x to 0.010 by KL 47. The useful KL budget for this reward
+is under about 10 nats/sequence, and the run spent 47. This is what licenses
+"over-optimization" as a technical claim in the Gao, Schulman and Hilton sense
+rather than as a loose description of a bad outcome: the proxy (training reward)
+kept improving while the gold metric turned over at a measurable KL threshold.
+
+**The collapsed policy is degenerate in an information-theoretic sense, not
+merely a low-scoring one.** Converting each KL to the reference's cross-entropy
+on the policy's own samples (CE = KL + H, exact in expectation), the untrained
+base model assigns 0.140 nats/token to the final GRPO policy's output versus
+0.698 nats/token to the SFT policy's. The collapsed text is 5.0x more predictable
+to a model that never saw this task than SFT's text is, and 1.85x more predictable
+than the base model's own temperature-0.9 samples (0.258). GRPO did not discover a
+sophisticated structural strategy. It found a short, stereotyped output that any
+Qwen2.5-7B already considers obvious, and then stopped.
+
+One detail worth flagging for the SFT arm: under sampling the SFT policy has both
+the *highest* entropy of any arm (0.303) and the *worst* structural validity
+(0.37, against the untrained base's 0.69). The greedy tables understate how badly
+SFT alone damages board-grounding, because greedy decoding hides the tail of the
+distribution that sampling exposes.
+
+**Limitations.** These are seed 0's checkpoints only, because only seed 0 was
+Hub-synced during training. The 1.5B checkpoints were not synced and are
+unrecoverable, so this analysis is 7B-only, on 100 val puzzles at one temperature.
+The location of the phase transition is therefore established for one run, and the
+seed replication above speaks to the endpoint rather than to the timing.
+
+**Reproducibility note.** Independent of seeds, the published 1.5B eval was re-run end-to-end on a fresh VM under the same serving configuration and reproduced byte-identically (greedy decoding). Under a *different* vLLM configuration (four adapters served at once), greedy results drift slightly for SFT arms (Δ groups correct ≈ 0.025 at 7B) but not at all for GRPO arms, which reproduce exactly — an independent corroboration of entropy collapse, since the final 7B GRPO policy's directly measured entropy of 0.0099 nats/token leaves essentially no borderline token decisions to flip. Measurement noise is an order of magnitude below the effects claimed. Details in [`results.md`](results.md).
 
 ## What would move solve rate
 
 Larger base model (7–8B, where gvc-local shows nonzero single-model competence), reasoning-style completions (current outputs are ~75 tokens — near-zero deliberation; reward shaping or length incentives could force chain-of-thought), and more training signal per board (paraphrased/shuffled board augmentation to break memorization).
+
+The entropy and KL measurements add two cheaper levers that this run got wrong.
+First, **stop on a KL budget, not a step count**: held-out score peaked at
+KL 2.70 nats/sequence and was already past its peak by 8.12, so a run halted
+around step 50 would have kept a better policy than the one 353 steps of further
+training produced. Second, **beta=0.001 is the wrong KL penalty for this reward**;
+it is the DeepSeek-R1 value, chosen there for a setting with a far richer reward
+signal, and here it permitted a 47-nat displacement into a degenerate fixed point.
+Entropy regularization or an explicit KL trust region would attack the collapse
+directly rather than hoping the reward's semantic component holds the policy in
+place. Both are testable with existing checkpoints and one short run each.

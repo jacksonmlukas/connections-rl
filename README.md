@@ -49,6 +49,8 @@ Each seed re-runs GRPO from the same SFT warm start, isolating RL run-to-run var
 
 Both headline effects replicate in every run. At 7B, all three seeds fall below base on grouping (max 0.068 vs base 0.160) and below base on reward (max 0.141 vs 0.165); paired bootstrap of SFT − GRPO on groups correct gives +0.296 [0.191, 0.407], +0.278 [0.173, 0.389], +0.253 [0.142, 0.370] — three independent CIs excluding zero. At 1.5B, all three seeds hold invalid rate near 3% (vs SFT 74.1%) with reward above base. Seed 0, the originally published run, is the *least* favorable 7B draw on grouping, so the headline table understates GRPO rather than cherry-picking.
 
+**Mechanism: entropy collapse and the over-optimization curve.** Measuring policy entropy and KL from the RL initialization on every 7B checkpoint locates the failure precisely. Entropy falls **12.7x in the single step 100 to 150 interval** (30.6x over the run), exactly the interval in which held-out semantics collapses, and **98.7% of the total KL displacement is spent by step 150** so the final 253 steps perform no meaningful optimization. Plotting held-out score against KL gives the classic inverted U: semantics peaks at 0.095 at **KL 2.70 nats/sequence** and falls 9.5x by KL 47. The useful budget for this reward was under about 10 nats/sequence and the run spent 47, which makes "reward over-optimization" a measured claim here rather than a label. See [`results-analysis/entropy-kl-7b.png`](results-analysis/entropy-kl-7b.png) and [`report/findings.md`](report/findings.md).
+
 **Weight-space convergence.** Independent seeds do not merely agree behaviorally — they move the policy in the same direction. Cosine similarity between seeds' RL-induced LoRA updates is **+0.68 to +0.69 at 7B** and **+0.78 to +0.80 at 1.5B**, against a random-direction expectation of ~1e−5 and a near-zero control against the SFT update direction (so this is not an artifact of the shared warm start). Update magnitudes agree within 4%, and the largest changes concentrate in the same mid-layer MLP `up_proj`/`gate_proj` modules at both scales. The collapse is a systematic attractor of this reward under this optimizer, not seed noise. See [`results-seeds/`](https://github.com/jacksonmlukas/connections-rl/tree/main/results-seeds).
 
 All arms are evaluated on the same **leakage-aware, date-split held-out test set** with bootstrap CIs, McNemar significance tests between arms, and per-stratum breakdowns. CI re-runs the eval smoke and a release gate (GRPO must not regress vs. SFT beyond the CI) on every push.
@@ -59,7 +61,7 @@ All arms are evaluated on the same **leakage-aware, date-split held-out test set
 2. **Reward** (`connections_rl/reward`) — deterministic and unit-tested: format validity (all 16 board words, 4×4, once each), fully-correct groups / 4, a solve bonus, optional one-away shaping, and a penalty for malformed output.
 3. **SFT warm start** (`make train-sft`) — rank-16 LoRA on the train split.
 4. **GRPO** (`make train-grpo`) — K=8 completions per puzzle, group-relative advantage, KL penalty to the SFT reference. Single-GPU on a free Colab/Kaggle T4; QLoRA for 7B. Checkpoints sync to the Hub so runs resume across ephemeral sessions. Seed replicates via `--seed/--output-dir/--ckpt-hub-repo` overrides (`notebooks/kaggle_seed_run.ipynb`). Exact normalization settings are recorded in [`report/implementation_notes.md`](report/implementation_notes.md).
-5. **Eval** (`make eval`) — stratified sampling, bootstrap CIs, paired significance tests, reliability/ECE utilities. Beyond the main table: `eval/passk.py` (best-of-k sampling), `eval/checkpoint_curve.py` (structure/semantics decomposition over training), and `scripts/analyze_seed_weightspace.py` (cross-seed weight-space convergence). All results committed under `results*/`.
+5. **Eval** (`make eval`) — stratified sampling, bootstrap CIs, paired significance tests, reliability/ECE utilities. Beyond the main table: `eval/passk.py` (best-of-k sampling), `eval/checkpoint_curve.py` (structure/semantics decomposition over training), `eval/entropy_kl.py` (per-checkpoint policy entropy and KL from the SFT init and base), and `scripts/analyze_seed_weightspace.py` (cross-seed weight-space convergence). All results committed under `results*/`.
 6. **Serving** (`make serve`) — FastAPI over vLLM with `/solve`, `/compare` (base vs. GRPO on the same board), `/health`, `/metrics`. `docker compose up` runs the full stack.
 
 ## Quickstart
@@ -97,7 +99,7 @@ src/connections_rl/
   reward/       verifiable reward (the RL core)
   train/        sft.py (LoRA/QLoRA), grpo.py (TRL GRPOTrainer + seed overrides)
   eval/         harness, bootstrap/McNemar/ECE stats, release gate,
-                passk.py, checkpoint_curve.py
+                passk.py, checkpoint_curve.py, entropy_kl.py
   serve/        FastAPI + vLLM serving, request monitoring
   report/       results table + plots
 scripts/        weight-space seed analysis, model-card push
@@ -105,7 +107,7 @@ notebooks/      Colab/Kaggle runbooks: training, 7B, analysis, seed runs, seed e
 hub_cards/      model cards for the 8 published adapters
 results/        1.5B main results          results-7b/     7B main results
 results-seeds*/ per-seed metrics + weight-space convergence
-results-analysis/ pass@k + checkpoint decomposition
+results-analysis/ pass@k, checkpoint decomposition, entropy + KL curves
 report/         technical writeup, results tables, implementation notes
 ```
 

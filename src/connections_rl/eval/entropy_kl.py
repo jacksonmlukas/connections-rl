@@ -184,25 +184,56 @@ def build_figure(points: list[dict], out_png: str) -> bool:
         print("[entropy-kl] matplotlib unavailable; skipping figure")
         return False
 
-    steps = [p["step"] for p in points]
+    # The base model (step -1) is NOT on the GRPO trajectory: RL starts from the
+    # SFT init at step 0. Connecting it to the training path would draw a line
+    # through a point the optimizer never visited, so it is shown as a separate
+    # reference marker in both panels.
+    traj = [p for p in points if p["step"] >= 0]
+    ref = next((p for p in points if p["step"] < 0), None)
     fig, axes = plt.subplots(1, 2, figsize=(11, 4.2))
 
     ax = axes[0]
-    ax.plot(steps, [p["entropy_per_token"] for p in points], "o-", color="tab:red")
+    ax.plot(
+        [p["step"] for p in traj],
+        [p["entropy_per_token"] for p in traj],
+        "o-",
+        color="tab:red",
+        label="GRPO trajectory",
+    )
+    if ref is not None:
+        ax.axhline(ref["entropy_per_token"], ls="--", lw=1, color="gray", label="base (untrained)")
     ax.set_xlabel("GRPO training step")
     ax.set_ylabel("policy entropy (nats/token)")
     ax.set_title("Entropy collapse")
+    ax.legend(fontsize=8)
     ax.grid(alpha=0.3)
 
     ax = axes[1]
-    kl = [p["kl_from_sft_per_sequence"] for p in points]
-    sem = [p["semantic_groups_correct"] for p in points]
-    ax.plot(kl, sem, "o-", color="tab:blue")
-    for p, x, y in zip(points, kl, sem, strict=True):
+    kl = [p["kl_from_sft_per_sequence"] for p in traj]
+    sem = [p["semantic_groups_correct"] for p in traj]
+    ax.plot(kl, sem, "o-", color="tab:blue", label="GRPO trajectory")
+    # Label the informative steps only; post-collapse points pile up at the same
+    # coordinates and their labels would overprint into an unreadable smear.
+    seen: list[tuple[float, float]] = []
+    for p, x, y in zip(traj, kl, sem, strict=True):
+        if any(abs(x - sx) < 1.0 and abs(y - sy) < 0.005 for sx, sy in seen):
+            continue
+        seen.append((x, y))
         ax.annotate(str(p["step"]), (x, y), fontsize=7, xytext=(3, 3), textcoords="offset points")
+    if ref is not None:
+        ax.scatter(
+            [ref["kl_from_sft_per_sequence"]],
+            [ref["semantic_groups_correct"]],
+            marker="x",
+            s=60,
+            color="gray",
+            zorder=5,
+            label="base (untrained)",
+        )
     ax.set_xlabel("KL(policy || SFT init), nats/sequence")
     ax.set_ylabel("semantic score (groups correct / 4)")
     ax.set_title("Over-optimization curve")
+    ax.legend(fontsize=8)
     ax.grid(alpha=0.3)
 
     fig.tight_layout()

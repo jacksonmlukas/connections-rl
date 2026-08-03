@@ -93,6 +93,39 @@ Evaluated on the **val** split so the test set is never reused for analysis.
 1.5B checkpoints were not Hub-synced during the original run and are
 unrecoverable, so this curve is 7B-only.
 
+## Policy entropy and KL from reference (7B, val split, temperature 0.9, n=100)
+
+Entropy is the mean per-token entropy of the policy's own distribution on its own
+samples. KL is the sample-based estimate E_{y~pi}[log pi(y|x) − log ref(y|x)].
+Sampled rather than greedy, so absolute structural and semantic values are not
+comparable to the greedy tables above; the trajectory is what matters.
+
+| Step | Entropy (nats/tok) | KL from SFT (nats/seq) | KL from base (nats/tok) | Structural | Semantic |
+|---|---|---|---|---|---|
+| base | 0.258 | 42.60 | 0.000 | 0.69 | 0.013 |
+| 0 (SFT init) | 0.303 | 0.00 | 0.395 | 0.37 | 0.033 |
+| 50 | 0.211 | 2.70 | 0.342 | 0.68 | **0.095** |
+| 100 | 0.200 | 8.12 | 0.336 | 0.64 | 0.088 |
+| 150 | 0.016 | 46.42 | 0.139 | 0.95 | 0.008 |
+| 200 | 0.011 | 46.88 | 0.133 | 0.95 | 0.010 |
+| 250 | 0.010 | 46.96 | 0.130 | 0.96 | 0.010 |
+| 300-403 | 0.0099 | 47.05 | 0.130 | 0.96 | 0.010 |
+
+Three readings. **Entropy collapses 12.7x in the single step 100 to 150 interval**
+(30.6x over the whole run from the SFT init), the same interval in which the
+greedy decomposition above loses semantics. **KL saturates**: 98.7% of the total
+displacement from the SFT init is spent by step 150, and the remaining 253 steps
+add 1.4%; generated token counts are identical (7928) from step 200 onward.
+**The over-optimization curve is an inverted U**: semantic score peaks at 0.095 at
+KL 2.70 nats/sequence and falls 9.5x to 0.010 by KL 47.
+
+Converting to the reference's cross-entropy on the policy's samples (CE = KL + H):
+the untrained base assigns 0.140 nats/token to the final GRPO output versus 0.698
+to SFT's, so the collapsed text is 5.0x more predictable to the base model than
+SFT's is, and 1.85x more predictable than the base model's own samples (0.258).
+
+Seed 0 checkpoints only (the only seed Hub-synced during training).
+
 ## Weight-space seed convergence
 
 Cosine similarity between independent seeds' RL-induced effective LoRA updates
@@ -151,5 +184,6 @@ Where tables above report SFT numbers, they use the main-run measurement.
 | Seed replication | `results-seeds-7b/`, `results-seeds-1.5b/`, `results-seeds/seed_summary.json` |
 | pass@16 | `results-analysis/passk-7b.json`, `passk-1.5b.json` |
 | Checkpoint decomposition | `results-analysis/ckpt-curve-7b.json` + `.png` |
+| Entropy + KL per checkpoint | `results-analysis/entropy-kl-7b.json` + `.png` |
 | Weight-space convergence | `results-seeds/weight_space_{7b,1.5b}.txt` |
 | Training configuration | `report/implementation_notes.md` |
