@@ -47,13 +47,17 @@ Reference points from gvc-local (8B, multi-agent prompting): 20% basic, 60% mult
 
 Rerunning the identical pipeline on Qwen2.5-7B-Instruct (QLoRA on the same T4s; SFT 3 epochs, GRPO 1 epoch with the v2 hypers) inverts the value of RL:
 
-| Arm (7B) | Solve | Groups correct | Invalid | Mean reward |
-|---|---|---|---|---|
-| base | 0.0% | 0.160 | 6.8% | 0.165 |
-| SFT | 1.2% (2/162) | 0.346 | 22.2% | 0.197 |
-| GRPO | 0.0% | 0.025 | 0.6% | 0.125 |
+`Groups correct` is a **mean count on a 0-4 scale** (the convention in
+`results-7b/metrics.json`); the percentage of groups actually solved is that
+number divided by 4, given in the adjacent column.
 
-Three observations. First, scale unlocks genuine partial competence: base 7B gets 16% of groups with 6.8% invalid (1.5B: 0.6% and 32.1%), and SFT doubles grouping to 34.6% while producing the first held-out solves of the project (2/162; McNemar vs base p=0.5 — suggestive, not significant). Second, SFT's grounding cost shrinks with scale but persists (invalid 32→74% at 1.5B; 6.8→22.2% at 7B). Third — the sharpest result — **GRPO is net-harmful at 7B**: it reaches the best structural validity of any arm at any scale (0.6% invalid) while collapsing grouping *below the untrained base* (0.025 vs 0.160), leaving mean reward under base (0.125 vs 0.165). The policy converged to "emit a perfectly valid partition" and traded away semantics to get there.
+| Arm (7B) | Solve | Groups correct (0-4) | % of groups | Invalid | Mean reward |
+|---|---|---|---|---|---|
+| base | 0.0% | 0.160 | 4.0% | 6.8% | 0.165 |
+| SFT | 1.2% (2/162) | 0.346 | 8.6% | 22.2% | 0.197 |
+| GRPO | 0.0% | 0.025 | 0.6% | 0.6% | 0.125 |
+
+Three observations. First, scale unlocks genuine partial competence: base 7B solves 4.0% of groups with 6.8% invalid (1.5B: 0.15% and 32.1%), and SFT more than doubles grouping to 8.6% while producing the first held-out solves of the project (2/162; McNemar vs base p=0.5 — suggestive, not significant). Second, SFT's grounding cost shrinks with scale but persists (invalid 32→74% at 1.5B; 6.8→22.2% at 7B). Third — the sharpest result — **GRPO is net-harmful at 7B**: it reaches the best structural validity of any arm at any scale (0.6% invalid) while collapsing grouping *below the untrained base* (0.025 vs 0.160 on the 0-4 scale, i.e. 0.6% of groups against 4.0%), leaving mean reward under base (0.125 vs 0.165). The policy converged to "emit a perfectly valid partition" and traded away semantics to get there.
 
 The cross-scale conclusion is cleaner than either run alone: GRPO against a structurally-verifiable reward optimizes exactly what the reward can verify, at the expense of what it can't. At 1.5B the starting policy had no semantic ability to lose, so the trade was pure gain (hallucination fixed). At 7B it had real ability, and the same optimization destroyed it. The failure is not model scale — it is that the reward's cheap-to-verify component (structure) and expensive-to-verify component (semantics) decouple under optimization pressure with only 807 training boards.
 
@@ -61,7 +65,9 @@ The cross-scale conclusion is cleaner than either run alone: GRPO against a stru
 
 The obvious objection to a single RL run is variance. Two extra GRPO seeds per scale (six runs total, each re-run from the *same* SFT warm start so that only RL run-to-run variance varies) answer it three ways.
 
-**Behavioral (held-out test, greedy, n=162).**
+**Behavioral (held-out test, greedy, n=162).** These are the seed-eval measurement
+session (`results-seeds-*/`), which is also the session the paired statistics
+below use. `Groups correct` is a mean count on a 0-4 scale.
 
 | Scale | Metric | seed 0 | seed 1 | seed 2 | mean ± sd |
 |---|---|---|---|---|---|
@@ -72,7 +78,9 @@ The obvious objection to a single RL run is variance. Two extra GRPO seeds per s
 | 1.5B | invalid rate | 0.025 | 0.031 | 0.037 | 0.031 ± 0.006 |
 | 1.5B | mean reward | 0.113 | 0.110 | 0.109 | 0.111 ± 0.002 |
 
-Every 7B seed lands below base on grouping (max 0.068 vs 0.160) and below base on reward (max 0.141 vs 0.165); paired bootstrap of SFT − GRPO on groups correct yields +0.296 [0.191, 0.407], +0.278 [0.173, 0.389], +0.253 [0.142, 0.370]. Every 1.5B seed holds invalid near 3% with reward above base. Seed 0 — the originally published run — is the least favorable 7B draw on grouping, so the headline table understates GRPO rather than flattering it.
+Every 7B seed lands below base on grouping (max 0.068 vs 0.160) and below base on reward (max 0.141 vs 0.165); paired bootstrap of SFT − GRPO on groups correct (0-4 scale) yields +0.296 [0.191, 0.407], +0.278 [0.173, 0.389], +0.253 [0.142, 0.370], all against the seed-session SFT baseline of 0.321. Every 1.5B seed holds invalid near 3% with reward above base. Seed 0 — the originally published run — is the least favorable 7B draw on grouping, so the headline table understates GRPO rather than flattering it.
+
+A note on cross-referencing the raw data. The headline 7B table above reports SFT at 0.346 groups correct while `results-seeds/seed_summary.json` reports 0.321 for the same adapter. Neither is stale. They are two vLLM serving configurations measured on the same 162 puzzles, differing on 2 of them, and the solve rate is identical in both. Paired statistics are always computed within a single session: +0.321 for the headline table, +0.296 for the seed table. The full per-metric delta is in [`results.md`](results.md).
 
 **Dynamical.** The checkpoint decomposition (7B, val split) shows the mechanism rather than only the endpoint: through step 100 GRPO improves *both* components (structure 0.79 → 0.93, semantics 0.102 → 0.139, reward peaking at 0.289); between steps 100 and 150 semantics collapses an order of magnitude (0.120 → 0.012) while structure locks at 0.97 and never moves again. Mean reward *falls* from its step-50 peak and plateaus below it, so the collapse is not even reward-optimal on held-out data — the policy found a structural local optimum on the training distribution and stopped exploring. The section after next measures the entropy and KL dynamics underneath this transition.
 
@@ -164,4 +172,10 @@ it is the DeepSeek-R1 value, chosen there for a setting with a far richer reward
 signal, and here it permitted a 47-nat displacement into a degenerate fixed point.
 Entropy regularization or an explicit KL trust region would attack the collapse
 directly rather than hoping the reward's semantic component holds the policy in
-place. Both are testable with existing checkpoints and one short run each.
+place.
+
+These are recommendations supported observationally by the checkpoint sweep, not
+interventions this work ran or validated. Testing them would require seeds on the
+intervention to say anything a reviewer would accept, and the endpoint claims here
+carry n=3 while any intervention run on the surviving checkpoints would carry n=1.
+That asymmetry is the reason this line is left as a recommendation.

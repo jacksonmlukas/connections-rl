@@ -23,11 +23,12 @@ Rank-16 QLoRA (4-bit NF4 base, fp16 compute), 3 epochs on 807 puzzles, trained o
 | Metric | base 7B | **this adapter** | GRPO 7B |
 |---|---|---|---|
 | Solve rate | 0.0% | **1.2%** (2/162) | 0.0% |
-| Groups correct (mean) | 0.160 | **0.346** | 0.025 |
+| Groups correct (mean, 0-4 scale) | 0.160 | **0.346** | 0.025 |
+| Groups correct (% of groups) | 4.0% | **8.6%** | 0.6% |
 | Invalid outputs | 6.8% | 22.2% | 0.6% |
 | Mean reward | 0.165 | **0.197** | 0.125 |
 
-Doubles the base model's grouping accuracy and yields the first held-out solves of the project (not statistically significant at n=162; McNemar p=0.5). Under pass@16 sampling this adapter reaches 4.3% solve [1.2, 7.4] and 0.252 best-of-k groups correct, the best of any arm at any scale. Note the trade-off: like at 1.5B, SFT increases invalid outputs (format without grounding), though far less severely. The follow-on GRPO stage eliminated invalid outputs but destroyed grouping ability, in all three seeds tested — see the [technical report](https://github.com/jacksonmlukas/connections-rl/blob/main/report/findings.md).
+Doubles the base model's grouping accuracy and yields the first held-out solves of the project (not statistically significant at n=162; McNemar p=0.5). Under pass@16 sampling this adapter reaches 4.3% solve [1.2, 7.4] and 0.252 best-of-k groups correct as a fraction (25.2% of groups; note this analysis file uses the 0-1 fraction convention, unlike the 0-4 table above), the best of any arm at any scale. Note the trade-off: like at 1.5B, SFT increases invalid outputs (format without grounding), though far less severely. The follow-on GRPO stage eliminated invalid outputs but destroyed grouping ability, in all three seeds tested — see the [technical report](https://github.com/jacksonmlukas/connections-rl/blob/main/report/findings.md).
 
 This adapter is the shared warm start for all three 7B GRPO seed replicates, which isolates RL run-to-run variance from SFT variance.
 

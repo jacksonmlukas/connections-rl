@@ -26,13 +26,14 @@ TRL `GRPOTrainer` over the QLoRA SFT adapter; K=8, KL β=0.001, lr 5e-6, 1 epoch
 | Metric | base 7B | SFT 7B | **this adapter** |
 |---|---|---|---|
 | Solve rate | 0.0% | 1.2% | 0.0% |
-| Groups correct (mean) | 0.160 | 0.346 | 0.025 |
+| Groups correct (mean, 0-4 scale) | 0.160 | 0.346 | 0.025 |
+| Groups correct (% of groups) | 4.0% | 8.6% | 0.6% |
 | Invalid outputs | 6.8% | 22.2% | **0.6%** |
 | Mean reward | 0.165 | 0.197 | 0.125 |
 
 Cross-scale conclusion: GRPO against a structurally-verifiable reward optimizes what the reward can verify (structure) at the expense of what it can't (semantics). At 1.5B — where the starting policy had no semantic ability to lose — the identical recipe was a pure win. Full analysis in the [technical report](https://github.com/jacksonmlukas/connections-rl/blob/main/report/findings.md).
 
-**Replicated, not a single unlucky run.** Two further GRPO seeds ([seed1](https://huggingface.co/jacksonlukas/connections-rl-grpo-7b-seed1), [seed2](https://huggingface.co/jacksonlukas/connections-rl-grpo-7b-seed2)) reproduce the effect: groups correct 0.045 ± 0.022 across seeds, every seed below base (0.160) on grouping and below base on reward. This adapter (seed 0) is the *least* favorable draw of the three on grouping. Independent seeds also converge in weight space (update cosine +0.68), and pass@16 sampling does not recover the lost capability — so the degradation is distributional, not a decoding artifact.
+**Replicated, not a single unlucky run.** Two further GRPO seeds ([seed1](https://huggingface.co/jacksonlukas/connections-rl-grpo-7b-seed1), [seed2](https://huggingface.co/jacksonlukas/connections-rl-grpo-7b-seed2)) reproduce the effect: groups correct 0.045 ± 0.022 across seeds (0-4 scale), every seed below base (0.160) on grouping and below base on reward. This adapter (seed 0) is the *least* favorable draw of the three on grouping. Independent seeds also converge in weight space (update cosine +0.68), and pass@16 sampling does not recover the lost capability — so the degradation is distributional, not a decoding artifact.
 
 ## Usage
 

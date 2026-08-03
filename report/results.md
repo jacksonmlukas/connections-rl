@@ -4,13 +4,39 @@ All arms evaluated on the same held-out test split: **162 puzzles, 2025-12-15 �
 2026-05-29**, strictly after every training date. Greedy decoding unless noted.
 Bracketed values are bootstrap 95% CIs (1000 resamples).
 
+**Units.** Two conventions appear in this repo and are labeled explicitly in every
+table below, because they are easy to confuse:
+
+- `results/` and `results-7b/` (`metrics.json`) report **`groups correct` as a
+  mean count on a 0-4 scale**. A value of 0.346 means the model gets 0.346 of the
+  4 groups per board on average, i.e. **8.6% of groups**, not 34.6%.
+- `results-analysis/` (pass@k, checkpoint curve, entropy/KL) reports the same
+  quantity as a **0-1 fraction**, already divided by 4.
+
+Paired differences between arms are quoted on the **0-4 count scale** throughout.
+
+**Measurement sessions.** Some arms were measured twice under different vLLM
+serving configurations. Tables state which session they draw from:
+
+- **Session A (main run)**: `results/`, `results-7b/`.
+- **Session B (seed-eval run)**: `results-seeds-1.5b/`, `results-seeds-7b/`, and
+  the aggregate `results-seeds/seed_summary.json`.
+
+The two sessions disagree slightly on the SFT arms and not at all on the GRPO
+arms. See [Reproducibility and measurement noise](#reproducibility-and-measurement-noise)
+for the full delta. A statistic is never mixed across sessions within a single
+comparison.
+
 ## Qwen2.5-1.5B
 
-| Arm | n | Solve rate | Groups correct | Invalid rate | Mean reward |
-|---|---|---|---|---|---|
-| base | 162 | 0.0% [0.0, 0.0] | 0.006 | 32.1% [24.7, 38.9] | 0.049 |
-| SFT (LoRA) | 162 | 0.0% [0.0, 0.0] | 0.012 | 74.1% [67.3, 80.2] | −0.038 |
-| GRPO (seed 0) | 162 | 0.0% [0.0, 0.0] | 0.006 | **2.5% [0.6, 5.6]** | **0.113** |
+Session A (`results/`). `Groups correct` is a mean count on a 0-4 scale; the
+percentage of groups actually solved is that value divided by 4.
+
+| Arm | n | Solve rate | Groups correct (0-4) | % of groups | Invalid rate | Mean reward |
+|---|---|---|---|---|---|---|
+| base | 162 | 0.0% [0.0, 0.0] | 0.006 | 0.15% | 32.1% [24.7, 38.9] | 0.049 |
+| SFT (LoRA) | 162 | 0.0% [0.0, 0.0] | 0.012 | 0.31% | 74.1% [67.3, 80.2] | −0.038 |
+| GRPO (seed 0) | 162 | 0.0% [0.0, 0.0] | 0.006 | 0.15% | **2.5% [0.6, 5.6]** | **0.113** |
 
 Paired per-puzzle reward: GRPO − SFT = +0.152 [0.133, 0.169]; GRPO − base =
 +0.064 [0.046, 0.082]. McNemar on solve rate is degenerate (no arm solves
@@ -18,13 +44,21 @@ anything).
 
 ## Qwen2.5-7B
 
-| Arm | n | Solve rate | Groups correct | Invalid rate | Mean reward |
-|---|---|---|---|---|---|
-| base | 162 | 0.0% | 0.160 | 6.8% [3.1, 11.1] | 0.165 |
-| SFT (QLoRA) | 162 | **1.2%** (2/162) | **0.346** | 22.2% [16.0, 28.4] | **0.197** |
-| GRPO (seed 0) | 162 | 0.0% | 0.025 | **0.6% [0.0, 1.9]** | 0.125 |
+Session A (`results-7b/`). `Groups correct` is a mean count on a 0-4 scale.
 
-Paired SFT − GRPO on groups correct (0-4 scale): +0.296 [0.191, 0.407].
+| Arm | n | Solve rate | Groups correct (0-4) | % of groups | Invalid rate | Mean reward |
+|---|---|---|---|---|---|---|
+| base | 162 | 0.0% | 0.160 | 4.0% | 6.8% [3.1, 11.1] | 0.165 |
+| SFT (QLoRA) | 162 | **1.2%** (2/162) | **0.346** | **8.6%** | 22.2% [16.0, 28.4] | **0.197** |
+| GRPO (seed 0) | 162 | 0.0% | 0.025 | 0.6% | **0.6% [0.0, 1.9]** | 0.125 |
+
+Paired SFT − GRPO on groups correct (0-4 scale), both arms from session A:
+**+0.321 [0.216, 0.432]**.
+
+The corresponding session B figure is +0.296 [0.191, 0.407], and it is the one
+quoted in the seed table below, where the SFT baseline is also session B. The two
+are the same comparison measured in two serving configurations, not two different
+comparisons.
 
 ## Reference points (from gvc-local, 8B, multi-agent prompting)
 
@@ -38,7 +72,9 @@ Small n; these are context for the capability ceiling, not matched comparisons.
 ## Seed replication (3 GRPO seeds per scale)
 
 Each seed re-runs GRPO from the same SFT warm start, isolating RL run-to-run
-variance. Same test split, greedy.
+variance. Same test split, greedy. **Session B** throughout
+(`results-seeds-{7b,1.5b}/`, aggregated in `results-seeds/seed_summary.json`).
+`Groups correct` is a mean count on a 0-4 scale.
 
 | Scale | Metric | seed 0 | seed 1 | seed 2 | mean ± sd |
 |---|---|---|---|---|---|
@@ -49,15 +85,21 @@ variance. Same test split, greedy.
 | 1.5B | invalid rate | 0.025 | 0.031 | 0.037 | 0.031 ± 0.006 |
 | 1.5B | mean reward | 0.113 | 0.110 | 0.109 | 0.111 ± 0.002 |
 
-Paired SFT − GRPO on groups correct, 7B, per seed: +0.296 [0.191, 0.407],
-+0.278 [0.173, 0.389], +0.253 [0.142, 0.370]. All three 7B seeds fall below base
-on both grouping (max 0.068 vs 0.160) and reward (max 0.141 vs 0.165).
+Paired SFT − GRPO on groups correct (0-4 scale), 7B, per seed: +0.296 [0.191,
+0.407], +0.278 [0.173, 0.389], +0.253 [0.142, 0.370]. These use the **session B**
+SFT baseline (`results-seeds-7b/sft/`, groups correct 0.321), which is the only
+one measured alongside seeds 1 and 2, so the three comparisons are internally
+consistent. All three 7B seeds fall below base on both grouping (max 0.068 vs
+0.160) and reward (max 0.141 vs 0.165).
 
 ## pass@16 (temperature 0.9, best-of-k scoring)
 
 Distinguishes capability loss from greedy-decoding degradation.
 
-| Scale | Arm | pass@16 solve | best-of-16 groups correct | any-valid |
+Unlike the tables above, `results-analysis/` reports grouping as a **0-1
+fraction**, so these values are directly percentages of groups.
+
+| Scale | Arm | pass@16 solve | best-of-16 groups correct (fraction) | any-valid |
 |---|---|---|---|---|
 | 7B | base | 0.000 [0.000, 0.000] | 0.114 | 0.994 |
 | 7B | SFT | **0.043** [0.012, 0.074] | **0.252** | 1.000 |
@@ -66,8 +108,10 @@ Distinguishes capability loss from greedy-decoding degradation.
 | 1.5B | SFT | 0.000 | 0.014 | 0.617 |
 | 1.5B | GRPO | 0.000 | 0.002 | 0.988 |
 
-Paired bootstrap on best-of-16 groups correct (7B): SFT − GRPO = +0.920 [+0.772,
-+1.062]; base − GRPO = +0.370 [+0.259, +0.475]. Sampling does not recover the
+Paired bootstrap on best-of-16 groups correct (7B), converted to the **0-4 count
+scale** for comparability with the tables above: SFT − GRPO = +0.920 [+0.772,
++1.062]; base − GRPO = +0.370 [+0.259, +0.475]. On the fraction scale those are
++0.230 and +0.093. Sampling does not recover the
 capability, so the loss is distributional rather than a decoding artifact.
 
 *Only k=16 has been measured. The full k ∈ {1, 2, 4, 8, 16, 32} curve is pending.*
@@ -153,22 +197,42 @@ re-run end-to-end on a fresh VM with the same vLLM configuration and reproduced
 byte-identically under greedy decoding.
 
 **Different serving config introduces small drift — but only for high-entropy
-policies.** The seed-replication session served four LoRA adapters at once
+policies.** The seed-replication session (B) served four LoRA adapters at once
 (different `--max-loras`, different tensor-parallel layout) and re-measured the
-SFT arms as a side effect. Comparing the same adapter across the two sessions:
+SFT arms as a side effect. Comparing the same adapter across the two sessions on
+**every** metric, not just grouping:
 
-| Arm | main run | seed-eval run | Δ groups correct |
-|---|---|---|---|
-| 7B SFT | 0.346 | 0.321 | 0.025 |
-| 1.5B SFT | 0.012 | 0.019 | 0.007 |
-| 7B GRPO seed 0 | 0.025 | 0.025 | **0.000** |
-| 1.5B GRPO seed 0 | 0.006 | 0.006 | **0.000** |
+| Arm | Metric | Session A | Session B | Δ |
+|---|---|---|---|---|
+| 7B SFT | solve rate | 0.012346 | 0.012346 | **0.000000** |
+| 7B SFT | groups correct | 0.345679 | 0.320988 | 0.024691 |
+| 7B SFT | invalid rate | 0.222222 | 0.228395 | −0.006173 |
+| 7B SFT | mean reward | 0.196914 | 0.188580 | 0.008333 |
+| 1.5B SFT | groups correct | 0.012346 | 0.018519 | −0.006173 |
+| 1.5B SFT | mean reward | −0.038272 | −0.036728 | −0.001543 |
+| 1.5B SFT | invalid rate | 0.740741 | 0.740741 | **0.000000** |
+| 7B GRPO seed 0 | all four | — | — | **0.000000** |
+| 1.5B GRPO seed 0 | all four | — | — | **0.000000** |
 
 Greedy decoding is not bitwise-deterministic across vLLM batching/parallelism
-configurations, so a few borderline tokens flip. Practical measurement noise on
-`groups_correct` is therefore ~0.025 for SFT arms — an order of magnitude smaller
-than the effects claimed here (SFT − GRPO ≈ 0.28-0.32 at 7B), so no conclusion is
-affected.
+configurations, so a few borderline tokens flip. At the per-puzzle level the
+7B SFT arm differs on **2 of 162 puzzles** for grouping and **3 of 162** for
+format validity; the GRPO arms differ on **0 of 162** for every metric. Practical
+measurement noise on `groups_correct` is therefore ~0.025 (0-4 scale) for SFT
+arms, an order of magnitude smaller than the effects claimed here
+(SFT − GRPO ≈ 0.25-0.32 at 7B), so no conclusion is affected.
+
+This is why the headline 7B table reads 0.346 while `seed_summary.json` reads
+0.321 for what is nominally the same arm. Neither file is stale. They are two
+serving configurations of the same adapter on the same 162 puzzles, and the solve
+rate (2/162) is identical in both because the two puzzles that arm solves are not
+close calls.
+
+Note which arms drift: the **GRPO adapters reproduce exactly** while the SFT
+adapters do not. That is an independent corroboration of the entropy-collapse
+story: the final 7B GRPO policy's measured entropy of 0.0099 nats/token leaves no
+borderline token decisions to flip, whereas the SFT policy has the highest entropy
+of any arm (0.303).
 
 Note which arms drift: the **GRPO adapters reproduce exactly** while the SFT
 adapters do not. That is an independent corroboration of the entropy-collapse
