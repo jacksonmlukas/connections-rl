@@ -59,15 +59,33 @@ def _entropy_and_logprobs(logits, target_ids, chunk: int = 64):
     return torch.cat(ents), torch.cat(lps)
 
 
+def _activate(model, which: str) -> None:
+    """Make `which` the live policy ('base' = all adapters off).
+
+    PeftModel exposes `disable_adapter()` only as a context manager; the
+    programmatic toggles live on the tuner (`base_model`). transformers' own
+    PEFT integration uses `disable_adapters()`/`enable_adapters()` instead, so
+    both spellings are attempted for version robustness.
+    """
+    tuner = getattr(model, "base_model", model)
+    if which == "base":
+        if hasattr(tuner, "disable_adapter_layers"):
+            tuner.disable_adapter_layers()
+        else:
+            model.disable_adapters()
+        return
+    if hasattr(tuner, "enable_adapter_layers"):
+        tuner.enable_adapter_layers()
+    elif hasattr(model, "enable_adapters"):
+        model.enable_adapters()
+    model.set_adapter(which)
+
+
 def _logits_under(model, inp, lo: int, hi: int, which: str):
     """Logits over the generated span under a named adapter ('base' = adapter-free)."""
     import torch
 
-    if which == "base":
-        model.disable_adapters()
-    else:
-        model.enable_adapters()
-        model.set_adapter(which)
+    _activate(model, which)
     with torch.no_grad():
         return model(inp).logits[0, lo:hi]
 
@@ -100,10 +118,7 @@ def measure_checkpoint(
         plen = enc["input_ids"].shape[1]
 
         # 1) sample from THIS policy
-        if adapter is None:
-            model.disable_adapters()
-        else:
-            model.set_adapter(adapter)
+        _activate(model, adapter if adapter is not None else "base")
         torch.manual_seed(seed + p.puzzle_id)
         with torch.no_grad():
             out = model.generate(
