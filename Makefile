@@ -4,7 +4,7 @@
 PY ?= python
 PUZZLES ?= $(CONNECTIONS_PUZZLES)
 
-.PHONY: setup data train-sft train-grpo eval eval-smoke gate serve report lint test docker
+.PHONY: setup data train-sft train-grpo eval eval-smoke gate serve report cards cards-check push-cards lint test docker
 
 setup:
 	pip install -e ".[dev]"
@@ -39,6 +39,18 @@ serve:
 
 report:
 	$(PY) -m connections_rl.report.build --results results --out report/results.md
+
+## Model cards — regenerate hub_cards/*.md from the committed eval JSON.
+cards:
+	$(PY) scripts/build_model_cards.py
+
+## CI check — fail if any card disagrees with the results it cites.
+cards-check:
+	$(PY) scripts/build_model_cards.py --check
+
+## Publish cards to the Hub (needs HF_TOKEN with write scope).
+push-cards:
+	$(PY) scripts/push_model_cards.py
 
 lint:
 	ruff check src tests

@@ -4,7 +4,7 @@ language:
   - en
 library_name: peft
 pipeline_tag: text-generation
-base_model: Qwen/Qwen2.5-1.5B-Instruct
+base_model: Qwen/Qwen2.5-7B-Instruct
 base_model_relation: adapter
 tags:
   - lora
@@ -12,13 +12,14 @@ tags:
   - peft
   - nyt-connections
   - puzzle-solving
+  - qlora
   - grpo
   - reinforcement-learning
   - rlvr
   - reward-over-optimization
   - negative-results
 model-index:
-  - name: connections-rl-grpo
+  - name: connections-rl-grpo-7b-seed2
     results:
       - task:
           type: text-generation
@@ -33,28 +34,28 @@ model-index:
             value: 0.000000
           - type: groups_correct
             name: Groups correct (mean, 0-4 scale)
-            value: 0.006173
+            value: 0.067901
           - type: invalid_rate
             name: Invalid output rate
-            value: 0.024691
+            value: 0.012346
           - type: reward
             name: Mean reward
-            value: 0.113272
+            value: 0.141358
 ---
 
-# connections-rl-grpo (1.5B)
+# connections-rl-grpo-7b-seed2 (7B)
 
-GRPO (verifiable-reward RL, DeepSeek-R1 style) LoRA adapter for [Qwen2.5-1.5B-Instruct](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct), warm-started from [connections-rl-sft](https://huggingface.co/jacksonlukas/connections-rl-sft).
+GRPO (verifiable-reward RL) QLoRA adapter for [Qwen/Qwen2.5-7B-Instruct](https://huggingface.co/Qwen/Qwen2.5-7B-Instruct), warm-started from [connections-rl-sft-7b](https://huggingface.co/jacksonlukas/connections-rl-sft-7b) and trained with **seed 2**.
 
-**Headline result: RL transferred exactly what the reward could verify.** Invalid outputs fall from 74.1% (SFT) and 32.1% (base) to **2.5%**, a significant paired reward gain, while grouping ability does not generalize at all.
+**Replication seed 2 of the 7B negative result.** Like seed 0, this run collapses semantic grouping below the untrained base model (1.7% of groups against base 4.0%) while driving invalid outputs to 1.2%.
 
 > **Reading the numbers.** `Groups correct` is a **mean count on a 0-4 scale**: each board has 4 groups, so a value of 0.346 means 0.346 of 4 groups per board, i.e. 8.6% of groups. The `% of groups` column is that value divided by 4. Values quoted from `results-analysis/` (pass@k, entropy/KL) are already 0-1 fractions.
 
 ## Model Details
 
 - **Developed by:** Jackson Lukas
-- **Model type:** LoRA adapter (rank 16, alpha 32, all-linear) for a decoder-only causal LM
-- **Base model:** [Qwen/Qwen2.5-1.5B-Instruct](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct)
+- **Model type:** QLoRA adapter (rank 16, alpha 32, all-linear) for a decoder-only causal LM
+- **Base model:** [Qwen/Qwen2.5-7B-Instruct](https://huggingface.co/Qwen/Qwen2.5-7B-Instruct)
 - **Training stage:** GRPO (verifiable-reward RL) on top of the SFT warm start
 - **Language:** English
 - **License:** MIT (the base model carries its own Qwen license)
@@ -66,15 +67,15 @@ GRPO (verifiable-reward RL, DeepSeek-R1 style) LoRA adapter for [Qwen2.5-1.5B-In
 - **Full result tables:** [`report/results.md`](https://github.com/jacksonmlukas/connections-rl/blob/main/report/results.md)
 - **Implementation notes:** [`report/implementation_notes.md`](https://github.com/jacksonmlukas/connections-rl/blob/main/report/implementation_notes.md)
 - **Raw eval artifacts:** [`jacksonlukas/connections-rl-results`](https://huggingface.co/datasets/jacksonlukas/connections-rl-results)
-- **This adapter:** [`jacksonlukas/connections-rl-grpo`](https://huggingface.co/jacksonlukas/connections-rl-grpo)
+- **This adapter:** [`jacksonlukas/connections-rl-grpo-7b-seed2`](https://huggingface.co/jacksonlukas/connections-rl-grpo-7b-seed2)
 
-Part of [**connections-rl**](https://github.com/jacksonmlukas/connections-rl), a two-scale, three-seed study. The companion 7B adapter shows the *same* recipe turning net-harmful once the starting policy has real semantic ability to lose.
+Part of [**connections-rl**](https://github.com/jacksonmlukas/connections-rl). This adapter exists to answer the obvious objection to a single RL run. It re-runs GRPO from the *same* SFT warm start with a different seed, so that only RL run-to-run variance differs. The primary adapter is [connections-rl-grpo-7b](https://huggingface.co/jacksonlukas/connections-rl-grpo-7b); across-seed statistics are in [`results-seeds/`](https://github.com/jacksonmlukas/connections-rl/tree/main/results-seeds).
 
 ## Intended Uses
 
 ### Direct Use
 
-A worked example of verifiable-reward RL acting as a format-and-grounding teacher. The adapter reliably emits well-formed 4x4 partitions using only words present on the board, which is the behavior the reward could check per sample.
+Variance evidence. Use it together with seeds 0 and 1 to check that the reported effect is not a single unlucky draw.
 
 ### Downstream Use
 
@@ -94,7 +95,7 @@ This is a research artifact, not a product. Do not use it to:
 
 ## Bias, Risks, and Limitations
 
-Solve rate is **0 of 162** held-out puzzles, and grouping accuracy does not improve over base. Training reward saturated at its theoretical maximum (1.6) with reward variance exactly 0 and policy entropy near 0, meaning the policy memorized the 807 training answers rather than learning to group. The gain is confined to output validity.
+Same limitations as the primary adapter: held-out solve rate is 0 of 162, and at 7B the adapter is worse than the untrained base at grouping. This replicate was evaluated in session B only, alongside the other seeds.
 
 **Study-level limitations that apply to every adapter here:**
 
@@ -105,20 +106,26 @@ Solve rate is **0 of 162** held-out puzzles, and grouping accuracy does not impr
 
 ### Recommendations
 
-Treat the 2.5% invalid rate as the real result and the 0% solve rate as the equally real limitation. Do not extrapolate the format gain into a claim about reasoning.
+Cite the across-seed mean and standard deviation (grouping 0.045 ± 0.022 on the 0-4 scale) rather than any single seed.
 
 ## How to Get Started
 
 ```python
 from peft import PeftModel
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 import torch
 
-base = AutoModelForCausalLM.from_pretrained(
-    "Qwen/Qwen2.5-1.5B-Instruct", dtype=torch.float16, device_map="auto"
+bnb = BitsAndBytesConfig(
+    load_in_4bit=True,
+    bnb_4bit_quant_type="nf4",
+    bnb_4bit_use_double_quant=True,
+    bnb_4bit_compute_dtype=torch.float16,
 )
-tok = AutoTokenizer.from_pretrained("Qwen/Qwen2.5-1.5B-Instruct")
-model = PeftModel.from_pretrained(base, "jacksonlukas/connections-rl-grpo")
+base = AutoModelForCausalLM.from_pretrained(
+    "Qwen/Qwen2.5-7B-Instruct", quantization_config=bnb, device_map="auto"
+)
+tok = AutoTokenizer.from_pretrained("Qwen/Qwen2.5-7B-Instruct")
+model = PeftModel.from_pretrained(base, "jacksonlukas/connections-rl-grpo-7b-seed2")
 model.eval()
 
 words = ["HAIL", "RAIN", "SLEET", "SNOW", "BUCKS", "HEAT", "JAZZ", "NETS",
@@ -185,7 +192,7 @@ group-relative advantage, KL penalty to the frozen SFT reference.
 | `learning_rate` | 5e-6 |
 | `per_device_train_batch_size` | 2 |
 | `gradient_accumulation_steps` | 8 |
-| `num_train_epochs` | 2 |
+| `num_train_epochs` | 1 |
 | `max_completion_length` | 512 |
 
 `scale_rewards`, `loss_type`, `num_iterations` and the clipping epsilons were not
@@ -194,7 +201,7 @@ set explicitly and therefore inherited TRL defaults (`scale_rewards="group"`,
 is the normalization Dr. GRPO ([2503.20783](https://huggingface.co/papers/2503.20783))
 argues against. See [`implementation_notes.md`](https://github.com/jacksonmlukas/connections-rl/blob/main/report/implementation_notes.md).
 
-Training reward reached the 1.6 maximum by roughly step 270, at which point `frac_reward_zero_std` reached 1.0: every generation group was saturated, advantages were identically zero, and the final third of training produced no gradient signal.
+Identical to seed 0 except for `--seed 2` and the output paths, via the seed-replicate CLI overrides in [`train/grpo.py`](https://github.com/jacksonmlukas/connections-rl/blob/main/src/connections_rl/train/grpo.py).
 
 ## Evaluation
 
@@ -207,30 +214,28 @@ McNemar tests on solve rate and paired bootstrap on per-puzzle reward. Results
 are stratified by puzzle category (wordplay, cultural, category, tag-fillin,
 silent-letter) in the underlying JSON.
 
-Numbers below come from **session A (main run)**. See
+Numbers below come from **session B (seed-replication run)**. See
 [Reproducibility](#reproducibility-and-measurement-noise).
 
 ### Results
 
-| Metric | base 1.5B | SFT | **GRPO (seed 0)** |
-|---|---|---|---|
-| Solve rate | 0.0% | 0.0% | **0.0%** |
-| Groups correct (0-4) | 0.006 | 0.012 | **0.006** |
-| Groups correct (% of groups) | 0.2% | 0.3% | **0.2%** |
-| Invalid outputs | 32.1% | 74.1% | **2.5%** |
-| Mean reward | 0.049 | -0.038 | **0.113** |
+This adapter (seed 2), measured alongside its own SFT baseline in the same session:
 
-The reward has two components of very different learnability. Structural validity is verifiable per sample and generalizes as a policy: emit only words on the board. Semantic grouping requires knowledge a 1.5B model largely lacks, so with 807 boards the shortest descent path is memorization. Paired per-puzzle reward differences: GRPO minus SFT = +0.152 [0.133, 0.169]; GRPO minus base = +0.064 [0.046, 0.082].
+| Metric | SFT baseline | **this adapter** |
+|---|---|---|
+| Solve rate | 1.2% | 0.0% |
+| Groups correct (0-4) | 0.321 | **0.068** |
+| Groups correct (% of groups) | 8.0% | **1.7%** |
+| Invalid outputs | 22.8% | **1.2%** |
+| Mean reward | 0.189 | 0.141 |
 
-**Seed replication (1.5B, 3 GRPO seeds).** Measured in session B:
+All three 7B GRPO seeds:
 
 | Metric | seed 0 | seed 1 | seed 2 | mean ± sd |
 |---|---|---|---|---|
-| Groups correct (0-4) | 0.006 | 0.000 | 0.000 | 0.002 ± 0.004 |
-| Invalid rate | 0.025 | 0.031 | 0.037 | 0.031 ± 0.006 |
-| Mean reward | 0.113 | 0.110 | 0.109 | 0.111 ± 0.002 |
-
-Under **pass@16** sampling (temperature 0.9, best-of-k scoring): base 0.000 solve / 0.011 groups (fraction), SFT 0.000 / 0.014, GRPO 0.000 / 0.002.
+| Groups correct (0-4) | 0.025 | 0.043 | 0.068 | 0.045 ± 0.022 |
+| Invalid rate | 0.006 | 0.019 | 0.012 | 0.012 ± 0.006 |
+| Mean reward | 0.125 | 0.129 | 0.141 | 0.132 ± 0.008 |
 
 ## Reproducibility and Measurement Noise
 
@@ -253,7 +258,7 @@ a single comparison.
 
 Trained on free-tier NVIDIA T4 GPUs (16 GB, Turing, pre-Ampere) via Kaggle and
 Google Colab. Total training compute for this adapter was approximately
-**about 10 hours on a single T4**. The entire 1.5B study, including all seed
+**about 5.5 hours on a single T4**. The entire 7B study, including all seed
 replicates and evaluation, was run at $0 marginal cost on free-tier hardware.
 Carbon emissions were not directly measured; the T4 has a 70 W TDP, which bounds
 the energy use of a single run well below 1 kWh.

@@ -27,6 +27,8 @@ jobs:
         run: pytest -v
       - name: Eval smoke (harness end-to-end, no GPU)
         run: python -m connections_rl.eval.run --smoke
+      - name: Model cards match committed results
+        run: python scripts/build_model_cards.py --check
       - name: Release gate (no-op until eval artifacts are committed)
         run: |
           python -m connections_rl.eval.gate \

@@ -18,7 +18,7 @@ tags:
   - reward-over-optimization
   - negative-results
 model-index:
-  - name: connections-rl-grpo
+  - name: connections-rl-grpo-1.5b-seed2
     results:
       - task:
           type: text-generation
@@ -33,20 +33,20 @@ model-index:
             value: 0.000000
           - type: groups_correct
             name: Groups correct (mean, 0-4 scale)
-            value: 0.006173
+            value: 0.000000
           - type: invalid_rate
             name: Invalid output rate
-            value: 0.024691
+            value: 0.037037
           - type: reward
             name: Mean reward
-            value: 0.113272
+            value: 0.109259
 ---
 
-# connections-rl-grpo (1.5B)
+# connections-rl-grpo-1.5b-seed2 (1.5B)
 
-GRPO (verifiable-reward RL, DeepSeek-R1 style) LoRA adapter for [Qwen2.5-1.5B-Instruct](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct), warm-started from [connections-rl-sft](https://huggingface.co/jacksonlukas/connections-rl-sft).
+GRPO (verifiable-reward RL) LoRA adapter for [Qwen/Qwen2.5-1.5B-Instruct](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct), warm-started from [connections-rl-sft](https://huggingface.co/jacksonlukas/connections-rl-sft) and trained with **seed 2**.
 
-**Headline result: RL transferred exactly what the reward could verify.** Invalid outputs fall from 74.1% (SFT) and 32.1% (base) to **2.5%**, a significant paired reward gain, while grouping ability does not generalize at all.
+**Replication seed 2 of the 1.5B result.** Like seed 0, this run holds the invalid-output rate near 3% (3.7%) against the SFT warm start's 74.1%, while grouping ability remains at zero.
 
 > **Reading the numbers.** `Groups correct` is a **mean count on a 0-4 scale**: each board has 4 groups, so a value of 0.346 means 0.346 of 4 groups per board, i.e. 8.6% of groups. The `% of groups` column is that value divided by 4. Values quoted from `results-analysis/` (pass@k, entropy/KL) are already 0-1 fractions.
 
@@ -66,15 +66,15 @@ GRPO (verifiable-reward RL, DeepSeek-R1 style) LoRA adapter for [Qwen2.5-1.5B-In
 - **Full result tables:** [`report/results.md`](https://github.com/jacksonmlukas/connections-rl/blob/main/report/results.md)
 - **Implementation notes:** [`report/implementation_notes.md`](https://github.com/jacksonmlukas/connections-rl/blob/main/report/implementation_notes.md)
 - **Raw eval artifacts:** [`jacksonlukas/connections-rl-results`](https://huggingface.co/datasets/jacksonlukas/connections-rl-results)
-- **This adapter:** [`jacksonlukas/connections-rl-grpo`](https://huggingface.co/jacksonlukas/connections-rl-grpo)
+- **This adapter:** [`jacksonlukas/connections-rl-grpo-1.5b-seed2`](https://huggingface.co/jacksonlukas/connections-rl-grpo-1.5b-seed2)
 
-Part of [**connections-rl**](https://github.com/jacksonmlukas/connections-rl), a two-scale, three-seed study. The companion 7B adapter shows the *same* recipe turning net-harmful once the starting policy has real semantic ability to lose.
+Part of [**connections-rl**](https://github.com/jacksonmlukas/connections-rl). This adapter exists to answer the obvious objection to a single RL run. It re-runs GRPO from the *same* SFT warm start with a different seed, so that only RL run-to-run variance differs. The primary adapter is [connections-rl-grpo](https://huggingface.co/jacksonlukas/connections-rl-grpo); across-seed statistics are in [`results-seeds/`](https://github.com/jacksonmlukas/connections-rl/tree/main/results-seeds).
 
 ## Intended Uses
 
 ### Direct Use
 
-A worked example of verifiable-reward RL acting as a format-and-grounding teacher. The adapter reliably emits well-formed 4x4 partitions using only words present on the board, which is the behavior the reward could check per sample.
+Variance evidence. Use it together with seeds 0 and 1 to check that the reported effect is not a single unlucky draw.
 
 ### Downstream Use
 
@@ -94,7 +94,7 @@ This is a research artifact, not a product. Do not use it to:
 
 ## Bias, Risks, and Limitations
 
-Solve rate is **0 of 162** held-out puzzles, and grouping accuracy does not improve over base. Training reward saturated at its theoretical maximum (1.6) with reward variance exactly 0 and policy entropy near 0, meaning the policy memorized the 807 training answers rather than learning to group. The gain is confined to output validity.
+Same limitations as the primary adapter: held-out solve rate is 0 of 162, and at 7B the adapter is worse than the untrained base at grouping. This replicate was evaluated in session B only, alongside the other seeds.
 
 **Study-level limitations that apply to every adapter here:**
 
@@ -105,7 +105,7 @@ Solve rate is **0 of 162** held-out puzzles, and grouping accuracy does not impr
 
 ### Recommendations
 
-Treat the 2.5% invalid rate as the real result and the 0% solve rate as the equally real limitation. Do not extrapolate the format gain into a claim about reasoning.
+Cite the across-seed mean and standard deviation (grouping 0.002 ± 0.004 on the 0-4 scale) rather than any single seed.
 
 ## How to Get Started
 
@@ -118,7 +118,7 @@ base = AutoModelForCausalLM.from_pretrained(
     "Qwen/Qwen2.5-1.5B-Instruct", dtype=torch.float16, device_map="auto"
 )
 tok = AutoTokenizer.from_pretrained("Qwen/Qwen2.5-1.5B-Instruct")
-model = PeftModel.from_pretrained(base, "jacksonlukas/connections-rl-grpo")
+model = PeftModel.from_pretrained(base, "jacksonlukas/connections-rl-grpo-1.5b-seed2")
 model.eval()
 
 words = ["HAIL", "RAIN", "SLEET", "SNOW", "BUCKS", "HEAT", "JAZZ", "NETS",
@@ -194,7 +194,7 @@ set explicitly and therefore inherited TRL defaults (`scale_rewards="group"`,
 is the normalization Dr. GRPO ([2503.20783](https://huggingface.co/papers/2503.20783))
 argues against. See [`implementation_notes.md`](https://github.com/jacksonmlukas/connections-rl/blob/main/report/implementation_notes.md).
 
-Training reward reached the 1.6 maximum by roughly step 270, at which point `frac_reward_zero_std` reached 1.0: every generation group was saturated, advantages were identically zero, and the final third of training produced no gradient signal.
+Identical to seed 0 except for `--seed 2` and the output paths, via the seed-replicate CLI overrides in [`train/grpo.py`](https://github.com/jacksonmlukas/connections-rl/blob/main/src/connections_rl/train/grpo.py).
 
 ## Evaluation
 
@@ -207,30 +207,28 @@ McNemar tests on solve rate and paired bootstrap on per-puzzle reward. Results
 are stratified by puzzle category (wordplay, cultural, category, tag-fillin,
 silent-letter) in the underlying JSON.
 
-Numbers below come from **session A (main run)**. See
+Numbers below come from **session B (seed-replication run)**. See
 [Reproducibility](#reproducibility-and-measurement-noise).
 
 ### Results
 
-| Metric | base 1.5B | SFT | **GRPO (seed 0)** |
-|---|---|---|---|
-| Solve rate | 0.0% | 0.0% | **0.0%** |
-| Groups correct (0-4) | 0.006 | 0.012 | **0.006** |
-| Groups correct (% of groups) | 0.2% | 0.3% | **0.2%** |
-| Invalid outputs | 32.1% | 74.1% | **2.5%** |
-| Mean reward | 0.049 | -0.038 | **0.113** |
+This adapter (seed 2), measured alongside its own SFT baseline in the same session:
 
-The reward has two components of very different learnability. Structural validity is verifiable per sample and generalizes as a policy: emit only words on the board. Semantic grouping requires knowledge a 1.5B model largely lacks, so with 807 boards the shortest descent path is memorization. Paired per-puzzle reward differences: GRPO minus SFT = +0.152 [0.133, 0.169]; GRPO minus base = +0.064 [0.046, 0.082].
+| Metric | SFT baseline | **this adapter** |
+|---|---|---|
+| Solve rate | 0.0% | 0.0% |
+| Groups correct (0-4) | 0.019 | **0.000** |
+| Groups correct (% of groups) | 0.5% | **0.0%** |
+| Invalid outputs | 74.1% | **3.7%** |
+| Mean reward | -0.037 | 0.109 |
 
-**Seed replication (1.5B, 3 GRPO seeds).** Measured in session B:
+All three 1.5B GRPO seeds:
 
 | Metric | seed 0 | seed 1 | seed 2 | mean ± sd |
 |---|---|---|---|---|
 | Groups correct (0-4) | 0.006 | 0.000 | 0.000 | 0.002 ± 0.004 |
 | Invalid rate | 0.025 | 0.031 | 0.037 | 0.031 ± 0.006 |
 | Mean reward | 0.113 | 0.110 | 0.109 | 0.111 ± 0.002 |
-
-Under **pass@16** sampling (temperature 0.9, best-of-k scoring): base 0.000 solve / 0.011 groups (fraction), SFT 0.000 / 0.014, GRPO 0.000 / 0.002.
 
 ## Reproducibility and Measurement Noise
 
