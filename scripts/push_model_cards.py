@@ -32,6 +32,10 @@ REPOS = [
     "connections-rl-grpo-1.5b-seed2",
 ]
 
+# Dataset repos: {card filename stem: repo name}. These need repo_type="dataset";
+# uploading them as models silently targets a different (usually nonexistent) repo.
+DATASET_CARDS = {"dataset-connections-rl-results": "connections-rl-results"}
+
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
@@ -53,16 +57,24 @@ def main(argv: list[str] | None = None) -> int:
             print("Refusing to push stale cards. Run: python scripts/build_model_cards.py")
             return 1
 
-    targets = args.only or REPOS
-    missing = [r for r in targets if not (CARDS_DIR / f"{r}.md").exists()]
+    # (card stem, repo name, repo_type)
+    all_targets = [(r, r, "model") for r in REPOS]
+    all_targets += [(stem, repo, "dataset") for stem, repo in DATASET_CARDS.items()]
+    if args.only:
+        all_targets = [t for t in all_targets if t[1] in args.only or t[0] in args.only]
+        if not all_targets:
+            print(f"No card matches --only {args.only}", file=sys.stderr)
+            return 1
+
+    missing = [s for s, _, _ in all_targets if not (CARDS_DIR / f"{s}.md").exists()]
     if missing:
         print(f"Missing cards: {', '.join(missing)}", file=sys.stderr)
         return 1
 
     if args.dry_run:
-        for r in targets:
-            n = len((CARDS_DIR / f"{r}.md").read_text().splitlines())
-            print(f"[dry-run] would push hub_cards/{r}.md ({n} lines) -> <user>/{r}")
+        for stem, repo, kind in all_targets:
+            n = len((CARDS_DIR / f"{stem}.md").read_text().splitlines())
+            print(f"[dry-run] would push hub_cards/{stem}.md ({n} lines) -> <user>/{repo} [{kind}]")
         return 0
 
     token = os.environ.get("HF_TOKEN")
@@ -76,25 +88,27 @@ def main(argv: list[str] | None = None) -> int:
     api = HfApi(token=token)
     user = api.whoami()["name"]
     failed = []
-    for repo_name in targets:
+    for stem, repo_name, kind in all_targets:
         repo = f"{user}/{repo_name}"
-        path = CARDS_DIR / f"{repo_name}.md"
+        path = CARDS_DIR / f"{stem}.md"
+        url = f"https://huggingface.co/{'datasets/' if kind == 'dataset' else ''}{repo}"
         try:
             api.upload_file(
                 path_or_fileobj=str(path),
                 path_in_repo="README.md",
                 repo_id=repo,
-                commit_message="Update model card (generated from committed eval results)",
+                repo_type=kind,
+                commit_message="Update card (generated from committed eval results)",
             )
-            print(f"pushed {path.name} -> https://huggingface.co/{repo}")
+            print(f"pushed {path.name} -> {url}")
         except RepositoryNotFoundError:
-            print(f"SKIP {repo}: repo not found or no write access", file=sys.stderr)
+            print(f"SKIP {repo} [{kind}]: repo not found or no write access", file=sys.stderr)
             failed.append(repo_name)
         except Exception as exc:  # noqa: BLE001 - report and continue over the rest
-            print(f"FAIL {repo}: {type(exc).__name__}: {exc}", file=sys.stderr)
+            print(f"FAIL {repo} [{kind}]: {type(exc).__name__}: {exc}", file=sys.stderr)
             failed.append(repo_name)
 
-    print(f"\n{len(targets) - len(failed)}/{len(targets)} cards pushed")
+    print(f"\n{len(all_targets) - len(failed)}/{len(all_targets)} cards pushed")
     return 1 if failed else 0
 
 
