@@ -1,3 +1,7 @@
+# RETAINED AS A DOCUMENTED FAILURE, NOT A PATH TO USE.
+# FSDP on 2xT4 (pre-Ampere) fails: bf16/fp32 flatten mismatch from fp32 PEFT layers,
+# and fp16 mixed precision breaks generate() rollouts. All published runs are single-T4.
+# See report/findings.md, "Negative results worth keeping".
 # Kaggle 2xT4 multi-GPU config (M2 distributed-training evidence).
 # Launch: accelerate launch --config_file configs/accelerate/fsdp_2xt4.yaml -m connections_rl.train.grpo --config configs/train/grpo.yaml
 compute_environment: LOCAL_MACHINE

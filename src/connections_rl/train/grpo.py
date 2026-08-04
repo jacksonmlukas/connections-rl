@@ -3,11 +3,16 @@
 DeepSeek-R1-style verifiable-reward RL via TRL's GRPOTrainer:
   * K completions sampled per puzzle, scored by the deterministic reward
     (connections_rl.reward) — group-relative advantage, no value network;
-  * KL penalty to the reference (SFT) policy prevents collapse;
+  * KL penalty to the reference (SFT) policy is intended to prevent collapse
+    (at beta=0.001 it did not; see report/findings.md);
   * starts from the SFT LoRA checkpoint (configs/train/grpo.yaml: init_adapter).
 
-Single T4: run as-is (Colab). 2xT4 (Kaggle): launch with
-  accelerate launch --config_file configs/accelerate/fsdp_2xt4.yaml -m connections_rl.train.grpo ...
+**Run single-GPU.** Every published run in this study is single-T4 (Colab or
+Kaggle). The 2xT4 FSDP path in configs/accelerate/fsdp_2xt4.yaml is retained only
+as a documented failure: on pre-Ampere GPUs it hits a bf16/fp32 flatten mismatch
+from fp32 PEFT layers, and fp16 mixed precision breaks generate() rollouts under
+FSDP. See the "Negative results worth keeping" section of report/findings.md and
+common.py::fix_qlora_adapter_dtype_for_pre_ampere. Do not start there.
 """
 
 from __future__ import annotations

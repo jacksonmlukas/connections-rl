@@ -48,7 +48,7 @@ GRPO (verifiable-reward RL) LoRA adapter for [Qwen/Qwen2.5-1.5B-Instruct](https:
 
 **Replication seed 1 of the 1.5B result.** Like seed 0, this run holds the invalid-output rate near 3% (3.1%) against the SFT warm start's 74.1%, while grouping ability remains at zero.
 
-> **Reading the numbers.** `Groups correct` is a **mean count on a 0-4 scale**: each board has 4 groups, so a value of 0.346 means 0.346 of 4 groups per board, i.e. 8.6% of groups. The `% of groups` column is that value divided by 4. Values quoted from `results-analysis/` (pass@k, entropy/KL) are already 0-1 fractions.
+> **Reading the numbers.** `Groups correct` is a **mean count on a 0-4 scale**: each board has 4 groups, so the SFT value of 0.012 below means 0.012 of 4 groups per board, i.e. 0.3% of groups. The `% of groups` column is that value divided by 4. **Invalid rate** is shown as a percentage in the arm-comparison table and as a bare 0-1 fraction in the seed table, matching how each is stored; both rows are labeled with their units. Values quoted from `results-analysis/` (pass@k, entropy/KL) are already 0-1 fractions.
 
 ## Model Details
 
@@ -94,7 +94,7 @@ This is a research artifact, not a product. Do not use it to:
 
 ## Bias, Risks, and Limitations
 
-Same limitations as the primary adapter: held-out solve rate is 0 of 162, and at 7B the adapter is worse than the untrained base at grouping. This replicate was evaluated in session B only, alongside the other seeds.
+Same limitations as the primary adapter: held-out solve rate is 0 of 162, and grouping ability does not generalize at either the base or the tuned policy, so the measurable gain is confined to output validity. This replicate was evaluated in session B only, alongside the other seeds.
 
 **Study-level limitations that apply to every adapter here:**
 
@@ -219,15 +219,17 @@ This adapter (seed 1), measured alongside its own SFT baseline in the same sessi
 | Solve rate | 0.0% | 0.0% |
 | Groups correct (0-4) | 0.019 | **0.000** |
 | Groups correct (% of groups) | 0.5% | **0.0%** |
-| Invalid outputs | 74.1% | **3.1%** |
+| Invalid outputs (%) | 74.1% | **3.1%** |
 | Mean reward | -0.037 | 0.110 |
+
+*The SFT baseline above is the **session B** measurement (groups correct 0.019). The primary adapter cards report 0.012 for the same adapter, measured in session A. Both are correct: greedy decoding is not bitwise deterministic across vLLM layouts. See [Reproducibility](#reproducibility-and-measurement-noise) below.*
 
 All three 1.5B GRPO seeds:
 
 | Metric | seed 0 | seed 1 | seed 2 | mean ± sd |
 |---|---|---|---|---|
 | Groups correct (0-4) | 0.006 | 0.000 | 0.000 | 0.002 ± 0.004 |
-| Invalid rate | 0.025 | 0.031 | 0.037 | 0.031 ± 0.006 |
+| Invalid rate (0-1 fraction) | 0.025 | 0.031 | 0.037 | 0.031 ± 0.006 |
 | Mean reward | 0.113 | 0.110 | 0.109 | 0.111 ± 0.002 |
 
 ## Reproducibility and Measurement Noise

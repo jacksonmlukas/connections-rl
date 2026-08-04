@@ -44,7 +44,7 @@ model-index:
 
 QLoRA supervised fine-tuning adapter for [Qwen2.5-7B-Instruct](https://huggingface.co/Qwen/Qwen2.5-7B-Instruct) on NYT Connections. **The best-performing arm of the [connections-rl](https://github.com/jacksonmlukas/connections-rl) study and the only one that produces held-out solves.**
 
-> **Reading the numbers.** `Groups correct` is a **mean count on a 0-4 scale**: each board has 4 groups, so a value of 0.346 means 0.346 of 4 groups per board, i.e. 8.6% of groups. The `% of groups` column is that value divided by 4. Values quoted from `results-analysis/` (pass@k, entropy/KL) are already 0-1 fractions.
+> **Reading the numbers.** `Groups correct` is a **mean count on a 0-4 scale**: each board has 4 groups, so the SFT value of 0.346 below means 0.346 of 4 groups per board, i.e. 8.6% of groups. The `% of groups` column is that value divided by 4. **Invalid rate** is shown as a percentage in the arm-comparison table and as a bare 0-1 fraction in the seed table, matching how each is stored; both rows are labeled with their units. Values quoted from `results-analysis/` (pass@k, entropy/KL) are already 0-1 fractions.
 
 ## Model Details
 
@@ -207,8 +207,10 @@ Numbers below come from **session A (main run)**. See
 | Solve rate | 0.0% | **1.2%** | 0.0% |
 | Groups correct (0-4) | 0.160 | **0.346** | 0.025 |
 | Groups correct (% of groups) | 4.0% | **8.6%** | 0.6% |
-| Invalid outputs | 6.8% | **22.2%** | 0.6% |
+| Invalid outputs (%) | 6.8% | **22.2%** | 0.6% |
 | Mean reward | 0.165 | **0.197** | 0.125 |
+
+*The SFT baseline above is the **session A** measurement (groups correct 0.346). The seed-replicate cards report 0.321 for the same adapter, measured in session B. Both are correct: greedy decoding is not bitwise deterministic across vLLM layouts. See [Reproducibility](#reproducibility-and-measurement-noise) below.*
 
 Scale unlocks genuine partial competence: the base 7B model already solves 4.0% of groups, and SFT more than doubles that to 8.6% while producing the project's first held-out solves. The grounding cost of SFT shrinks with scale but persists.
 
@@ -217,7 +219,7 @@ Scale unlocks genuine partial competence: the base 7B model already solves 4.0% 
 | Metric | seed 0 | seed 1 | seed 2 | mean ± sd |
 |---|---|---|---|---|
 | Groups correct (0-4) | 0.025 | 0.043 | 0.068 | 0.045 ± 0.022 |
-| Invalid rate | 0.006 | 0.019 | 0.012 | 0.012 ± 0.006 |
+| Invalid rate (0-1 fraction) | 0.006 | 0.019 | 0.012 | 0.012 ± 0.006 |
 | Mean reward | 0.125 | 0.129 | 0.141 | 0.132 ± 0.008 |
 
 Under **pass@16** sampling (temperature 0.9, best-of-k scoring): base 0.000 solve / 0.114 groups (fraction), SFT 0.043 / 0.252, GRPO 0.012 / 0.022.

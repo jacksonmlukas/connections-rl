@@ -49,7 +49,7 @@ GRPO (verifiable-reward RL) QLoRA adapter for [Qwen2.5-7B-Instruct](https://hugg
 
 **This adapter is published as a documented negative result.** It reaches the best structural validity of any arm at any scale (0.6% invalid) while collapsing semantic grouping *below the untrained base model*. It is a clean, measured instance of reward over-optimization.
 
-> **Reading the numbers.** `Groups correct` is a **mean count on a 0-4 scale**: each board has 4 groups, so a value of 0.346 means 0.346 of 4 groups per board, i.e. 8.6% of groups. The `% of groups` column is that value divided by 4. Values quoted from `results-analysis/` (pass@k, entropy/KL) are already 0-1 fractions.
+> **Reading the numbers.** `Groups correct` is a **mean count on a 0-4 scale**: each board has 4 groups, so the SFT value of 0.346 below means 0.346 of 4 groups per board, i.e. 8.6% of groups. The `% of groups` column is that value divided by 4. **Invalid rate** is shown as a percentage in the arm-comparison table and as a bare 0-1 fraction in the seed table, matching how each is stored; both rows are labeled with their units. Values quoted from `results-analysis/` (pass@k, entropy/KL) are already 0-1 fractions.
 
 ## Model Details
 
@@ -203,6 +203,8 @@ set explicitly and therefore inherited TRL defaults (`scale_rewards="group"`,
 is the normalization Dr. GRPO ([2503.20783](https://huggingface.co/papers/2503.20783))
 argues against. See [`implementation_notes.md`](https://github.com/jacksonmlukas/connections-rl/blob/main/report/implementation_notes.md).
 
+**Why 1 epoch here and 2 at 1.5B.** This is a compute-budget constraint, not a tuning choice: at roughly 2-3x the 1.5B step time, a second 7B epoch would have exceeded Kaggle's 12-hour batch limit. It is recorded in [`configs/train/grpo-7b.yaml`](https://github.com/jacksonmlukas/connections-rl/blob/main/configs/train/grpo-7b.yaml). The 7B run still reached its collapsed fixed point well inside one epoch: 98.7% of the total KL displacement was spent by step 150 of 403, so the shorter schedule does not explain the outcome.
+
 Checkpoints were synced to the Hub every 50 steps so that training could resume across ephemeral free-tier sessions, which is what made the post-hoc checkpoint, entropy and KL analyses possible.
 
 ## Evaluation
@@ -226,8 +228,10 @@ Numbers below come from **session A (main run)**. See
 | Solve rate | 0.0% | 1.2% | **0.0%** |
 | Groups correct (0-4) | 0.160 | 0.346 | **0.025** |
 | Groups correct (% of groups) | 4.0% | 8.6% | **0.6%** |
-| Invalid outputs | 6.8% | 22.2% | **0.6%** |
+| Invalid outputs (%) | 6.8% | 22.2% | **0.6%** |
 | Mean reward | 0.165 | 0.197 | **0.125** |
+
+*The SFT baseline above is the **session A** measurement (groups correct 0.346). The seed-replicate cards report 0.321 for the same adapter, measured in session B. Both are correct: greedy decoding is not bitwise deterministic across vLLM layouts. See [Reproducibility](#reproducibility-and-measurement-noise) below.*
 
 GRPO against a structurally-verifiable reward optimizes what the reward can check (structure) at the expense of what it cannot (semantics). Measuring every checkpoint locates the failure precisely: policy entropy falls 30.6x over the run (0.303 to 0.0099 nats/token), collapsing 12.7x within the single step 100 to 150 interval, which is exactly where held-out semantics collapses. 98.7% of the total KL displacement from the SFT init is spent by step 150, so the final 253 steps perform no meaningful optimization. Plotting held-out score against KL gives the classic inverted-U over-optimization curve, peaking at KL 2.70 nats/sequence (step 50) and falling 9.5x by KL 47.
 
@@ -236,7 +240,7 @@ GRPO against a structurally-verifiable reward optimizes what the reward can chec
 | Metric | seed 0 | seed 1 | seed 2 | mean ± sd |
 |---|---|---|---|---|
 | Groups correct (0-4) | 0.025 | 0.043 | 0.068 | 0.045 ± 0.022 |
-| Invalid rate | 0.006 | 0.019 | 0.012 | 0.012 ± 0.006 |
+| Invalid rate (0-1 fraction) | 0.006 | 0.019 | 0.012 | 0.012 ± 0.006 |
 | Mean reward | 0.125 | 0.129 | 0.141 | 0.132 ± 0.008 |
 
 Under **pass@16** sampling (temperature 0.9, best-of-k scoring): base 0.000 solve / 0.114 groups (fraction), SFT 0.043 / 0.252, GRPO 0.012 / 0.022.

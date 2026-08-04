@@ -73,12 +73,17 @@ def pct(x: float) -> str:
     return f"{100 * x:.1f}%"
 
 
-def units_note() -> str:
+def units_note(main: dict) -> str:
+    """Units warning, worked through a value that actually appears on *this* card."""
+    g = main["sft"]["groups_correct"][0]
     return (
-        "> **Reading the numbers.** `Groups correct` is a **mean count on a 0-4 scale**: each "
-        "board has 4 groups, so a value of 0.346 means 0.346 of 4 groups per board, i.e. 8.6% of "
-        "groups. The `% of groups` column is that value divided by 4. Values quoted from "
-        "`results-analysis/` (pass@k, entropy/KL) are already 0-1 fractions."
+        f"> **Reading the numbers.** `Groups correct` is a **mean count on a 0-4 scale**: each "
+        f"board has 4 groups, so the SFT value of {g:.3f} below means {g:.3f} of 4 groups per "
+        f"board, i.e. {pct(g / 4)} of groups. The `% of groups` column is that value divided by 4. "
+        f"**Invalid rate** is shown as a percentage in the arm-comparison table and as a bare "
+        f"0-1 fraction in the seed table, matching how each is stored; both rows are labeled with "
+        f"their units. Values quoted from `results-analysis/` (pass@k, entropy/KL) are already "
+        f"0-1 fractions."
     )
 
 
@@ -131,6 +136,30 @@ silent-letter) in the underlying JSON.
 
 Numbers below come from **{session}**. See
 [Reproducibility](#reproducibility-and-measurement-noise)."""
+
+
+def session_pointer(scale: str, data: dict, replicate: bool) -> str:
+    """Pre-empt the reader who compares this card's SFT row against the other cards'.
+
+    The same SFT adapter was measured in two vLLM serving configurations, so the
+    seed cards and the primary cards report slightly different baselines. Without
+    a pointer this reads as an error rather than as documented measurement noise.
+    """
+    a = data["main"][scale]["sft"]
+    b = seed_row(data, scale, "sft")
+    here, there = ("session B", "session A") if replicate else ("session A", "session B")
+    other = "primary adapter cards" if replicate else "seed-replicate cards"
+    x, y = (
+        (b["groups"], a["groups_correct"][0])
+        if replicate
+        else (a["groups_correct"][0], b["groups"])
+    )
+    return (
+        f"*The SFT baseline above is the **{here}** measurement (groups correct {x:.3f}). The "
+        f"{other} report {y:.3f} for the same adapter, measured in {there}. Both are correct: "
+        f"greedy decoding is not bitwise deterministic across vLLM layouts. See "
+        f"[Reproducibility](#reproducibility-and-measurement-noise) below.*"
+    )
 
 
 def repro_block() -> str:
@@ -312,7 +341,7 @@ def results_table(scale: str, main: dict, highlight: str) -> str:
 | Solve rate | {" | ".join(row("", "solve_rate", a) for a in ("base", "sft", "grpo"))} |
 | Groups correct (0-4) | {" | ".join(row("", "groups_correct", a) for a in ("base", "sft", "grpo"))} |
 | Groups correct (% of groups) | {" | ".join(gp(a) for a in ("base", "sft", "grpo"))} |
-| Invalid outputs | {" | ".join(row("", "invalid_rate", a) for a in ("base", "sft", "grpo"))} |
+| Invalid outputs (%) | {" | ".join(row("", "invalid_rate", a) for a in ("base", "sft", "grpo"))} |
 | Mean reward | {" | ".join(row("", "reward", a) for a in ("base", "sft", "grpo"))} |"""
 
 
@@ -334,7 +363,7 @@ def seed_table(data: dict, scale: str) -> str:
     rows = []
     for metric, label in (
         ("groups", "Groups correct (0-4)"),
-        ("invalid", "Invalid rate"),
+        ("invalid", "Invalid rate (0-1 fraction)"),
         ("reward", "Mean reward"),
     ):
         vals = [seed_row(data, scale, f"grpo-seed{i}")[metric] for i in range(3)]
@@ -365,7 +394,7 @@ def build_card(spec: dict, data: dict) -> str:
         m = main[arm]
 
     parts = [frontmatter(repo, scale, quant, arm, m), "", f"# {repo} ({scale})", ""]
-    parts += [spec["summary"], "", units_note(), ""]
+    parts += [spec["summary"], "", units_note(main), ""]
 
     parts += [
         "## Model Details",
@@ -445,8 +474,10 @@ def build_card(spec: dict, data: dict) -> str:
             f"| Solve rate | {pct(sft_b['solve'])} | {pct(r['solve'])} |",
             f"| Groups correct (0-4) | {sft_b['groups']:.3f} | **{r['groups']:.3f}** |",
             f"| Groups correct (% of groups) | {pct(sft_b['groups'] / 4)} | **{pct(r['groups'] / 4)}** |",
-            f"| Invalid outputs | {pct(sft_b['invalid'])} | **{pct(r['invalid'])}** |",
+            f"| Invalid outputs (%) | {pct(sft_b['invalid'])} | **{pct(r['invalid'])}** |",
             f"| Mean reward | {sft_b['reward']:.3f} | {r['reward']:.3f} |",
+            "",
+            session_pointer(scale, data, replicate=True),
             "",
             f"All three {scale} GRPO seeds:",
             "",
@@ -456,6 +487,8 @@ def build_card(spec: dict, data: dict) -> str:
     else:
         parts += [
             results_table(scale, main, arm),
+            "",
+            session_pointer(scale, data, replicate=False),
             "",
             spec["interpretation"],
             "",
@@ -507,6 +540,14 @@ argues against. See [`implementation_notes.md`]({GH}/blob/main/report/implementa
 
     common_grpo_proc_7 = common_grpo_proc_15.replace(
         "| `num_train_epochs` | 2 |", "| `num_train_epochs` | 1 |"
+    ) + (
+        f"\n\n**Why 1 epoch here and 2 at 1.5B.** This is a compute-budget constraint, not a "
+        f"tuning choice: at roughly 2-3x the 1.5B step time, a second 7B epoch would have "
+        f"exceeded Kaggle's 12-hour batch limit. It is recorded in "
+        f"[`configs/train/grpo-7b.yaml`]({GH}/blob/main/configs/train/grpo-7b.yaml). The 7B run "
+        f"still reached its collapsed fixed point well inside one epoch: 98.7% of the total KL "
+        f"displacement was spent by step 150 of 403, so the shorter schedule does not explain "
+        f"the outcome."
     )
 
     sft_proc_15 = """Rank-16 LoRA (alpha 32, all-linear target modules) over the instruct base,
@@ -753,6 +794,18 @@ fp16 gradient scaler. The workaround is a post-construction re-cast to fp32 in
             primary = "connections-rl-grpo-7b" if scale == "7B" else "connections-rl-grpo"
             r = seed_row(data, scale, f"grpo-seed{seed}")
             a = across(data, scale, "groups")
+            # Scale-specific: at 7B the adapter is net-harmful against base, at 1.5B it is not.
+            # Writing this once per scale prevents a 7B-only claim leaking onto a 1.5B card.
+            if scale == "7B":
+                scale_specific_harm = (
+                    f"this adapter is worse than the untrained base at grouping "
+                    f"({pct(r['groups'] / 4)} of groups against base 4.0%)."
+                )
+            else:
+                scale_specific_harm = (
+                    "grouping ability does not generalize at either the base or the tuned "
+                    "policy, so the measurable gain is confined to output validity."
+                )
             if scale == "7B":
                 head = (
                     f"**Replication seed {seed} of the 7B negative result.** Like seed 0, this "
@@ -817,9 +870,9 @@ fp16 gradient scaler. The workaround is a post-construction re-cast to fp32 in
                     ),
                     out_of_scope=out_scope_common,
                     limitations=(
-                        "Same limitations as the primary adapter: held-out solve rate is 0 of 162, "
-                        "and at 7B the adapter is worse than the untrained base at grouping. This "
-                        "replicate was evaluated in session B only, alongside the other seeds."
+                        f"Same limitations as the primary adapter: held-out solve rate is 0 of "
+                        f"162, and {scale_specific_harm} This replicate was evaluated in session "
+                        f"B only, alongside the other seeds."
                     ),
                     recommendation=(
                         "Cite the across-seed mean and standard deviation (grouping {:.3f} ± {:.3f} on "

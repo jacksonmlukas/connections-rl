@@ -49,7 +49,7 @@ GRPO (verifiable-reward RL) QLoRA adapter for [Qwen/Qwen2.5-7B-Instruct](https:/
 
 **Replication seed 1 of the 7B negative result.** Like seed 0, this run collapses semantic grouping below the untrained base model (1.1% of groups against base 4.0%) while driving invalid outputs to 1.9%.
 
-> **Reading the numbers.** `Groups correct` is a **mean count on a 0-4 scale**: each board has 4 groups, so a value of 0.346 means 0.346 of 4 groups per board, i.e. 8.6% of groups. The `% of groups` column is that value divided by 4. Values quoted from `results-analysis/` (pass@k, entropy/KL) are already 0-1 fractions.
+> **Reading the numbers.** `Groups correct` is a **mean count on a 0-4 scale**: each board has 4 groups, so the SFT value of 0.346 below means 0.346 of 4 groups per board, i.e. 8.6% of groups. The `% of groups` column is that value divided by 4. **Invalid rate** is shown as a percentage in the arm-comparison table and as a bare 0-1 fraction in the seed table, matching how each is stored; both rows are labeled with their units. Values quoted from `results-analysis/` (pass@k, entropy/KL) are already 0-1 fractions.
 
 ## Model Details
 
@@ -95,7 +95,7 @@ This is a research artifact, not a product. Do not use it to:
 
 ## Bias, Risks, and Limitations
 
-Same limitations as the primary adapter: held-out solve rate is 0 of 162, and at 7B the adapter is worse than the untrained base at grouping. This replicate was evaluated in session B only, alongside the other seeds.
+Same limitations as the primary adapter: held-out solve rate is 0 of 162, and this adapter is worse than the untrained base at grouping (1.1% of groups against base 4.0%). This replicate was evaluated in session B only, alongside the other seeds.
 
 **Study-level limitations that apply to every adapter here:**
 
@@ -201,6 +201,8 @@ set explicitly and therefore inherited TRL defaults (`scale_rewards="group"`,
 is the normalization Dr. GRPO ([2503.20783](https://huggingface.co/papers/2503.20783))
 argues against. See [`implementation_notes.md`](https://github.com/jacksonmlukas/connections-rl/blob/main/report/implementation_notes.md).
 
+**Why 1 epoch here and 2 at 1.5B.** This is a compute-budget constraint, not a tuning choice: at roughly 2-3x the 1.5B step time, a second 7B epoch would have exceeded Kaggle's 12-hour batch limit. It is recorded in [`configs/train/grpo-7b.yaml`](https://github.com/jacksonmlukas/connections-rl/blob/main/configs/train/grpo-7b.yaml). The 7B run still reached its collapsed fixed point well inside one epoch: 98.7% of the total KL displacement was spent by step 150 of 403, so the shorter schedule does not explain the outcome.
+
 Identical to seed 0 except for `--seed 1` and the output paths, via the seed-replicate CLI overrides in [`train/grpo.py`](https://github.com/jacksonmlukas/connections-rl/blob/main/src/connections_rl/train/grpo.py).
 
 ## Evaluation
@@ -226,15 +228,17 @@ This adapter (seed 1), measured alongside its own SFT baseline in the same sessi
 | Solve rate | 1.2% | 0.0% |
 | Groups correct (0-4) | 0.321 | **0.043** |
 | Groups correct (% of groups) | 8.0% | **1.1%** |
-| Invalid outputs | 22.8% | **1.9%** |
+| Invalid outputs (%) | 22.8% | **1.9%** |
 | Mean reward | 0.189 | 0.129 |
+
+*The SFT baseline above is the **session B** measurement (groups correct 0.321). The primary adapter cards report 0.346 for the same adapter, measured in session A. Both are correct: greedy decoding is not bitwise deterministic across vLLM layouts. See [Reproducibility](#reproducibility-and-measurement-noise) below.*
 
 All three 7B GRPO seeds:
 
 | Metric | seed 0 | seed 1 | seed 2 | mean ± sd |
 |---|---|---|---|---|
 | Groups correct (0-4) | 0.025 | 0.043 | 0.068 | 0.045 ± 0.022 |
-| Invalid rate | 0.006 | 0.019 | 0.012 | 0.012 ± 0.006 |
+| Invalid rate (0-1 fraction) | 0.006 | 0.019 | 0.012 | 0.012 ± 0.006 |
 | Mean reward | 0.125 | 0.129 | 0.141 | 0.132 ± 0.008 |
 
 ## Reproducibility and Measurement Noise

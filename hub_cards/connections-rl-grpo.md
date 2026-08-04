@@ -48,7 +48,7 @@ GRPO (verifiable-reward RL, DeepSeek-R1 style) LoRA adapter for [Qwen2.5-1.5B-In
 
 **Headline result: RL transferred exactly what the reward could verify.** Invalid outputs fall from 74.1% (SFT) and 32.1% (base) to **2.5%**, a significant paired reward gain, while grouping ability does not generalize at all.
 
-> **Reading the numbers.** `Groups correct` is a **mean count on a 0-4 scale**: each board has 4 groups, so a value of 0.346 means 0.346 of 4 groups per board, i.e. 8.6% of groups. The `% of groups` column is that value divided by 4. Values quoted from `results-analysis/` (pass@k, entropy/KL) are already 0-1 fractions.
+> **Reading the numbers.** `Groups correct` is a **mean count on a 0-4 scale**: each board has 4 groups, so the SFT value of 0.012 below means 0.012 of 4 groups per board, i.e. 0.3% of groups. The `% of groups` column is that value divided by 4. **Invalid rate** is shown as a percentage in the arm-comparison table and as a bare 0-1 fraction in the seed table, matching how each is stored; both rows are labeled with their units. Values quoted from `results-analysis/` (pass@k, entropy/KL) are already 0-1 fractions.
 
 ## Model Details
 
@@ -217,8 +217,10 @@ Numbers below come from **session A (main run)**. See
 | Solve rate | 0.0% | 0.0% | **0.0%** |
 | Groups correct (0-4) | 0.006 | 0.012 | **0.006** |
 | Groups correct (% of groups) | 0.2% | 0.3% | **0.2%** |
-| Invalid outputs | 32.1% | 74.1% | **2.5%** |
+| Invalid outputs (%) | 32.1% | 74.1% | **2.5%** |
 | Mean reward | 0.049 | -0.038 | **0.113** |
+
+*The SFT baseline above is the **session A** measurement (groups correct 0.012). The seed-replicate cards report 0.019 for the same adapter, measured in session B. Both are correct: greedy decoding is not bitwise deterministic across vLLM layouts. See [Reproducibility](#reproducibility-and-measurement-noise) below.*
 
 The reward has two components of very different learnability. Structural validity is verifiable per sample and generalizes as a policy: emit only words on the board. Semantic grouping requires knowledge a 1.5B model largely lacks, so with 807 boards the shortest descent path is memorization. Paired per-puzzle reward differences: GRPO minus SFT = +0.152 [0.133, 0.169]; GRPO minus base = +0.064 [0.046, 0.082].
 
@@ -227,7 +229,7 @@ The reward has two components of very different learnability. Structural validit
 | Metric | seed 0 | seed 1 | seed 2 | mean ± sd |
 |---|---|---|---|---|
 | Groups correct (0-4) | 0.006 | 0.000 | 0.000 | 0.002 ± 0.004 |
-| Invalid rate | 0.025 | 0.031 | 0.037 | 0.031 ± 0.006 |
+| Invalid rate (0-1 fraction) | 0.025 | 0.031 | 0.037 | 0.031 ± 0.006 |
 | Mean reward | 0.113 | 0.110 | 0.109 | 0.111 ± 0.002 |
 
 Under **pass@16** sampling (temperature 0.9, best-of-k scoring): base 0.000 solve / 0.011 groups (fraction), SFT 0.000 / 0.014, GRPO 0.000 / 0.002.

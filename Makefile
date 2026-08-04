@@ -17,7 +17,8 @@ data:
 train-sft:
 	$(PY) -m connections_rl.train.sft --config configs/train/sft.yaml
 
-## M1/M2 — GRPO from the SFT checkpoint. Use configs/accelerate/fsdp_2xt4.yaml on Kaggle.
+## M1/M2 — GRPO from the SFT checkpoint. Single-GPU: every published run is single-T4.
+## (configs/accelerate/fsdp_2xt4.yaml is kept as a documented pre-Ampere failure, not a path to use.)
 train-grpo:
 	$(PY) -m connections_rl.train.grpo --config configs/train/grpo.yaml
 
