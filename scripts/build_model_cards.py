@@ -66,6 +66,26 @@ def across(data: dict, scale: str, metric: str) -> dict:
     return data["seeds"]["across_seed"][scale][metric]
 
 
+def paired_passk_ci(data: dict, scale: str, a: str, b: str) -> tuple[float, float, float]:
+    """Paired best-of-k difference (a - b) on the 0-4 count scale, bootstrap seed 0.
+
+    Computed from the per-puzzle records rather than quoted, because a hardcoded
+    CI here previously drifted from the repo's own recomputation when the prose
+    value had been generated under an unrecorded RNG seed (see report/defects.md
+    D3). Uses the shipped estimator so the card cannot disagree with the harness.
+    """
+    import sys
+
+    sys.path.insert(0, str(ROOT / "src"))
+    from connections_rl.eval.stats import paired_bootstrap_diff
+
+    arms = data["passk"][scale]["arms"]
+    va = {r["puzzle_id"]: r["max_groups_correct"] for r in arms[a]["records"]}
+    vb = {r["puzzle_id"]: r["max_groups_correct"] for r in arms[b]["records"]}
+    ids = sorted(set(va) & set(vb))
+    return paired_bootstrap_diff([va[i] for i in ids], [vb[i] for i in ids])
+
+
 # --------------------------------------------------------------------------
 # shared prose
 # --------------------------------------------------------------------------
@@ -517,6 +537,11 @@ def specs(data: dict) -> list[dict]:
     ek = {p["name"]: p for p in data["entropy_kl"]}
     final_h = ek["ckpt-403"]["entropy_per_token"]
     sft_h = ek["sft"]["entropy_per_token"]
+    # Derived, never quoted: see paired_passk_ci docstring and defects.md D3.
+    pk_sft = paired_passk_ci(data, "7B", "sft", "grpo")
+    pk_base = paired_passk_ci(data, "7B", "base", "grpo")
+    g7v = data["main"]["7B"]["grpo"]["groups_correct"][0]
+    b7v = data["main"]["7B"]["base"]["groups_correct"][0]
 
     common_grpo_proc_15 = f"""TRL `GRPOTrainer` over the SFT warm start. K=8 completions per puzzle,
 group-relative advantage, KL penalty to the frozen SFT reference.
@@ -757,11 +782,14 @@ fp16 gradient scaler. The workaround is a post-construction re-cast to fp32 in
                 "than the untrained base model at the actual task."
             ),
             limitations=(
-                "The adapter is *worse than doing nothing* on the semantic task: grouping falls to "
-                "0.6% of groups against the base model's 4.0%, and mean reward (0.125) sits below "
-                "base (0.165). Sampling does not recover the loss: at pass@16 the gap to SFT is "
-                "+0.920 [0.772, 1.062] on the 0-4 scale, so the degradation is distributional "
-                "rather than a greedy-decoding artifact."
+                f"The adapter is *worse than doing nothing* on the semantic task: grouping falls "
+                f"to {pct(g7v / 4)} of groups against the base model's {pct(b7v / 4)}, and mean "
+                f"reward ({data['main']['7B']['grpo']['reward'][0]:.3f}) sits below base "
+                f"({data['main']['7B']['base']['reward'][0]:.3f}). Sampling does not recover the "
+                f"loss: at pass@16 the gap to SFT is +{pk_sft[0]:.3f} "
+                f"[{pk_sft[1]:.3f}, {pk_sft[2]:.3f}] and to the untrained base +{pk_base[0]:.3f} "
+                f"[{pk_base[1]:.3f}, {pk_base[2]:.3f}] on the 0-4 scale, so the degradation is "
+                f"distributional rather than a greedy-decoding artifact."
             ),
             recommendation=(
                 "Use this adapter to study the failure, not to solve puzzles. If you need valid "

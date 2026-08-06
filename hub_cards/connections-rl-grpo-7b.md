@@ -97,7 +97,7 @@ In particular, **do not use this adapter for grouping quality**. It is worse tha
 
 ## Bias, Risks, and Limitations
 
-The adapter is *worse than doing nothing* on the semantic task: grouping falls to 0.6% of groups against the base model's 4.0%, and mean reward (0.125) sits below base (0.165). Sampling does not recover the loss: at pass@16 the gap to SFT is +0.920 [0.772, 1.062] on the 0-4 scale, so the degradation is distributional rather than a greedy-decoding artifact.
+The adapter is *worse than doing nothing* on the semantic task: grouping falls to 0.6% of groups against the base model's 4.0%, and mean reward (0.125) sits below base (0.165). Sampling does not recover the loss: at pass@16 the gap to SFT is +0.920 [0.778, 1.062] and to the untrained base +0.370 [0.259, 0.475] on the 0-4 scale, so the degradation is distributional rather than a greedy-decoding artifact.
 
 **Study-level limitations that apply to every adapter here:**
 
