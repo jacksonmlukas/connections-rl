@@ -41,9 +41,10 @@ quoted in `hub_cards/connections-rl-grpo.md` and the repo tables) were checked
 the same way 2026-08-04: point estimates reproduce exactly from
 `results/{base,sft,grpo}/records.jsonl` (+0.1515, +0.0642); the bounds match an
 alternative-seed draw, within ±0.002 of seed 0 ([0.132, 0.168] / [0.048,
-0.081]), and were left as published pending the standardization decision in
-`ci_provenance.md`. Rule going forward: quote CIs from the default seed 0 or
-record the seed used.
+0.081]), and were left as published — ruled final by the owner on 2026-08-18
+(Option B in `ci_provenance.md`: every surface already agrees verbatim and the
+unrecorded seed is documented here). Rule going forward: quote CIs from the
+default seed 0 or record the seed used.
 
 **Hub-surface status for D3, direction stated precisely.** The live Hub card at
 `jacksonlukas/connections-rl-grpo-7b` already carries the corrected bound — it
@@ -118,17 +119,21 @@ with new samples.
 inherited from the installed TRL version, which was not pinned per run. Already
 flagged there as an action item; restated here so the defect list is complete.
 
-## Reported 2026-08-10, pending owner ruling
+## Reported 2026-08-10; ruled and fixed 2026-08-18
 
-**D8. The 7B cross-seed cosine range is misstated at its low end on every
-prose surface that quotes a range.** `results-seeds/weight_space_7b.txt`
+**D8. The 7B cross-seed cosine range was misstated at its low end on every
+prose surface that quoted a range.** `results-seeds/weight_space_7b.txt`
 records cos(seed0,seed1) = +0.6794, cos(seed0,seed2) = +0.6747,
 cos(seed1,seed2) = +0.6882, so the range at two decimals is **+0.67 to
 +0.69**. `README.md` line 70, `report/findings.md` line 109, and the generator
-template at `scripts/build_model_cards.py` line 849 all state "+0.68 to
+template at `scripts/build_model_cards.py` line 849 all stated "+0.68 to
 +0.69" — but 0.6747 rounds to 0.67, not 0.68. The `results.md` weight-space
-table (+0.679 / +0.675 / +0.688) matches the artifact exactly and is correct.
-The 1.5B range "+0.78 to +0.80" is correct against `weight_space_1.5b.txt`
-(+0.7793 / +0.7925 / +0.7970). Not fixed here: the surfaces span README,
-findings, and the card generator, and cross-surface numeric edits are under an
-owner ruling; recorded so the misstatement cannot ship silently.
+table (+0.679 / +0.675 / +0.688) matches the artifact exactly and was always
+correct. The 1.5B range "+0.78 to +0.80" is correct against
+`weight_space_1.5b.txt` (+0.7793 / +0.7925 / +0.7970).
+
+*Resolution (owner ruled fix, 2026-08-18):* "+0.68 to +0.69" replaced with
+"+0.67 to +0.69" in exactly the three surfaces above — one occurrence each,
+verified before and after the edit; the old string no longer appears anywhere
+in the repo and the 1.5B ranges are untouched. `results.md` was not edited.
+Future seed cards built from the template now inherit the correct range.

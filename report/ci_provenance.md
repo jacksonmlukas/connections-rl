@@ -93,5 +93,8 @@ across all surfaces with zero edits. Rewriting published numbers days before
 a preprint creates churn, a card rebuild, and a Hub re-push for no
 inferential gain.
 
-Decision is the owner's. Nothing in this memo pre-commits either way; the D3
-rule (new CIs quote seed 0 or record their seed) applies regardless.
+**Ruled by the owner, 2026-08-18: Option B — leave as published.** No numeric
+edits; prose, generator literal, local card, and live Hub card continue to
+agree verbatim, and D3's documentation of the unrecorded seed stands as the
+provenance record. The D3 rule (new CIs quote seed 0 or record their seed)
+continues to apply to everything written from now on.

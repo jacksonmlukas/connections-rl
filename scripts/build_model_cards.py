@@ -846,7 +846,7 @@ fp16 gradient scaler. The workaround is a post-construction re-cast to fp32 in
                     "on the 0-4 scale) and below base on reward (max 0.141 against 0.165). Paired "
                     "bootstrap of SFT minus GRPO on groups correct excludes zero for every seed. "
                     "Independent seeds also converge in weight space, with RL-update cosine "
-                    "similarity of +0.68 to +0.69 against a random-direction expectation near "
+                    "similarity of +0.67 to +0.69 against a random-direction expectation near "
                     "1e-5, so the collapse is a systematic attractor of this reward rather than "
                     "seed noise."
                 )
