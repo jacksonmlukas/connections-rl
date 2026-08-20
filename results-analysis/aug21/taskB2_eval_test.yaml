@@ -1,0 +1,28 @@
+# aug21 main eval: ONE vLLM session, test split, greedy.
+# Arms: the two anchors, step-50, step-100 (B2), and B1's final + val-peak
+# checkpoints. Replace NOSCALE_PEAK_STEP in the lora-modules and below after
+# the B1 checkpoint curve picks the val-semantic argmax.
+puzzles: data/splits/puzzles_test.json
+out_dir: results-analysis/aug21/evalB-session
+n_resamples: 1000
+seed: 0
+
+arms:
+  - name: base
+    model: Qwen/Qwen2.5-7B-Instruct
+    temperature: 0.0
+  - name: grpo-ckpt50
+    model: connections-rl-grpo-7b-ckpt50
+    temperature: 0.0
+  - name: grpo-ckpt100
+    model: connections-rl-grpo-7b-ckpt100
+    temperature: 0.0
+  - name: grpo-final
+    model: connections-rl-grpo-7b
+    temperature: 0.0
+  - name: noscale-final
+    model: connections-rl-grpo-7b-noscale
+    temperature: 0.0
+  - name: noscale-peak
+    model: connections-rl-grpo-7b-noscale-peak   # ckpt NOSCALE_PEAK_STEP
+    temperature: 0.0

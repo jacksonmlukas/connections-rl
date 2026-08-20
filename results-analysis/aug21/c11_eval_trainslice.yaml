@@ -1,0 +1,13 @@
+# aug21 C1.1: base model on the prespecified 162-puzzle train-window slice.
+# Run in the SAME vLLM session as taskB2_eval_test.yaml, after
+# `python results-analysis/aug21/c1_shift_analysis.py prepare` has written
+# the puzzle subset file.
+puzzles: results-analysis/aug21/c11_train_slice_puzzles.json
+out_dir: results-analysis/aug21/c11-session
+n_resamples: 1000
+seed: 0
+
+arms:
+  - name: base-trainslice
+    model: Qwen/Qwen2.5-7B-Instruct
+    temperature: 0.0

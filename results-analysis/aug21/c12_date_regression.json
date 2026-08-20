@@ -1,0 +1,11 @@
+{
+ "task": "C1.2 groups-correct (0-4) regressed on publication date across the 162-item test split",
+ "method": "OLS slope in groups/year; percentile bootstrap over puzzles, random.Random(0), 10000 resamples",
+ "session": "session D (taskD-session; single vLLM session)",
+ "source": ["results-analysis/aug20/taskD-session/base/records.jsonl", "results-analysis/aug20/taskD-session/grpo-final/records.jsonl"],
+ "results": {
+  "base":       {"ols_slope_groups_per_year_0to4": -0.158418, "bootstrap95": [-0.633955, 0.292175], "n": 162, "B": 10000},
+  "grpo-final": {"ols_slope_groups_per_year_0to4":  0.035298, "bootstrap95": [-0.270531, 0.328879], "n": 162, "B": 10000}
+ },
+ "plain_statement": "Neither slope is distinguishable from zero: both 95% intervals straddle 0. Within the 5.5-month test window there is no detectable performance drift with puzzle date for the base model or the final GRPO policy."
+}

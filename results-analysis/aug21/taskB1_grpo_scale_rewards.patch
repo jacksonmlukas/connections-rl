@@ -1,0 +1,24 @@
+--- a/src/connections_rl/train/grpo.py
++++ b/src/connections_rl/train/grpo.py
+@@ apply inside the GRPOConfig(**compatible_config_kwargs(GRPOConfig, dict(...))) block,
+@@ e.g. immediately after the `beta=cfg.get("kl_beta", 0.04),` line:
++                # aug21 B1 ablation: only passed when the config sets it, so every
++                # existing config is bit-identical. Fails loudly if the installed
++                # TRL cannot honor it -- a silently dropped kwarg would make the
++                # ablation replicate the original run.
++                **(
++                    {"scale_rewards": cfg["scale_rewards"]}
++                    if "scale_rewards" in cfg
++                    else {}
++                ),
+
+Additionally, BEFORE the GRPOConfig construction insert the loud-fail guard:
+
++    if "scale_rewards" in cfg:
++        import inspect
++        if "scale_rewards" not in inspect.signature(GRPOConfig.__init__).parameters:
++            raise RuntimeError(
++                "config sets scale_rewards but this TRL version's GRPOConfig "
++                "does not accept it -- upgrade TRL; refusing to run an ablation "
++                "that would silently replicate the original."
++            )

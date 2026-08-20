@@ -1,0 +1,8 @@
+{
+ "task": "C1.3 stratum composition, train vs test",
+ "test": {"n": 162, "counts": {"category": 69, "cultural": 28, "tag-fillin": 40, "wordplay": 21, "silent-letter": 4},
+          "proportions": {"category": 0.4259, "cultural": 0.1728, "tag-fillin": 0.2469, "wordplay": 0.1296, "silent-letter": 0.0247},
+          "source": "results-analysis/aug20/taskD-session/base/records.jsonl strata field (identical in every arm's records)"},
+ "train": "PENDING: tags live only in gvc-local/data/puzzles/tagged_connections.json, which is currently unreadable through the device bridge (apparently iCloud-evicted; open/cat it once locally to materialize). c1_shift_analysis.py analyze computes this cell in-session; alternatively re-run it locally once the file reads.",
+ "status": "partial"
+}
