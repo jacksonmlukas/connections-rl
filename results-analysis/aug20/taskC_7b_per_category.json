@@ -1,0 +1,149 @@
+{
+ "task": "7B per-category groups-correct (0-4), session A, greedy",
+ "n_per_category": {
+  "category": 69,
+  "cultural": 28,
+  "tag-fillin": 40,
+  "wordplay": 21,
+  "silent-letter": 4
+ },
+ "arms": {
+  "base": {
+   "per_category": {
+    "category": {
+     "mean_0to4": 0.17391304347826086,
+     "ci_lo": 0.08695652173913043,
+     "ci_hi": 0.2753623188405797,
+     "n": 69
+    },
+    "cultural": {
+     "mean_0to4": 0.21428571428571427,
+     "ci_lo": 0.07142857142857142,
+     "ci_hi": 0.39285714285714285,
+     "n": 28
+    },
+    "tag-fillin": {
+     "mean_0to4": 0.175,
+     "ci_lo": 0.075,
+     "ci_hi": 0.3,
+     "n": 40
+    },
+    "wordplay": {
+     "mean_0to4": 0.047619047619047616,
+     "ci_lo": 0.0,
+     "ci_hi": 0.14285714285714285,
+     "n": 21
+    },
+    "silent-letter": {
+     "mean_0to4": 0.0,
+     "ci_lo": 0.0,
+     "ci_hi": 0.0,
+     "n": 4
+    }
+   },
+   "source": "results-7b/base/metrics.json -> summary.<stratum>.groups_correct (verified against records.jsonl)"
+  },
+  "sft": {
+   "per_category": {
+    "category": {
+     "mean_0to4": 0.36231884057971014,
+     "ci_lo": 0.2028985507246377,
+     "ci_hi": 0.5652173913043478,
+     "n": 69
+    },
+    "cultural": {
+     "mean_0to4": 0.35714285714285715,
+     "ci_lo": 0.10625000000000004,
+     "ci_hi": 0.75,
+     "n": 28
+    },
+    "tag-fillin": {
+     "mean_0to4": 0.325,
+     "ci_lo": 0.15,
+     "ci_hi": 0.5,
+     "n": 40
+    },
+    "wordplay": {
+     "mean_0to4": 0.38095238095238093,
+     "ci_lo": 0.14285714285714285,
+     "ci_hi": 0.6666666666666666,
+     "n": 21
+    },
+    "silent-letter": {
+     "mean_0to4": 0.0,
+     "ci_lo": 0.0,
+     "ci_hi": 0.0,
+     "n": 4
+    }
+   },
+   "source": "results-7b/sft/metrics.json -> summary.<stratum>.groups_correct (verified against records.jsonl)"
+  },
+  "grpo": {
+   "per_category": {
+    "category": {
+     "mean_0to4": 0.014492753623188406,
+     "ci_lo": 0.0,
+     "ci_hi": 0.043478260869565216,
+     "n": 69
+    },
+    "cultural": {
+     "mean_0to4": 0.07142857142857142,
+     "ci_lo": 0.0,
+     "ci_hi": 0.21428571428571427,
+     "n": 28
+    },
+    "tag-fillin": {
+     "mean_0to4": 0.025,
+     "ci_lo": 0.0,
+     "ci_hi": 0.1,
+     "n": 40
+    },
+    "wordplay": {
+     "mean_0to4": 0.0,
+     "ci_lo": 0.0,
+     "ci_hi": 0.0,
+     "n": 21
+    },
+    "silent-letter": {
+     "mean_0to4": 0.0,
+     "ci_lo": 0.0,
+     "ci_hi": 0.0,
+     "n": 4
+    }
+   },
+   "source": "results-7b/grpo/metrics.json -> summary.<stratum>.groups_correct (verified against records.jsonl)"
+  }
+ },
+ "base_to_grpo_delta": {
+  "category": {
+   "base": 0.17391304347826086,
+   "grpo": 0.014492753623188406,
+   "delta": -0.15942,
+   "relative_loss": -0.9167
+  },
+  "cultural": {
+   "base": 0.21428571428571427,
+   "grpo": 0.07142857142857142,
+   "delta": -0.142857,
+   "relative_loss": -0.6667
+  },
+  "tag-fillin": {
+   "base": 0.175,
+   "grpo": 0.025,
+   "delta": -0.15,
+   "relative_loss": -0.8571
+  },
+  "wordplay": {
+   "base": 0.047619047619047616,
+   "grpo": 0.0,
+   "delta": -0.047619,
+   "relative_loss": -1.0
+  },
+  "silent-letter": {
+   "base": 0.0,
+   "grpo": 0.0,
+   "delta": 0.0,
+   "relative_loss": null
+  }
+ }
+}

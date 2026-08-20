@@ -1,0 +1,67 @@
+{
+ "task": "1.5B groups-correct and solve rate, test split, greedy",
+ "scale_note": "groups_correct is a mean count on the 0-4 scale; CIs are the bootstrap tuples stored in the artifact (mean, lo, hi), seed 0 by harness default",
+ "session_A": {
+  "base": {
+   "groups_correct_0to4": [
+    0.006172839506172839,
+    0.0,
+    0.018518518518518517
+   ],
+   "solve_rate": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "source": "results/base/metrics.json -> summary.OVERALL"
+  },
+  "sft": {
+   "groups_correct_0to4": [
+    0.012345679012345678,
+    0.0,
+    0.030864197530864196
+   ],
+   "solve_rate": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "source": "results/sft/metrics.json -> summary.OVERALL"
+  },
+  "grpo": {
+   "groups_correct_0to4": [
+    0.006172839506172839,
+    0.0,
+    0.018518518518518517
+   ],
+   "solve_rate": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "source": "results/grpo/metrics.json -> summary.OVERALL"
+  }
+ },
+ "session_B": {
+  "sft": {
+   "groups_correct_0to4": 0.018518518518518517,
+   "solve_rate": 0.0,
+   "source": "results-seeds/seed_summary.json -> per_arm"
+  },
+  "grpo-seed0": {
+   "groups_correct_0to4": 0.006172839506172839,
+   "solve_rate": 0.0,
+   "source": "results-seeds/seed_summary.json -> per_arm"
+  },
+  "grpo-seed1": {
+   "groups_correct_0to4": 0.0,
+   "solve_rate": 0.0,
+   "source": "results-seeds/seed_summary.json -> per_arm"
+  },
+  "grpo-seed2": {
+   "groups_correct_0to4": 0.0,
+   "solve_rate": 0.0,
+   "source": "results-seeds/seed_summary.json -> per_arm"
+  }
+ }
+}

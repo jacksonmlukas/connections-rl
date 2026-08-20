@@ -1,0 +1,106 @@
+{
+ "task": "mean groups-correct (0-4) conditioned on structurally valid output",
+ "definition": "valid = records.jsonl invalid_format == false; mean of groups_correct over valid rows only",
+ "cells": [
+  {
+   "scale": "7B",
+   "session": "A",
+   "arm": "base",
+   "mean_groups_valid_only_0to4": 0.172185,
+   "n_valid": 151,
+   "n_total": 162,
+   "unconditional_mean_0to4": 0.160494,
+   "source": "results-7b/base/records.jsonl"
+  },
+  {
+   "scale": "7B",
+   "session": "A",
+   "arm": "sft",
+   "mean_groups_valid_only_0to4": 0.444444,
+   "n_valid": 126,
+   "n_total": 162,
+   "unconditional_mean_0to4": 0.345679,
+   "source": "results-7b/sft/records.jsonl"
+  },
+  {
+   "scale": "7B",
+   "session": "A",
+   "arm": "grpo-seed0",
+   "mean_groups_valid_only_0to4": 0.024845,
+   "n_valid": 161,
+   "n_total": 162,
+   "unconditional_mean_0to4": 0.024691,
+   "source": "results-7b/grpo/records.jsonl"
+  },
+  {
+   "scale": "1.5B",
+   "session": "A",
+   "arm": "base",
+   "mean_groups_valid_only_0to4": 0.009091,
+   "n_valid": 110,
+   "n_total": 162,
+   "unconditional_mean_0to4": 0.006173,
+   "source": "results/base/records.jsonl"
+  },
+  {
+   "scale": "1.5B",
+   "session": "A",
+   "arm": "sft",
+   "mean_groups_valid_only_0to4": 0.047619,
+   "n_valid": 42,
+   "n_total": 162,
+   "unconditional_mean_0to4": 0.012346,
+   "source": "results/sft/records.jsonl"
+  },
+  {
+   "scale": "1.5B",
+   "session": "A",
+   "arm": "grpo-seed0",
+   "mean_groups_valid_only_0to4": 0.006329,
+   "n_valid": 158,
+   "n_total": 162,
+   "unconditional_mean_0to4": 0.006173,
+   "source": "results/grpo/records.jsonl"
+  },
+  {
+   "scale": "7B",
+   "session": "B",
+   "arm": "sft",
+   "mean_groups_valid_only_0to4": 0.416,
+   "n_valid": 125,
+   "n_total": 162,
+   "unconditional_mean_0to4": 0.320988,
+   "source": "results-seeds-7b/sft/records.jsonl"
+  },
+  {
+   "scale": "7B",
+   "session": "B",
+   "arm": "grpo-seed0",
+   "mean_groups_valid_only_0to4": 0.024845,
+   "n_valid": 161,
+   "n_total": 162,
+   "unconditional_mean_0to4": 0.024691,
+   "source": "results-seeds-7b/grpo-seed0/records.jsonl"
+  },
+  {
+   "scale": "7B",
+   "session": "B",
+   "arm": "grpo-seed1",
+   "mean_groups_valid_only_0to4": 0.044025,
+   "n_valid": 159,
+   "n_total": 162,
+   "unconditional_mean_0to4": 0.04321,
+   "source": "results-seeds-7b/grpo-seed1/records.jsonl"
+  },
+  {
+   "scale": "7B",
+   "session": "B",
+   "arm": "grpo-seed2",
+   "mean_groups_valid_only_0to4": 0.06875,
+   "n_valid": 160,
+   "n_total": 162,
+   "unconditional_mean_0to4": 0.067901,
+   "source": "results-seeds-7b/grpo-seed2/records.jsonl"
+  }
+ ]
+}

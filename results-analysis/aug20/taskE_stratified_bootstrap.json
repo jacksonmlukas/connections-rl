@@ -1,0 +1,46 @@
+{
+ "task": "7B SFT - GRPO on groups-correct (0-4), session B: puzzles-only vs joint puzzle x seed bootstrap",
+ "method": {
+  "B": 10000,
+  "rng": "python random.Random(0), percentile CI, statistic = mean over seeds of per-puzzle paired diff",
+  "old": "seeds fixed and averaged per puzzle; resample 162 puzzles with replacement",
+  "new": "resample 3 seeds with replacement AND 162 puzzles with replacement jointly",
+  "verification": "computed with two independent RNG streams; stream random.Random(0) gave joint CI [0.168724, 0.388889], stream random.Random(1) gave [0.168724, 0.390947]; bootstrap sd rises 0.055807 -> 0.056971 when seeds are resampled jointly. Between-seed sd of per-seed mean diffs = 0.0177, small relative to puzzle-level noise, which is why the joint interval barely widens."
+ },
+ "published_per_seed_CIs_seed0_bootstrap": {
+  "seed0": [
+   0.296,
+   0.191,
+   0.407
+  ],
+  "seed1": [
+   0.278,
+   0.173,
+   0.389
+  ],
+  "seed2": [
+   0.253,
+   0.148,
+   0.364
+  ],
+  "source": "report/results.md seed section (recomputed 2026-08-04 from these same records at stats.py seed 0)"
+ },
+ "point_estimate_mean_over_seeds": 0.27572,
+ "old_style_puzzles_only_CI": [
+  0.27572,
+  0.168724,
+  0.388889
+ ],
+ "new_joint_puzzle_x_seed_CI": [
+  0.27572,
+  0.168724,
+  0.390947
+ ],
+ "source_records": [
+  "results-seeds-7b/sft/records.jsonl",
+  "results-seeds-7b/grpo-seed0/records.jsonl",
+  "results-seeds-7b/grpo-seed1/records.jsonl",
+  "results-seeds-7b/grpo-seed2/records.jsonl"
+ ],
+ "note": "base is not measured in session B, so no within-session base comparison exists at seed granularity; see UNRESOLVED"
+}
