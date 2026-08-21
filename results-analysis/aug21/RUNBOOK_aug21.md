@@ -8,10 +8,14 @@ difference is expected and is not to be "fixed."
 
 1. **Apply the B1 patch.** `src/connections_rl/train/grpo.py` builds GRPOConfig
    from a fixed kwargs dict — a `scale_rewards:` key in YAML is silently
-   ignored without the two insertions in `taskB1_grpo_scale_rewards.patch`
-   (one conditional kwarg + one loud-fail guard). Apply by hand (it is ~10
-   lines), commit on `analysis/aug21`, push. **Without this, B1 replicates the
-   original run and reports it as an ablation.**
+   ignored without the three insertions in `taskB1_grpo_scale_rewards.patch`
+   (conditional kwarg + signature guard + **read-back verification off the
+   constructed GRPOConfig**, which aborts on mismatch and prints the resolved
+   value plus the TRL version — R3a). Apply by hand (~20 lines), commit on
+   `analysis/aug21`, push. **Without this, B1 replicates the original run and
+   reports it as an ablation.** The notebook's cell 2 applies the same three
+   insertions in-session if the branch copy is missing any of them, and cell
+   2b runs the handoff's dry check — do not launch training until it passes.
 2. `cat ~/Desktop/gvc-local/data/puzzles/tagged_connections.json > /dev/null`
    — the file is iCloud-evicted and unreadable through the bridge; this
    materializes it (needed for the C1.3 train-side cell).
@@ -84,7 +88,13 @@ python -m connections_rl.eval.run --config results-analysis/aug21/c11_eval_train
 python results-analysis/aug21/c2_capture_generations.py
 python results-analysis/aug21/taskB2_paired.py
 python results-analysis/aug21/c1_shift_analysis.py analyze
+python results-analysis/aug21/r_map_deliverables.py   # exact data/ paths + R6 26/77/4 gate
 ```
+
+(The R6 captures come free with the eval: `taskB2_eval_test.yaml` sets
+`capture_generations: true`, an opt-in harness flag — default off everywhere
+else — that writes `<arm>/generations.jsonl` per puzzle as
+`{"puzzle_id","prompt","generation","groups_correct","valid"}`.)
 
 ## 5. C2 judging (CPU anywhere, needs OPENROUTER_API_KEY; a couple of dollars)
 
@@ -99,16 +109,22 @@ python results-analysis/aug21/c2_judge_openrouter.py
 pip install wandb && python results-analysis/aug21/b3_wandb_export.py
 ```
 
-The printed `final _step` for the 1.5B v2 run settles 403-vs-806.
+Writes `data/wandb_train_reward.csv` (R1: raw `scan_history` rows, unsmoothed)
+and `data/step_count_1p5b.json` (R2: the final logged `_step` settles
+403-vs-806; if W&B lacks the run the script says so and writes nothing —
+the number is never inferred from the config).
 
 ## 7. Persist
 
 ```bash
-zip -qr aug21-outputs.zip results-analysis/aug21
+zip -qr aug21-outputs.zip results-analysis/aug21 data -x 'data/splits/*'
 python - <<'PY'
 from huggingface_hub import HfApi
 HfApi().upload_folder(folder_path="results-analysis/aug21",
     repo_id="jacksonlukas/connections-rl-results", repo_type="dataset", path_in_repo="aug21")
+HfApi().upload_folder(folder_path="data",
+    repo_id="jacksonlukas/connections-rl-results", repo_type="dataset",
+    path_in_repo="aug21/data", ignore_patterns=["splits/*"])
 PY
 ```
 

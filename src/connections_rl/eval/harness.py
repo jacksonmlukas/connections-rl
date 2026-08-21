@@ -129,36 +129,66 @@ def evaluate_arm(
     puzzles: Sequence[Puzzle],
     reward_config: RewardConfig | None = None,
     prompt_seed: int | None = None,
+    capture_path: str | Path | None = None,
 ) -> ArmResult:
     """Run ``solver`` over ``puzzles`` and score every completion.
 
     Solver exceptions are recorded as invalid completions rather than
     aborting the run (matches gvc-local's harness behaviour).
+
+    ``capture_path`` is opt-in (default ``None`` — behaviour is unchanged):
+    when set, the raw completion text of every puzzle is additionally written
+    to that path as JSONL rows ``{"puzzle_id", "prompt", "generation",
+    "groups_correct", "valid"}``, where ``prompt`` is the JSON-serialized chat
+    message list actually sent to the solver (the chat-template rendering
+    happens server-side, so the message list is the faithful record).
     """
     if reward_config is None:
         reward_config = RewardConfig()
     result = ArmResult(arm=arm)
-    for p in puzzles:
-        start = time.perf_counter()
-        try:
-            completion = solver(build_chat(p, seed=prompt_seed))
-        except Exception:
-            completion = ""
-        latency_ms = (time.perf_counter() - start) * 1000
-        br = reward_breakdown(completion, p.words, p.answer_sets, reward_config)
-        result.records.append(
-            PuzzleRecord(
-                puzzle_id=p.puzzle_id,
-                date=p.date,
-                strata=p.strata,
-                solved=br.solved,
-                groups_correct=br.correct_groups,
-                one_away=br.correct_groups == 3 and br.one_away_groups >= 1,
-                invalid_format=not br.valid,
-                reward=br.total,
-                latency_ms=latency_ms,
+    capture_f = None
+    if capture_path is not None:
+        Path(capture_path).parent.mkdir(parents=True, exist_ok=True)
+        capture_f = open(capture_path, "w", encoding="utf-8")
+    try:
+        for p in puzzles:
+            start = time.perf_counter()
+            messages = build_chat(p, seed=prompt_seed)
+            try:
+                completion = solver(messages)
+            except Exception:
+                completion = ""
+            latency_ms = (time.perf_counter() - start) * 1000
+            br = reward_breakdown(completion, p.words, p.answer_sets, reward_config)
+            result.records.append(
+                PuzzleRecord(
+                    puzzle_id=p.puzzle_id,
+                    date=p.date,
+                    strata=p.strata,
+                    solved=br.solved,
+                    groups_correct=br.correct_groups,
+                    one_away=br.correct_groups == 3 and br.one_away_groups >= 1,
+                    invalid_format=not br.valid,
+                    reward=br.total,
+                    latency_ms=latency_ms,
+                )
             )
-        )
+            if capture_f is not None:
+                capture_f.write(
+                    json.dumps(
+                        {
+                            "puzzle_id": p.puzzle_id,
+                            "prompt": json.dumps(messages),
+                            "generation": completion,
+                            "groups_correct": br.correct_groups,
+                            "valid": br.valid,
+                        }
+                    )
+                    + "\n"
+                )
+    finally:
+        if capture_f is not None:
+            capture_f.close()
     return result
 
 

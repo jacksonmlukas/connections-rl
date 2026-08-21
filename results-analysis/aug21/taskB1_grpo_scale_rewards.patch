@@ -1,18 +1,14 @@
 --- a/src/connections_rl/train/grpo.py
 +++ b/src/connections_rl/train/grpo.py
-@@ apply inside the GRPOConfig(**compatible_config_kwargs(GRPOConfig, dict(...))) block,
-@@ e.g. immediately after the `beta=cfg.get("kl_beta", 0.04),` line:
-+                # aug21 B1 ablation: only passed when the config sets it, so every
-+                # existing config is bit-identical. Fails loudly if the installed
-+                # TRL cannot honor it -- a silently dropped kwarg would make the
-+                # ablation replicate the original run.
-+                **(
-+                    {"scale_rewards": cfg["scale_rewards"]}
-+                    if "scale_rewards" in cfg
-+                    else {}
-+                ),
+@@ Three insertions around the GRPOConfig construction (~lines 229-273).
+@@ R3a requirement: the flag must be settable AND verifiable, with the
+@@ verification read back off the CONSTRUCTED GRPOConfig object -- the defect
+@@ being guarded against is a value that is accepted and then discarded
+@@ downstream (fixed kwargs dict; version-compat filter). Abort loudly on
+@@ mismatch; print the resolved value plus the TRL version at startup.
 
-Additionally, BEFORE the GRPOConfig construction insert the loud-fail guard:
+(1) BEFORE `grpo_config = GRPOConfig(` insert the signature guard (fast fail
+    before any model download):
 
 +    if "scale_rewards" in cfg:
 +        import inspect
@@ -22,3 +18,48 @@ Additionally, BEFORE the GRPOConfig construction insert the loud-fail guard:
 +                "does not accept it -- upgrade TRL; refusing to run an ablation "
 +                "that would silently replicate the original."
 +            )
+
+(2) Inside the kwargs dict, immediately after the
+    `beta=cfg.get("kl_beta", 0.04),` line:
+
++                # aug21 B1 ablation: only passed when the config sets it, so
++                # every existing config is bit-identical.
++                **(
++                    {"scale_rewards": cfg["scale_rewards"]}
++                    if "scale_rewards" in cfg
++                    else {}
++                ),
+
+(3) AFTER the closing `)` of the `grpo_config = GRPOConfig(...)` assignment,
+    the read-back verification (this is the guard that actually counts --
+    (1) and (2) can both succeed while the value is normalized or dropped):
+
++    if "scale_rewards" in cfg:
++        import trl
++        _requested = cfg["scale_rewards"]
++        _resolved = getattr(grpo_config, "scale_rewards", "<attribute missing>")
++        print(
++            f"[B1 scale_rewards] trl={trl.__version__}  "
++            f"requested={_requested!r}  resolved on GRPOConfig={_resolved!r}"
++        )
++        if _resolved != _requested:
++            raise RuntimeError(
++                f"GRPOConfig resolved scale_rewards to {_resolved!r}, not the "
++                f"requested {_requested!r} (trl {trl.__version__}). Refusing to "
++                "train: the run would not be the ablation it claims to be. If "
++                "this TRL normalizes False to a string ('none'), that is a "
++                "deliberate decision for the owner to make and record -- pin a "
++                "TRL version where the dry check passes, or update the config "
++                "and this guard together, never silently."
++            )
+
+Dry check (from the R-handoff) to run BEFORE committing GPU hours -- also in
+the notebook as its own cell:
+
+    import inspect, trl
+    from trl import GRPOConfig
+    p = inspect.signature(GRPOConfig.__init__).parameters
+    print("trl:", trl.__version__, "| accepts scale_rewards:", "scale_rewards" in p)
+    c = GRPOConfig(output_dir="/tmp/_probe", scale_rewards=False)
+    assert getattr(c, "scale_rewards", None) is False, "FLAG DOES NOT STICK -- do not launch"
+    print("OK -- safe to launch")

@@ -60,6 +60,7 @@ def run_full(config_path: str) -> None:
     if cfg.get("per_stratum"):
         puzzles = stratified_subsample(puzzles, cfg["per_stratum"], seed=cfg.get("seed", 0))
     results: dict[str, ArmResult] = {}
+    out_root = Path(cfg.get("out_dir", "results"))
     for arm in cfg["arms"]:
         solver = endpoint_solver(
             model=arm["model"],
@@ -67,7 +68,16 @@ def run_full(config_path: str) -> None:
             temperature=arm.get("temperature", 0.0),
             max_tokens=arm.get("max_tokens", 1024),
         )
-        res = evaluate_arm(arm["name"], solver, puzzles)
+        # Opt-in (default off, behaviour unchanged): `capture_generations: true`
+        # in the config writes <out_dir>/<arm>/generations.jsonl alongside the
+        # scores — records.jsonl keeps scores only and the text is otherwise
+        # discarded.
+        capture_path = (
+            out_root / arm["name"] / "generations.jsonl"
+            if cfg.get("capture_generations")
+            else None
+        )
+        res = evaluate_arm(arm["name"], solver, puzzles, capture_path=capture_path)
         res.save(Path(cfg.get("out_dir", "results")) / arm["name"], cfg.get("n_resamples", 1000))
         _print_summary(res)
         results[arm["name"]] = res

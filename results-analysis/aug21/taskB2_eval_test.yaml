@@ -6,6 +6,10 @@ puzzles: data/splits/puzzles_test.json
 out_dir: results-analysis/aug21/evalB-session
 n_resamples: 1000
 seed: 0
+# R6: opt-in harness flag (default off elsewhere) — writes
+# <out_dir>/<arm>/generations.jsonl with
+# {"puzzle_id","prompt","generation","groups_correct","valid"} per puzzle.
+capture_generations: true
 
 arms:
   - name: base

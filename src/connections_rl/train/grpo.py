@@ -231,6 +231,15 @@ def main(argv: list[str] | None = None) -> None:
     train_ds = build_dataset(load_puzzle_split(cfg["split_dir"], "train"))
     reward_config = RewardConfig(**cfg.get("reward", {}))
 
+    if "scale_rewards" in cfg:
+        import inspect
+        if "scale_rewards" not in inspect.signature(GRPOConfig.__init__).parameters:
+            raise RuntimeError(
+                "config sets scale_rewards but this TRL version's GRPOConfig "
+                "does not accept it -- upgrade TRL; refusing to run an ablation "
+                "that would silently replicate the original."
+            )
+
     grpo_config = GRPOConfig(
         **compatible_config_kwargs(
             GRPOConfig,
@@ -243,6 +252,7 @@ def main(argv: list[str] | None = None) -> None:
                 max_completion_length=cfg.get("max_completion_length", 512),
                 temperature=cfg.get("temperature", 0.9),
                 beta=cfg.get("kl_beta", 0.04),  # KL penalty to the reference policy
+                **({"scale_rewards": cfg["scale_rewards"]} if "scale_rewards" in cfg else {}),
                 learning_rate=float(cfg.get("lr", 1e-6)),
                 per_device_train_batch_size=cfg.get("batch_size", 2),
                 gradient_accumulation_steps=cfg.get("grad_accum", 8),
@@ -276,6 +286,19 @@ def main(argv: list[str] | None = None) -> None:
             ),
         )
     )
+    if "scale_rewards" in cfg:
+        import trl
+        _requested = cfg["scale_rewards"]
+        _resolved = getattr(grpo_config, "scale_rewards", "<attribute missing>")
+        print(f"[B1 scale_rewards] trl={trl.__version__}  "
+              f"requested={_requested!r}  resolved on GRPOConfig={_resolved!r}")
+        if _resolved != _requested:
+            raise RuntimeError(
+                f"GRPOConfig resolved scale_rewards to {_resolved!r}, not the "
+                f"requested {_requested!r} (trl {trl.__version__}). Refusing to "
+                "train: the run would not be the ablation it claims to be."
+            )
+
     # Cross-session resume: pull the latest checkpoint from the Hub before
     # looking locally, and mirror every new checkpoint back to the Hub.
     callbacks = []
