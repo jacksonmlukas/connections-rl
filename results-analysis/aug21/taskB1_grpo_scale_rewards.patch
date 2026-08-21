@@ -42,24 +42,35 @@
 +            f"[B1 scale_rewards] trl={trl.__version__}  "
 +            f"requested={_requested!r}  resolved on GRPOConfig={_resolved!r}"
 +        )
-+        if _resolved != _requested:
++        # TRL >= bool->str migration normalizes in GRPOConfig.__post_init__:
++        #   {True: "group", False: "none"}  (verified verbatim in trl v1.10.0
++        #   trl/trainer/grpo_config.py, 2026-08-21). That documented pair is
++        #   the ONLY accepted difference; anything else -- e.g. the "group"
++        #   default surviving -- still aborts.
++        _equivalent = {_requested, {True: "group", False: "none"}.get(_requested, _requested)}
++        if _resolved not in _equivalent:
 +            raise RuntimeError(
 +                f"GRPOConfig resolved scale_rewards to {_resolved!r}, not the "
-+                f"requested {_requested!r} (trl {trl.__version__}). Refusing to "
-+                "train: the run would not be the ablation it claims to be. If "
-+                "this TRL normalizes False to a string ('none'), that is a "
-+                "deliberate decision for the owner to make and record -- pin a "
-+                "TRL version where the dry check passes, or update the config "
-+                "and this guard together, never silently."
++                f"requested {_requested!r} or its documented normalization "
++                f"(trl {trl.__version__}). Refusing to train: the run would "
++                "not be the ablation it claims to be."
 +            )
 
-Dry check (from the R-handoff) to run BEFORE committing GPU hours -- also in
-the notebook as its own cell:
+Dry check to run BEFORE committing GPU hours -- also in the notebook as cell
+2b. NOTE: this is the R-handoff's snippet with one deliberate change, recorded
+here: the handoff asserted `is False`, which false-fails on any TRL at or past
+the bool->str migration (v1.10.0's __post_init__ maps False -> "none"; "none"
+IS the flag sticking). The assert accepts exactly that documented pair:
 
     import inspect, trl
     from trl import GRPOConfig
     p = inspect.signature(GRPOConfig.__init__).parameters
     print("trl:", trl.__version__, "| accepts scale_rewards:", "scale_rewards" in p)
     c = GRPOConfig(output_dir="/tmp/_probe", scale_rewards=False)
-    assert getattr(c, "scale_rewards", None) is False, "FLAG DOES NOT STICK -- do not launch"
+    default = GRPOConfig(output_dir="/tmp/_probe2").scale_rewards
+    print("requested False -> resolved:", repr(c.scale_rewards), "| default:", repr(default))
+    assert c.scale_rewards in (False, "none"), "FLAG DOES NOT STICK -- do not launch"
     print("OK -- safe to launch")
+
+The printed default doubles as the version-pinned evidence for the paper's
+"scale_rewards='group' is the inherited TRL default" claim.

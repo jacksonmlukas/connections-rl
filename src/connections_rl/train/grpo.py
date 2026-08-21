@@ -292,11 +292,18 @@ def main(argv: list[str] | None = None) -> None:
         _resolved = getattr(grpo_config, "scale_rewards", "<attribute missing>")
         print(f"[B1 scale_rewards] trl={trl.__version__}  "
               f"requested={_requested!r}  resolved on GRPOConfig={_resolved!r}")
-        if _resolved != _requested:
+        # TRL >= bool->str migration normalizes in GRPOConfig.__post_init__:
+        #   {True: "group", False: "none"}  (verified verbatim in trl v1.10.0
+        #   trl/trainer/grpo_config.py). That documented pair is the ONLY
+        #   accepted difference; anything else (e.g. the "group" default
+        #   surviving) still aborts.
+        _equivalent = {_requested, {True: "group", False: "none"}.get(_requested, _requested)}
+        if _resolved not in _equivalent:
             raise RuntimeError(
                 f"GRPOConfig resolved scale_rewards to {_resolved!r}, not the "
-                f"requested {_requested!r} (trl {trl.__version__}). Refusing to "
-                "train: the run would not be the ablation it claims to be."
+                f"requested {_requested!r} or its documented normalization "
+                f"(trl {trl.__version__}). Refusing to train: the run would "
+                "not be the ablation it claims to be."
             )
 
     # Cross-session resume: pull the latest checkpoint from the Hub before
