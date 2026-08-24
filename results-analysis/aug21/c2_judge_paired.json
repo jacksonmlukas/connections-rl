@@ -1,0 +1,65 @@
+{
+ "provenance": {
+  "judged_texts": "results-analysis/aug21/c2_generations.json (aug21 session, second greedy pass; truth on judged texts 27/79/4 of 648)",
+  "scores": "results-analysis/aug21/c2_judge_results.json raw_scores (162/162 parsed for every judge x arm)",
+  "estimator": "connections_rl.eval.stats.paired_bootstrap_diff, n_resamples=1000, seed=0",
+  "scale": "blind judge rating 1-10, no answer key",
+  "judge_config": {
+   "max_tokens": 2048,
+   "reasoning_effort": "low"
+  }
+ },
+ "comparisons": {
+  "openai/gpt-5-mini": {
+   "step50_minus_base": [
+    0.35802469135802467,
+    0.18518518518518517,
+    0.5493827160493827
+   ],
+   "step50_minus_final": [
+    0.5987654320987654,
+    0.4382716049382716,
+    0.7841049382716049
+   ],
+   "base_minus_final": [
+    0.24074074074074073,
+    0.12962962962962962,
+    0.352006172839506
+   ]
+  },
+  "google/gemini-2.5-flash": {
+   "step50_minus_base": [
+    1.6851851851851851,
+    1.2219135802469137,
+    2.1606481481481477
+   ],
+   "step50_minus_final": [
+    3.253086419753086,
+    2.814814814814815,
+    3.672993827160494
+   ],
+   "base_minus_final": [
+    1.5679012345679013,
+    1.154320987654321,
+    1.96929012345679
+   ]
+  },
+  "anthropic/claude-sonnet-4-5": {
+   "step50_minus_base": [
+    0.845679012345679,
+    0.5615740740740741,
+    1.1421296296296295
+   ],
+   "step50_minus_final": [
+    1.617283950617284,
+    1.333179012345679,
+    1.8950617283950617
+   ],
+   "base_minus_final": [
+    0.7716049382716049,
+    0.5555555555555556,
+    0.9692901234567899
+   ]
+  }
+ }
+}

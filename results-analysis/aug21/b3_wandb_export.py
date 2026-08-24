@@ -21,8 +21,6 @@ from pathlib import Path
 
 import wandb
 
-ENTITY = None  # default entity of the logged-in user
-PROJECT_CANDIDATES = ["connections-rl"]
 NAME_HINTS = {"7b": "connections-rl-grpo-qwen7b-v1", "1.5b": "connections-rl-grpo-qwen1.5b-v2"}
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -30,17 +28,33 @@ DATA = ROOT / "data"
 DATA.mkdir(exist_ok=True)
 
 api = wandb.Api()
+entity = api.default_entity
+# The training script sets run_name but never a W&B project, so the runs land
+# in whatever project the logger defaulted to (TRL/transformers commonly use
+# 'huggingface'). Enumerate ALL projects and search every one; print anything
+# that even mentions connections/grpo so a near-miss name is visible.
+projects = [p.name for p in api.projects(entity)]
+print(f"W&B entity {entity!r}, projects: {projects}")
 matches: dict[str, list] = {tag: [] for tag in NAME_HINTS}
-for proj in PROJECT_CANDIDATES:
+near_misses = []
+for proj in projects:
     try:
-        runs = list(api.runs(f"{ENTITY + '/' if ENTITY else ''}{proj}"))
+        runs = list(api.runs(f"{entity}/{proj}"))
     except Exception as e:
         print(f"project {proj!r}: {e}")
         continue
     for run in runs:
+        nm = run.name or ""
         for tag, hint in NAME_HINTS.items():
-            if hint in (run.name or ""):
+            if hint in nm:
                 matches[tag].append(run)
+        if "connections" in nm.lower() or "grpo" in nm.lower():
+            near_misses.append(
+                f"  {proj}/{nm} (id {run.id}, state {run.state}, "
+                f"final _step {run.summary.get('_step')})"
+            )
+print("runs mentioning connections/grpo across all projects:")
+print("\n".join(near_misses) if near_misses else "  none")
 
 for tag, ms in matches.items():
     if len(ms) > 1:

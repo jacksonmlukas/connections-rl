@@ -33,3 +33,4 @@ data/splits/
 
 # Secrets
 .env
+results-analysis/aug21/c2_judge_scores_partial.json
