@@ -11,7 +11,7 @@ R2 -> data/step_count_1p5b.json     ({"final_step","epochs_logged",
 
 If a run cannot be found, this script says so plainly and writes nothing for
 that item. Multiple name matches abort rather than pick silently.
-Edit ENTITY/PROJECT_CANDIDATES/NAME_HINTS if the naming differs.
+Run ids are pinned in RUN_IDS (resolved 2026-08-24; see comment there).
 """
 
 import csv
@@ -21,7 +21,15 @@ from pathlib import Path
 
 import wandb
 
-NAME_HINTS = {"7b": "connections-rl-grpo-qwen7b-v1", "1.5b": "connections-rl-grpo-qwen1.5b-v2"}
+# Resolved 2026-08-24 from the all-projects enumeration: the trainer sets
+# run_name but no W&B project, so everything lives in project 'huggingface'.
+# The 1.5B v2 name matched THREE runs; the two others are dead starts (state
+# failed, _step 1). Explicit ids, chosen for that recorded reason:
+RUN_IDS = {
+    "7b": "odyc3xnk",     # connections-rl-grpo-qwen7b-v1, finished
+    "1.5b": "8ynmbuda",   # connections-rl-grpo-qwen1.5b-v2, finished
+}
+PROJECT = "huggingface"
 
 ROOT = Path(__file__).resolve().parents[2]
 DATA = ROOT / "data"
@@ -29,61 +37,54 @@ DATA.mkdir(exist_ok=True)
 
 api = wandb.Api()
 entity = api.default_entity
-# The training script sets run_name but never a W&B project, so the runs land
-# in whatever project the logger defaulted to (TRL/transformers commonly use
-# 'huggingface'). Enumerate ALL projects and search every one; print anything
-# that even mentions connections/grpo so a near-miss name is visible.
-projects = [p.name for p in api.projects(entity)]
-print(f"W&B entity {entity!r}, projects: {projects}")
-matches: dict[str, list] = {tag: [] for tag in NAME_HINTS}
-near_misses = []
-for proj in projects:
+matches: dict[str, list] = {}
+for tag, rid in RUN_IDS.items():
     try:
-        runs = list(api.runs(f"{entity}/{proj}"))
-    except Exception as e:
-        print(f"project {proj!r}: {e}")
-        continue
-    for run in runs:
-        nm = run.name or ""
-        for tag, hint in NAME_HINTS.items():
-            if hint in nm:
-                matches[tag].append(run)
-        if "connections" in nm.lower() or "grpo" in nm.lower():
-            near_misses.append(
-                f"  {proj}/{nm} (id {run.id}, state {run.state}, "
-                f"final _step {run.summary.get('_step')})"
-            )
-print("runs mentioning connections/grpo across all projects:")
-print("\n".join(near_misses) if near_misses else "  none")
-
-for tag, ms in matches.items():
-    if len(ms) > 1:
-        sys.exit(
-            f"ABORT: {len(ms)} runs match the {tag} hint "
-            f"({[r.name + ' ' + r.id for r in ms]}); disambiguate NAME_HINTS "
-            f"rather than letting the script pick one silently."
+        run = api.run(f"{entity}/{PROJECT}/{rid}")
+        matches[tag] = [run]
+        # W&B's _step counts wandb.log calls, NOT optimizer steps (the 7B run
+        # shows _step 11364 with checkpoints ending at 403). The trainer step
+        # is train/global_step.
+        print(
+            f"{tag}: {run.name} (id {run.id}, state {run.state}) "
+            f"train/global_step={run.summary.get('train/global_step')} "
+            f"train/epoch={run.summary.get('train/epoch')} _step={run.summary.get('_step')}"
         )
+    except Exception as e:
+        matches[tag] = []
+        print(f"{tag}: run {rid} not fetchable: {e}")
+
+
+def trainer_step_column(rows):
+    for k in ("train/global_step", "global_step"):
+        if any(k in r for r in rows):
+            return k
+    return None
 
 # ---- R1: 7B training-reward series, raw rows --------------------------------
 if not matches["7b"]:
-    print(
-        "R1: W&B does not have a run matching the 7B hint "
-        f"{NAME_HINTS['7b']!r} in {PROJECT_CANDIDATES}. Saying so plainly; "
-        "no CSV written."
-    )
+    print("R1: the 7B run could not be fetched. Saying so plainly; no CSV written.")
 else:
     run = matches["7b"][0]
     # scan_history returns EVERY logged row; run.history() samples ~500 points
     # and would violate the raw-rows requirement.
     rows = list(run.scan_history())
+    step_col = trainer_step_column(rows)
+    keep = {"_step", "train/epoch", "epoch"} | ({step_col} if step_col else set())
     keys: list[str] = []
     for r in rows:
         for k in r:
-            if k not in keys and (k == "_step" or "reward" in k.lower()):
+            if k not in keys and (k in keep or "reward" in k.lower()):
                 keys.append(k)
     if "_step" not in keys:
         sys.exit("ABORT R1: no _step column in the run history — inspect the run by hand.")
-    keys.sort(key=lambda k: (k != "_step", k))  # _step first
+    if step_col is None:
+        print(
+            "R1 WARNING: no train/global_step column in the history — the CSV "
+            "carries only _step (a log-call counter, NOT the optimizer step); "
+            "the figure's x-axis needs mapping before use."
+        )
+    keys.sort(key=lambda k: (k != "_step", k != step_col, k))  # steps first
     out_csv = DATA / "wandb_train_reward.csv"
     with open(out_csv, "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=keys, extrasaction="ignore")
@@ -107,21 +108,33 @@ else:
 # ---- R2: 1.5B final step ----------------------------------------------------
 if not matches["1.5b"]:
     print(
-        "R2: W&B does not have a run matching the 1.5B hint "
-        f"{NAME_HINTS['1.5b']!r} in {PROJECT_CANDIDATES}. Per the handoff: "
-        "saying that plainly, and NOT inferring the number from the config. "
-        "No JSON written."
+        "R2: the 1.5B run could not be fetched. Per the handoff: saying that "
+        "plainly, and NOT inferring the number from the config. No JSON written."
     )
 else:
     run = matches["1.5b"][0]
-    final_step = run.summary.get("_step")
+    final_step = run.summary.get("train/global_step")
     epochs = run.summary.get("train/epoch", run.summary.get("epoch"))
+    source = "summary train/global_step"
     if final_step is None:
-        sys.exit("ABORT R2: run found but summary has no _step — inspect the run by hand.")
+        # fall back to the last logged trainer step in the raw history
+        hist = list(run.scan_history())
+        col = trainer_step_column(hist)
+        if col is None:
+            sys.exit(
+                "ABORT R2: neither the summary nor the history carries "
+                "train/global_step — _step is a log-call counter and does NOT "
+                "answer 403-vs-806; inspect the run by hand."
+            )
+        final_step = max(r[col] for r in hist if r.get(col) is not None)
+        if epochs is None:
+            epochs = max((r.get("train/epoch") for r in hist if r.get("train/epoch") is not None), default=None)
+        source = f"max {col} over the raw scan_history rows"
     verdict = (
-        f"{int(final_step)} — settled by the final logged _step of the W&B run "
-        f"({run.name}, state {run.state}); the config's epochs field does not "
-        f"override what was actually logged."
+        f"{int(final_step)} — settled by {source} of W&B run {run.name} "
+        f"(id {run.id}, state {run.state}, project {PROJECT}); chosen over two "
+        f"same-named dead starts (failed, _step 1). W&B _step "
+        f"({run.summary.get('_step')}) is a log-call counter and was not used."
     )
     out_json = DATA / "step_count_1p5b.json"
     out_json.write_text(
