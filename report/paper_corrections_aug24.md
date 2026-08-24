@@ -139,8 +139,23 @@ diff on ids 917, 949); `c2_generations.json` vs
 
 Sources: `results-analysis/aug21/ckpt-curve-7b-noscale.json`,
 `data/b1_noscale_test_metrics.json`, `data/b1_noscale_peak_test.json`,
-`evalB-session/paired_groups.json`, `session-trl-version.txt`. (The noscale
-entropy/KL trajectory is still pending — `entropy_kaggle.ipynb`.)
+`evalB-session/paired_groups.json`, `session-trl-version.txt`.
+
+**Companion sentence — the entropy/KL trajectory also replicates:**
+
+> The dynamics match as well: without reward scaling, policy entropy falls
+> 0.2111 (step 50) → 0.1346 (100) → 0.0128 (150) and stays near 0.011
+> through step 403 (the original run's endpoint: 0.0099 nats/token), while
+> KL from the SFT init rises 2.75 → 17.84 → 45.64 nats per sequence and
+> plateaus near 46 (original: 47.05); on the same n=100 validation sample,
+> semantic score reads 35/400, 17/400, then 2/400 from step 150 onward as
+> structural validity climbs from 0.70 to 0.96.
+
+Source: `data/b1_noscale_ckpt_curve.json` (n_puzzles=100 in every row;
+mirrored at `aug21/entropy-kl-7b-noscale.json`). Internal control: the base
+row reproduces the original series' base sample exactly (42.5952008 nats/seq
+over the same 9,766 tokens — `entropy_kl` seeds per puzzle id, so both runs
+sampled identical base generations).
 
 ## Ready-to-paste addition B — the blind-judge row (JUDGe)
 
