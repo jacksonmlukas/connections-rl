@@ -4,6 +4,24 @@ Three required corrections, one conditional, and two ready-to-paste additions.
 Every number carries its count and source artifact; session labels are part of
 the sentence wherever a comparison could otherwise be read cross-session.
 
+**Two standing rules for every sentence in the paper (v2 of this memo,
+after review):**
+
+1. **Name the sweep in every validation-score sentence.** There are two
+   validation measurements and they never share a label: the **greedy n=108
+   checkpoint sweep** (`checkpoint_curve`; denominators of 432) and the
+   **n=100 temperature-0.9 entropy sweep** (`entropy_kl`; denominators of
+   400). Trap to avoid: noscale step-50 on the n=100 sweep is 35/400 —
+   numerically identical to the ORIGINAL run's step-100 on that same sweep,
+   and the numeral 35 also appears as noscale step-100 on the n=108 sweep
+   (35/432). Same digits, three different facts.
+2. **Name the serving session in every step-50 sentence.** The step-50
+   checkpoint has two test counts: 77/648 (aug20 Task D — the published
+   headline) and 80/648 (aug21 evalB — the session the step-100 comparison
+   ran in). The step-100 comparison uses the aug21 pair (80 vs 76); the
+   headline stays aug20 (77). Never put 77 and 76 in one sentence — the
+   4-group within-session difference would silently read as 1.
+
 ---
 
 ## Correction 1 — training-reward saturation is at step 125, at the ceiling (R1)
@@ -34,7 +52,12 @@ Trajectory: 0.2125 (step 5) → 0.5519 (50) → 0.9931 (100) → 1.5206 (120) �
 > and averages 0.946 over the remainder of training: from step 125 onward the
 > optimizer receives no learning signal on nearly every prompt.
 
-Same source CSV, column `train/frac_reward_zero_std`.
+Same source CSV, column `train/frac_reward_zero_std`. **Describe this; do not
+explain past it.** What drives the remaining 278 steps of movement (entropy
+falling to ~0.011, KL to ~46 nats/seq) while ~95% of prompts carry zero
+advantage is an open question — plausibly the ~5% of prompts that still carry
+signal, compounded, but that is unmeasured. Report the diagnostic and the
+trajectory side by side without asserting the causal chain between them.
 
 **Optional abstract strengthening** (only if the abstract currently reads
 "the training reward does not record the reversal"):
@@ -128,8 +151,9 @@ diff on ids 917, 949); `c2_generations.json` vs
 > advantages (`scale_rewards="group"`, the TRL default — verified as the
 > default in trl 1.10.0, whose `GRPOConfig.__post_init__` normalizes
 > `False` to `"none"`), we repeated the 7B run identically except with
-> reward scaling disabled. The signature is unchanged: validation semantic
-> score rises to 62/432 at step 50, falls to 35/432 by step 100 and 4/432 by
+> reward scaling disabled. The signature is unchanged on the greedy n=108
+> checkpoint sweep: validation semantic score rises to 62/432 at step 50,
+> falls to 35/432 by step 100 and 4/432 by
 > step 150; on test, the final policy recovers 7/648 groups (0.0432 [0.0123,
 > 0.0804]) — below base by −0.1173 [−0.1790, −0.0556] paired (n=162, seed 0)
 > — while its validation-selected peak (step 50, frozen before any test
@@ -147,9 +171,10 @@ Sources: `results-analysis/aug21/ckpt-curve-7b-noscale.json`,
 > 0.2111 (step 50) → 0.1346 (100) → 0.0128 (150) and stays near 0.011
 > through step 403 (the original run's endpoint: 0.0099 nats/token), while
 > KL from the SFT init rises 2.75 → 17.84 → 45.64 nats per sequence and
-> plateaus near 46 (original: 47.05); on the same n=100 validation sample,
-> semantic score reads 35/400, 17/400, then 2/400 from step 150 onward as
-> structural validity climbs from 0.70 to 0.96.
+> plateaus near 46 (original: 47.05); on the n=100 temperature-0.9 entropy
+> sweep — a different measurement from the greedy n=108 checkpoint sweep
+> above — semantic score reads 35/400 at step 50, 17/400 at 100, then 2/400
+> from step 150 onward as structural validity climbs from 0.70 to 0.96.
 
 Source: `data/b1_noscale_ckpt_curve.json` (n_puzzles=100 in every row;
 mirrored at `aug21/entropy-kl-7b-noscale.json`). Internal control: the base
