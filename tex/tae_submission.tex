@@ -56,61 +56,45 @@ out, locates it exactly.
 \label{sec:intro}
 
 Post-training against verifiable rewards is attractive for a reason that
-sounds decisive: the reward is a program. It has no parameters to
-misgeneralize, no preferences to drift, and it returns exactly what it was
-written to return at every point in policy space. The argument that this
+sounds decisive: the reward is a program. It returns exactly what it was
+written to return at every point in policy space, and the argument that this
 buys immunity from reward hacking\footnote{We follow the common usage
 \emph{reward hacking} throughout; \citet{skalse2022}, whose formalization we
-adopt, publish it under the name \emph{reward gaming}.} rests on the reward's
-reliability. This paper is about the gap that reliability does not close: the
-gap between the reward and the construct it stands in for.
+adopt, publish it under the name \emph{reward gaming}.} rests on that
+reliability. This paper is about the gap reliability does not close: the gap
+between the reward and the construct it stands in for. We train on NYT
+Connections --- sixteen words, partitioned into four groups of four ---
+chosen because well-formedness and correctness are unusually separable: a
+response can be a perfectly valid partition of the board and completely
+wrong. Our reward pays for both, asymmetrically; two of its five components
+can be checked by reading the string, three require the answer key.
 
-We train on NYT Connections --- sixteen words, to be partitioned into four
-groups of four --- chosen because well-formedness and correctness are
-unusually separable: a response can be a perfectly valid partition of the
-board and completely wrong. Our reward pays for both, asymmetrically. Two of
-its five components can be checked by reading the string; three require the
-answer key.
+For fifty steps it works: held-out groups-correct nearly triples against the
+untrained base model, 26 recovered group slots of 648 to 77, clearing the
+supervised checkpoint the run is initialized from. Over the following 353
+steps the same run falls to 4 slots, below the untrained base model, while
+the invalid-output rate falls by an order of magnitude and the training
+reward sits at 1.6 --- the maximum the reward function can emit --- with
+zero variance across the $K=8$ rollouts on nearly every prompt. A
+practitioner watching that curve saw a solved task. The same reward
+function, evaluated on data the policy was not updated against, ranks all
+three checkpoints correctly. The failure is not in the metric; it is in the
+universal practice of reading it in sample.
 
-For fifty steps it works. Held-out groups-correct nearly triples against the
-untrained base model, from 0.160 to 0.475 --- 26 recovered group slots of 648
-to 77 --- and clears the supervised checkpoint the run is initialized from,
-which sits at 0.346 and 56 slots. Held-out mean reward reaches the highest
-value we measure anywhere in this study. Over the following 353 steps the
-same run drives that capability down to 0.025, four recovered slots, below
-the untrained base model and far below the supervised checkpoint it started
-from, while the training reward saturates at its ceiling and the
-invalid-output rate falls by an order of magnitude.
-
-The training signal does not merely miss this reversal --- it reports its
-opposite. From step 125 onward the logged training reward sits at 1.6, the
-maximum the reward function can emit, with zero variance across the $K=8$
-rollouts on nearly every prompt. A practitioner watching that curve saw a
-solved task. The same reward function, evaluated on data the policy was not
-updated against, ranks all three checkpoints correctly. The failure is not
-in the metric; it is in the universal practice of reading it in sample.
-
-\paragraph{Contributions.} (1)~A fully verifiable, temporally
-leakage-controlled case study in which GRPO against a partially verifiable
-reward first triples and then destroys the target construct, ending below
-the untrained base model, reproduced across three seeds
-(\S\ref{sec:arc}). (2)~A checkpoint-level account locating the semantic
-peak at 5.7\% of the run's eventual KL displacement and identifying entropy
-collapse as the mechanism, with the reward's cheap component climbing
-monotonically throughout (\S\ref{sec:mechanism}). (3)~Evidence that the
-training-side signal is structurally incapable of recording the reversal:
-the training reward reaches its ceiling with zero rollout variance by step
-125, at which point the group-relative advantage is identically zero on
-$\sim$95\% of prompts (\S\ref{sec:mechanism}). (4)~An ablation
-disabling TRL's group-level reward normalization --- the confound three of
-four adversarial reviewers of an earlier draft independently named --- which
-reproduces the hump, the collapse, and the below-base endpoint
-(\S\ref{sec:ablation}). (5)~A blind LLM-judge evaluation showing that
-external scorers with no answer key rank the checkpoints correctly, i.e.,
-the reversal is legible from outside the reward
-(\S\ref{sec:judge}). (6)~A scale contrast at 1.5B where the same recipe
-optimizes only what it can verify and leaves the (absent) construct
-untouched (\S\ref{sec:scale}).
+\paragraph{Contributions.} A fully verifiable, temporally
+leakage-controlled case study in which GRPO first triples and then destroys
+the target construct, ending below the untrained base model across three
+seeds (\S\ref{sec:arc}); a checkpoint-level account placing the semantic
+peak at 5.7\% of the run's KL displacement, with entropy collapse as the
+mechanism and the training reward at its ceiling --- zero group-relative
+advantage on $\sim$95\% of prompts --- from step 125 onward
+(\S\ref{sec:mechanism}); an ablation showing the collapse survives
+disabling TRL's group-level reward normalization, the confound three of
+four adversarial reviewers of an earlier draft independently named
+(\S\ref{sec:ablation}); a blind LLM-judge evaluation showing the reversal
+is legible from outside the reward (\S\ref{sec:judge}); and a 1.5B scale
+contrast where the same recipe optimizes only what it can verify
+(\S\ref{sec:scale}).
 
 \section{Task, pipeline, and the reward's asymmetry}
 \label{sec:setup}
@@ -182,34 +166,23 @@ GRPO, step 403     & 0.0247 $[0.000, 0.056]$ & 4 & 0.6\%  & 0.125 & 0/162 \\
 \end{tabular}
 \end{table}
 
-The method works, then reverses. At step 50 GRPO has nearly tripled the base
-model's semantic performance, 26 recovered group slots to 77, and the paired
-interval excludes zero ($+0.315$ $[+0.204, +0.438]$). By step 403 the same
-run sits at 4 slots, below the untrained base model ($-0.136$
-$[-0.191, -0.080]$) and far below the supervised checkpoint it was
-initialized from, which recovers 56 slots at 0.346 (served in a separate
-session; no paired interval attached). Means in Table~\ref{tab:arc} are
-exact ratios of the count column, and we report both because the
-multiplicative language used throughout this paper is describing the
-difference between 26, 77 and 4 slots out of 648. The question is not
-whether verifiable-reward RL helps. It is why nothing in the
-\emph{training} signal says when it has stopped.
-
-Two details make the mechanism visible rather than inferred. Held-out mean
-reward peaks at step 50 at 0.246, the highest value of any arm we measure,
-and ends at 0.125, below base's 0.165, while the training reward reaches the
-reward function's ceiling by step 125 (\S\ref{sec:mechanism}). The same
-reward function ranks the three checkpoints correctly when it is evaluated
-out of sample and fails to when it is read off the training curve; that
-contrast, and not the reward's determinism, is this paper's subject. And the
-step-50 policy is \emph{worse than base on structure}, 16.7\% invalid
-against 6.8\%. It is \emph{not} worse than the checkpoint it was actually
-initialized from, since the SFT arm is 22.2\% invalid --- measured against
-its own starting point, step 50 has improved on both axes at once. This
-constrains how the trajectory may be described: what is specific to the
-phase after step 50 is the semantic collapse, not the structural climb,
-which was already more than half complete before the peak
-(\S\ref{sec:mechanism}).
+The method works, then reverses: $+0.315$ $[+0.204, +0.438]$ paired against
+base at step 50, $-0.136$ $[-0.191, -0.080]$ at step 403, both intervals
+excluding zero, with the supervised checkpoint the run was initialized from
+at 56 slots and 0.346 (separate session; no paired interval attached).
+Means in Table~\ref{tab:arc} are exact ratios of the count column, and we
+report both because the paper's multiplicative language describes the
+difference between 26, 77 and 4 slots of 648. Two details locate the
+mechanism. Held-out mean reward peaks at step 50 at 0.246 and ends at
+0.125, below base's 0.165, while the training reward reaches its ceiling by
+step 125 (\S\ref{sec:mechanism}): the same reward ranks the checkpoints
+correctly out of sample and fails to on the training curve, and that
+contrast --- not the reward's determinism --- is this paper's subject. And
+the step-50 policy is worse than base on structure (16.7\% invalid against
+6.8\%) but \emph{not} worse than its actual initialization, the SFT arm at
+22.2\% --- so what is specific to the phase after step 50 is the semantic
+collapse, not the structural climb, which was already more than half
+complete before the peak (\S\ref{sec:mechanism}).
 
 \paragraph{The peak is a plateau, not a knife edge.} Step 100 of the same
 run was additionally evaluated on test, in a single later serving session
@@ -244,25 +217,8 @@ not rescue the converged policy --- pass@16 differences of $+0.920$
 $[0.778, 1.062]$ for SFT over GRPO and $-0.370$ $[-0.475, -0.259]$ for GRPO
 against base --- which is what a collapsed-entropy account predicts: a
 near-deterministic model has nothing new to sample. These pass@16 numbers
-are single-seed and we read them as illustrative.
-
-\begin{table}[h]
-\centering
-\caption{7B endpoints across three seeds (separate serving session from
-Table~\ref{tab:arc}; the SFT arm decodes to 0.346/56 in the
-Table~\ref{tab:arc} session's configuration and 0.321/52 here, differing on
-2 of 162 puzzles; both GRPO anchor arms reproduce across sessions exactly).}
-\label{tab:endpoints}
-\begin{tabular}{lcccc}
-\toprule
-Arm & Groups correct (0--4) & Groups (of 648) & Invalid & Mean reward \\
-\midrule
-Base  & 0.160 & 26 & 6.8\% $[3.1, 11.1]$ & 0.165 \\
-SFT   & 0.321 & 52 & 22.2\% & 0.197 \\
-GRPO (3 seeds) & $0.045 \pm 0.022$ & 4 / 7 / 11 & $0.012 \pm 0.006$ & $0.132 \pm 0.008$ \\
-\bottomrule
-\end{tabular}
-\end{table}
+are single-seed and we read them as illustrative. (Per-arm values for the
+three-seed session are tabulated in Appendix~\ref{app:endpoints}.)
 
 \paragraph{Conditioning on well-formed output widens the gap rather than
 explaining it, and we label the operation for what it is.} A reviewer will
@@ -318,9 +274,11 @@ base model with one recoverable group of 648 to begin with.
 \label{sec:mechanism}
 
 Figure~\ref{fig:mechanism} scores checkpoints of the reported run on the
-$n=100$ temperature-0.9 entropy sweep --- 100 validation puzzles, sampled
-decoding, the same forward passes used for the entropy and KL measurements
-(full per-checkpoint values in Appendix~\ref{app:ckpt}).
+$n=100$ temperature-0.9 \emph{entropy sweep} (denominators of 400; full
+per-checkpoint values in Appendix~\ref{app:ckpt}). The ablation's
+\emph{checkpoint sweep} in \S\ref{sec:ablation} is $n=108$, greedy,
+denominators of 432; the two are different measurements and are never
+mixed.
 
 \begin{figure}[t]
 \centering
@@ -335,10 +293,6 @@ undoes it. The untrained base model is shown as a reference; it is not on
 the GRPO trajectory.}
 \label{fig:mechanism}
 \end{figure}
-(Throughout this paper: the \emph{entropy sweep} is $n=100$ at temperature
-0.9, denominators of 400; the ablation's \emph{checkpoint sweep} in
-\S\ref{sec:ablation} is $n=108$, greedy, denominators of 432. The two are
-different measurements and are never mixed.)
 
 The semantic peak has a location; the structural climb does not. The
 semantic score rises from 0.0325 at the SFT initialization to 0.0950 at step
@@ -358,11 +312,9 @@ it predicts a policy that ends reliably well-formed and adaptively wrong,
 which is what the endpoint is --- but it does not license the vocabulary of
 a trade and we do not use it.
 
-\paragraph{Entropy is the mechanism.} Policy entropy falls 30-fold from the
-SFT initialization to the end of the run, 13.4-fold between steps 50 and
-150 alone, the window in which the semantic score falls 12.7-fold. By step
-150 the policy is effectively deterministic: it produces nearly the same
-kind of output regardless of which sixteen words it is handed. A
+\paragraph{Entropy is the mechanism.} Policy entropy falls 13.4-fold
+between steps 50 and 150, the window in which the semantic score falls
+12.7-fold; by step 150 the policy is effectively deterministic. A
 near-deterministic policy can be reliably well-formed --- the format is the
 same for every board and can be satisfied without reading the puzzle. It
 cannot be adaptively correct, because correctness requires responding to
@@ -641,6 +593,32 @@ Step 250  & 0.0102 & 46.96 & 0.96 & 0.0100 \\
 Step 300  & 0.0099 & 47.05 & 0.96 & 0.0100 \\
 Step 350  & 0.0099 & 47.05 & 0.96 & 0.0100 \\
 Step 403  & 0.0099 & 47.05 & 0.96 & 0.0100 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{7B endpoints across three seeds}
+\label{app:endpoints}
+
+Table~\ref{tab:endpoints} tabulates the three-seed endpoint session
+discussed in Section~\ref{sec:arc}; the 4 / 7 / 11 spread is the basis of
+the single-seed caveats in Sections~\ref{sec:implications}
+and~\ref{sec:limitations}.
+
+\begin{table}[h]
+\centering
+\caption{7B endpoints across three seeds (separate serving session from
+Table~\ref{tab:arc}; the SFT arm decodes to 0.346/56 in the
+Table~\ref{tab:arc} session's configuration and 0.321/52 here, differing on
+2 of 162 puzzles; both GRPO anchor arms reproduce across sessions exactly).}
+\label{tab:endpoints}
+\begin{tabular}{lcccc}
+\toprule
+Arm & Groups correct (0--4) & Groups (of 648) & Invalid & Mean reward \\
+\midrule
+Base  & 0.160 & 26 & 6.8\% $[3.1, 11.1]$ & 0.165 \\
+SFT   & 0.321 & 52 & 22.2\% & 0.197 \\
+GRPO (3 seeds) & $0.045 \pm 0.022$ & 4 / 7 / 11 & $0.012 \pm 0.006$ & $0.132 \pm 0.008$ \\
 \bottomrule
 \end{tabular}
 \end{table}
