@@ -28,39 +28,28 @@
 
 \begin{abstract}
 Verifiable rewards are trusted because they are deterministic: a program
-either awards the points or it does not. We report a case where that trust is
-misplaced in a specific, measurable way. We post-train Qwen2.5-7B-Instruct
+either awards the points or it does not. We post-train Qwen2.5-7B-Instruct
 with GRPO on NYT Connections under a reward with a cheap structural component
-(well-formed output) and an expensive semantic component (correct groupings).
-On a strictly chronological held-out test set of 162 puzzles (648 group
-slots), the 7B policy at training step 50 recovers 77 groups, 0.475 per
-puzzle, against the untrained base model's 26 at 0.160 --- a paired
-improvement of $+0.315$ $[+0.204, +0.438]$. It also exceeds the supervised
-checkpoint the run warm-starts from, which recovers 56 at 0.346, though that
-arm was served in a separate session and we attach no paired interval to that
-comparison. By step 403 the same run has fallen to 4 groups at 0.025, a
-paired loss against base of $-0.136$ $[-0.191, -0.080]$, reproduced across
-three seeds. The \emph{training} reward does not record the reversal --- it
-reads perfect, reaching the reward function's ceiling of 1.6 with zero
-across-rollout variance by step 125 and staying there. The identical reward
-evaluated out of sample records the whole arc, peaking at 0.246 at step 50
-and ending at 0.125, below the base model's 0.165. Checkpoint analysis
-places the semantic peak at 5.7\% of the run's eventual KL displacement, and
-the remaining 94.3\% undoes it as policy entropy collapses 13.4-fold.
-Structural validity meanwhile climbs monotonically --- 0.37 at the supervised
-initialization, 0.68 at step 50, 0.96 by step 150 --- so more than half of
-that gain is banked before the semantic peak rather than bought afterward at
-its expense. The collapse survives its strongest confound: rerunning with
-TRL's group-level reward normalization disabled reproduces the hump, the
-collapse, and the below-base endpoint. Three LLM judges, scoring the test
-generations blind, all rank the step-50 policy above base above the final
-policy. At 1.5B the same recipe leaves groups-correct at the base model's
-value, one recovered group of 648 in each arm, since that model had almost no
-semantic capability to trade. We read this as a construct-validity failure
-rather than an optimization failure. What fails to locate the point at which
-a verifiable reward stops helping is the in-sample metric; the same reward,
-held out, locates it exactly, and reporting only the training curve is the
-practice that hides the reversal.
+(well-formed output) and an expensive semantic component (correct
+groupings). On a strictly chronological test set of 162 puzzles (648 group
+slots), the step-50 policy recovers 77 groups against the untrained base
+model's 26 --- a paired improvement of $+0.315$ $[+0.204, +0.438]$ on the
+0--4 scale. By step 403 the same run recovers 4, below base by $-0.136$
+$[-0.191, -0.080]$, reproduced across three seeds. The \emph{training}
+reward records none of this: it reaches the reward's ceiling of 1.6 with
+zero across-rollout variance by step 125 and stays there, while the
+identical reward evaluated out of sample tracks the whole arc, peaking at
+0.246 at step 50 and ending at 0.125 against base's 0.165. The semantic
+peak arrives at 5.7\% of the run's eventual KL displacement; the remainder
+undoes it as policy entropy collapses and structural validity climbs
+monotonically. The collapse survives disabling TRL's group-level reward
+normalization, and three LLM judges scoring the test generations blind all
+rank step 50 above base above the final policy. At 1.5B, with almost no
+semantic capability to trade, the same recipe leaves the construct exactly
+where it found it --- one recovered group of 648 in each arm. We read this
+as a construct-validity failure: the in-sample metric cannot locate the
+point at which a verifiable reward stops helping; the same reward, held
+out, locates it exactly.
 \end{abstract}
 
 \section{Introduction}
@@ -303,30 +292,17 @@ selective-inference story without touching the entropy one.
 \section{The scale contrast at 1.5B}
 \label{sec:scale}
 
-\begin{table}[h]
-\centering
-\caption{1.5B on the test split (162 puzzles, 648 group slots).}
-\label{tab:small}
-\begin{tabular}{lccccc}
-\toprule
-Arm & Groups correct (0--4) & Groups (of 648) & Invalid & Mean reward & Solves \\
-\midrule
-Base & 0.0062 $[0.000, 0.0185]$ & 1 & 32.1\% $[24.7, 38.9]$ & 0.049 & 0.0\% \\
-SFT  & 0.0123 $[0.000, 0.0309]$ & 2 & 74.1\% $[67.3, 80.2]$ & $-0.038$ & 0.0\% \\
-GRPO & 0.0062 $[0.000, 0.0185]$ & 1 & 2.5\% $[0.6, 5.6]$ & 0.113 & 0.0\% \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-At this scale the count column is the honest reading of the table. Base
-recovers one group slot of 648 and GRPO recovers one; agreement ``to five
-decimal places'' is two integers that both equal 1, and none of the interval
-arithmetic here should be read as meaning more than that. The reward did at
-1.5B exactly what it did at 7B --- it optimized the component it can verify,
-driving invalid output from 32.1\% to 2.5\% and mean reward from 0.049 to
-0.113. What differs between scales is how much unverifiable ability existed
-to be displaced. At 1.5B there was essentially none, so nothing was lost.
-At 7B there was real ability, and it went.
+At this scale the counts are the honest reading (full table in
+Appendix~\ref{app:small}). Base recovers one group slot of 648, GRPO
+recovers one, and SFT --- the best arm --- recovers two; agreement ``to
+five decimal places'' between base and GRPO is two integers that both equal
+1, and no interval arithmetic on numbers this small should be read as
+meaning more than that. The reward did at 1.5B exactly what it did at 7B
+--- it optimized the component it can verify, driving invalid output from
+32.1\% to 2.5\% and mean reward from 0.049 to 0.113. What differs between
+scales is how much unverifiable ability existed to be displaced. At 1.5B
+there was essentially none, so nothing was lost. At 7B there was real
+ability, and it went.
 
 Two caveats attach. First, the scales are epoch-asymmetric: the 1.5B run
 trained for 806 optimizer steps --- two epochs over the 807 training puzzles
@@ -415,24 +391,19 @@ not joined to the curve.}
 \end{figure}
 
 \paragraph{The training signal, read from the trainer's own logs.} Figure
-\ref{fig:rewards} shows the paper's central contrast on one axis. The
-training reward saturates at the reward function's ceiling by step 125: the
-mean over the $K=8$ rollouts reaches 1.6000 with standard deviation 0.0000
-at step 125 --- the maximum the reward can emit
-(Table~\ref{tab:reward}) --- and averages 1.5814 over the 57 logged points
-from step 125 through 403, sitting exactly at the ceiling in 38 of them.
-The trajectory before saturation: 0.2125 (step 5), 0.5519 (50), 0.9931
-(100), 1.5206 (120), 1.6000 (125). TRL's own
-\texttt{frac\_reward\_zero\_std} diagnostic --- the fraction of prompt
-groups whose eight sampled rewards are identical, i.e., whose
-group-relative advantage is exactly zero --- rises from 0.0 at step 50 to
-1.0 at step 125 and averages 0.946 over the remainder of training. From
-step 125 onward the optimizer receives no learning signal on nearly every
-prompt. What drives the remaining 278 steps of movement --- entropy falling
-to 0.0099, KL climbing to 47.05 --- while $\sim$95\% of prompts carry zero
-advantage, we report as an open question; plausibly the residual prompts
-that still carry signal, compounded, but we have not measured that causal
-chain and do not assert it.
+\ref{fig:rewards} shows the paper's central contrast on one axis: the
+training reward reaches the reward function's ceiling --- 1.6000, with
+standard deviation 0.0000 across the $K=8$ rollouts --- by step 125 and
+stays there. What the figure cannot show is TRL's own
+\texttt{frac\_reward\_zero\_std} diagnostic: the fraction of prompt groups
+whose eight sampled rewards are identical, i.e., whose group-relative
+advantage is exactly zero. It rises from 0.0 at step 50 to 1.0 at step 125
+and averages 0.946 over the remainder of training, so from step 125 onward
+the optimizer receives no learning signal on nearly every prompt. What
+drives the remaining 278 steps of movement while $\sim$95\% of prompts
+carry zero advantage, we report as an open question; plausibly the residual
+prompts that still carry signal, compounded, but we have not measured that
+causal chain and do not assert it.
 
 \paragraph{$\beta$ was numerically inert, and the bracket is not an
 experiment.} An earlier configuration at learning rate $10^{-6}$ and
@@ -548,22 +519,15 @@ than a lucky column.
 \label{sec:related}
 
 \paragraph{Reward-model overoptimization.} \citet{gao2023scaling}
-established the curve shape we report --- gold-standard performance rising
-and then declining as KL from the initialization grows --- for
-\emph{learned} reward models, and framed it in the KL-budget terms we adopt
-here; \citet{stiennon2020} report the same reversal. The difference is what
-is being optimized, and it cuts against the reassuring reading rather than
-for it. In that literature the proxy is a learned model of human
-preference, and the accepted explanation is that optimization finds the
-regions where the learned model fits badly, which is Goodhart against an
-approximation and remediable in principle with a better reward model. Our
-reward is a program. It approximates nothing and there is nothing in it to
-game: it returns precisely what it was written to return, at every point in
-policy space. The overoptimization curve therefore does not require an
-imperfect reward model. It requires only that a reward's cheap component
-and its expensive component can be satisfied independently, which is a
-property of the reward's design rather than of its fit. That is a stronger
-reason for concern than the learned-reward case, because determinism is the
+established this curve shape --- gold-standard performance rising and then
+declining as KL from the initialization grows --- for \emph{learned} reward
+models, where the accepted explanation is Goodhart against an
+approximation, remediable in principle with a better reward model;
+\citet{stiennon2020} report the same reversal. Our reward is a program: it
+approximates nothing, and there is nothing in it to game. The curve
+therefore requires only that a reward's cheap and expensive components be
+independently satisfiable --- a property of the reward's design, not of its
+fit --- which is a stronger reason for concern, because determinism is the
 exact property cited when practitioners argue that verifiable rewards
 escape this failure mode.
 
@@ -677,6 +641,27 @@ Step 250  & 0.0102 & 46.96 & 0.96 & 0.0100 \\
 Step 300  & 0.0099 & 47.05 & 0.96 & 0.0100 \\
 Step 350  & 0.0099 & 47.05 & 0.96 & 0.0100 \\
 Step 403  & 0.0099 & 47.05 & 0.96 & 0.0100 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{1.5B test-split table}
+\label{app:small}
+
+Table~\ref{tab:small} tabulates the 1.5B arms discussed in
+Section~\ref{sec:scale}; every mean is the exact ratio of its count to 162.
+
+\begin{table}[h]
+\centering
+\caption{1.5B on the test split (162 puzzles, 648 group slots).}
+\label{tab:small}
+\begin{tabular}{lccccc}
+\toprule
+Arm & Groups correct (0--4) & Groups (of 648) & Invalid & Mean reward & Solves \\
+\midrule
+Base & 0.0062 $[0.000, 0.0185]$ & 1 & 32.1\% $[24.7, 38.9]$ & 0.049 & 0.0\% \\
+SFT  & 0.0123 $[0.000, 0.0309]$ & 2 & 74.1\% $[67.3, 80.2]$ & $-0.038$ & 0.0\% \\
+GRPO & 0.0062 $[0.000, 0.0185]$ & 1 & 2.5\% $[0.6, 5.6]$ & 0.113 & 0.0\% \\
 \bottomrule
 \end{tabular}
 \end{table}
