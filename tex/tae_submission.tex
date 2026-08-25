@@ -341,9 +341,24 @@ base model with one recoverable group of 648 to begin with.
 \section{Mechanism: entropy collapse and the step-50 semantic peak}
 \label{sec:mechanism}
 
-Table~\ref{tab:ckpt} scores checkpoints of the reported run on the $n=100$
-temperature-0.9 entropy sweep --- 100 validation puzzles, sampled decoding,
-the same forward passes used for the entropy and KL measurements.
+Figure~\ref{fig:mechanism} and Table~\ref{tab:ckpt} score checkpoints of the
+reported run on the $n=100$ temperature-0.9 entropy sweep --- 100 validation
+puzzles, sampled decoding, the same forward passes used for the entropy and
+KL measurements.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{../figs/fig1_entropy_collapse.pdf}
+\caption{The mechanism, on the $n=100$ temperature-0.9 entropy sweep
+(reported 7B run, seed 0). \textbf{Left:} policy entropy against optimizer
+step --- a 30-fold collapse, with the cliff between steps 100 and 150.
+\textbf{Right:} semantic score against KL from the SFT initialization, the
+over-optimization curve: the peak arrives at 2.70 of an eventual 47.05 nats
+per sequence (5.7\% of the run's displacement), and the remaining 94.3\%
+undoes it. The untrained base model is shown as a reference; it is not on
+the GRPO trajectory.}
+\label{fig:mechanism}
+\end{figure}
 (Throughout this paper: the \emph{entropy sweep} is $n=100$ at temperature
 0.9, denominators of 400; the ablation's \emph{checkpoint sweep} in
 \S\ref{sec:ablation} is $n=108$, greedy, denominators of 432. The two are
@@ -405,7 +420,21 @@ the eventual KL displacement would have returned a model that recovers 77
 group slots against base's 26; running to convergence returned one that
 recovers 4.
 
-\paragraph{The training signal, read from the trainer's own logs.} The
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{../figs/fig3_reward_curves.pdf}
+\caption{The same reward function, in sample and held out (reported 7B run,
+seed 0). The training reward (gray; raw run history, logged every 5 steps)
+reaches the reward function's ceiling of 1.6 by step 125 and stays there.
+The held-out mean reward on the 162-puzzle test set (solid markers; single
+serving session) peaks at step 50 and ends below the untrained base model.
+The step-100 point (hollow marker) is from a later serving session and is
+not joined to the curve.}
+\label{fig:rewards}
+\end{figure}
+
+\paragraph{The training signal, read from the trainer's own logs.} Figure
+\ref{fig:rewards} shows the paper's central contrast on one axis. The
 training reward saturates at the reward function's ceiling by step 125: the
 mean over the $K=8$ rollouts reaches 1.6000 with standard deviation 0.0000
 at step 125 --- the maximum the reward can emit
@@ -628,13 +657,10 @@ answers is a natural hypothesis that we have not measured --- neither SFT
 nor the final policy has been evaluated offline on training puzzles --- and
 we flag it as open rather than assert it.
 
-% ------------------------------------------------------------------
-% Figure TODOs (scripts exist; see repo):
-%   Fig 1: entropy / over-optimization curve — results-analysis/entropy-kl-7b.png
-%   Fig 3: training vs held-out reward — figs/make_fig3_reward_curves.py
-%          (recovered; update HELDOUT anchors + step-100 slot per memo before running;
-%          input: data/wandb_train_reward.csv)
-% ------------------------------------------------------------------
+% Figures are generated fresh from artifacts by figs/make_fig1_entropy.py
+% (input: results-analysis/entropy-kl-7b.json) and
+% figs/make_fig3_reward_curves.py (input: data/wandb_train_reward.csv).
+% Never embed a rendered image whose provenance predates the current numbers.
 
 \bibliographystyle{plainnat}
 \bibliography{refs}
