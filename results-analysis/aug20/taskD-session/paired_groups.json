@@ -1,0 +1,23 @@
+{
+ "n_paired": 162,
+ "bootstrap_seed": 0,
+ "scale": "0-4 groups-correct",
+ "session": "taskD-session (all arms served in one vLLM session)",
+ "comparisons": {
+  "grpo-ckpt50_minus_base": [
+   0.3148148148148148,
+   0.2037037037037037,
+   0.4382716049382716
+  ],
+  "grpo-final_minus_base": [
+   -0.13580246913580246,
+   -0.19135802469135801,
+   -0.08024691358024691
+  ],
+  "grpo-ckpt50_minus_grpo-final": [
+   0.4506172839506173,
+   0.3333333333333333,
+   0.5742283950617282
+  ]
+ }
+}

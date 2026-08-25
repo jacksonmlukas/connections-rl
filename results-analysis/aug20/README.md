@@ -11,7 +11,7 @@ B = `results-seeds-*/`.
 | `taskB_conditional_on_valid.json` | B — groups-correct over valid outputs only, both scales | done (exact, from records.jsonl) |
 | `taskC_7b_per_category.json` | C — 7B per-category stratification + base→GRPO deltas | done (metrics.json cross-checked against records) |
 | `taskE_stratified_bootstrap.json` | E — joint puzzle×seed bootstrap vs puzzles-only | done (10,000 resamples, two independent RNG streams) |
-| `taskD_eval_ckpt50.yaml`, `taskD_paired_groups.py`, `TASKD_RUNBOOK.md` | D — step-50 on test | prepared; owner launches on GPU |
+| `taskD-session/` (+ `taskD_eval_ckpt50.yaml`, `taskD_paired_groups.py`, `TASKD_RUNBOOK.md`, `taskD_kaggle.ipynb`) | D — step-50 on test | **done** — run 2026-08-20/21 on Kaggle (vLLM 0.27.1, one session, base + ckpt-50 + final); mirrored from `hf://datasets/jacksonlukas/connections-rl-results/aug20/` with byte-exact and full-precision metric verification. Headline: ckpt-50 groups 0.4753 [0.364, 0.599] (0-4) vs base 0.1605; paired ckpt50−base +0.3148 [+0.204, +0.438], final−base −0.1358 [−0.191, −0.080], seed-0 bootstrap independently reproduced to full precision; both anchor arms reproduce session A per-puzzle exactly (0/162 differences) |
 | `taskF_grpo-7b-beta01.yaml` + runbook §F | F — β=0.01 run | prepared; only after D |
 
 Headline readouts (details and exact values in the JSONs):

@@ -86,7 +86,8 @@ variance. Same test split, greedy. **Session B** throughout
 | 1.5B | mean reward | 0.113 | 0.110 | 0.109 | 0.111 ± 0.002 |
 
 Paired SFT − GRPO on groups correct (0-4 scale), 7B, per seed: +0.296 [0.191,
-0.407], +0.278 [0.173, 0.389], +0.253 [0.142, 0.370]. These use the **session B**
+0.407], +0.278 [0.173, 0.389], +0.253 [0.148, 0.364] (seed-2 interval
+recomputed at the default bootstrap seed 0; see `defects.md` D3). These use the **session B**
 SFT baseline (`results-seeds-7b/sft/`, groups correct 0.321), which is the only
 one measured alongside seeds 1 and 2, so the three comparisons are internally
 consistent. All three 7B seeds fall below base on both grouping (max 0.068 vs
@@ -109,12 +110,23 @@ fraction**, so these values are directly percentages of groups.
 | 1.5B | GRPO | 0.000 | 0.002 | 0.988 |
 
 Paired bootstrap on best-of-16 groups correct (7B), converted to the **0-4 count
-scale** for comparability with the tables above: SFT − GRPO = +0.920 [+0.772,
+scale** for comparability with the tables above: SFT − GRPO = +0.920 [+0.778,
 +1.062]; base − GRPO = +0.370 [+0.259, +0.475]. On the fraction scale those are
 +0.230 and +0.093. Sampling does not recover the
 capability, so the loss is distributional rather than a decoding artifact.
+(CIs recomputed 2026-08-04 from the per-puzzle records in `passk-7b.json` with
+`eval/stats.py::paired_bootstrap_diff` at its default bootstrap seed 0; bounds
+move by up to ~0.01 under other RNG seeds, point estimates are exact.)
 
-*Only k=16 has been measured. The full k ∈ {1, 2, 4, 8, 16, 32} curve is pending.*
+*Only k=16 has been measured. The full k ∈ {1, 2, 4, 8, 16, 32} curve is pending,
+and no part of it is recoverable from the existing pool: the per-puzzle record
+schema is `puzzle_id, date, any_solved, any_valid, max_groups_correct,
+best_reward, n_samples`, all aggregates over the 16 samples. `any_solved` and
+`any_valid` are booleans (an OR), so the success count `c` required by the
+unbiased estimator does not exist for the binary metrics either — every k < 16
+point, for every metric, and any k > 16 point requires regenerating a pool with
+per-sample records. See `src/connections_rl/eval/passk_curve.py` and
+`report/passk-curve-runplan.md`.*
 
 ## Checkpoint decomposition (7B, val split, greedy)
 
@@ -232,13 +244,8 @@ Note which arms drift: the **GRPO adapters reproduce exactly** while the SFT
 adapters do not. That is an independent corroboration of the entropy-collapse
 story: the final 7B GRPO policy's measured entropy of 0.0099 nats/token leaves no
 borderline token decisions to flip, whereas the SFT policy has the highest entropy
-of any arm (0.303).
-
-Note which arms drift: the **GRPO adapters reproduce exactly** while the SFT
-adapters do not. That is an independent corroboration of the entropy-collapse
-story — a policy with entropy ~3e−4 emits the same tokens regardless of serving
-nondeterminism, whereas a higher-entropy policy has borderline decisions to flip.
-Where tables above report SFT numbers, they use the main-run measurement.
+of any arm (0.303). Where tables above report SFT numbers, they use the main-run
+measurement.
 
 ## Provenance
 
@@ -246,7 +253,7 @@ Where tables above report SFT numbers, they use the main-run measurement.
 |---|---|
 | 1.5B, 7B main results | `results/`, `results-7b/` |
 | Seed replication | `results-seeds-7b/`, `results-seeds-1.5b/`, `results-seeds/seed_summary.json` |
-| pass@16 | `results-analysis/passk-7b.json`, `passk-1.5b.json` |
+| pass@16 | `results-analysis/passk-7b.json`, `passk-1.5b.json` (per-puzzle aggregates only — booleans/maxima over the 16 samples; supports the k=16 point and nothing else, see `defects.md` D5) |
 | Checkpoint decomposition | `results-analysis/ckpt-curve-7b.json` + `.png` |
 | Entropy + KL per checkpoint | `results-analysis/entropy-kl-7b.json` + `.png` |
 | Weight-space convergence | `results-seeds/weight_space_{7b,1.5b}.txt` |
