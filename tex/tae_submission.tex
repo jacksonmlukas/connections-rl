@@ -341,10 +341,10 @@ base model with one recoverable group of 648 to begin with.
 \section{Mechanism: entropy collapse and the step-50 semantic peak}
 \label{sec:mechanism}
 
-Figure~\ref{fig:mechanism} and Table~\ref{tab:ckpt} score checkpoints of the
-reported run on the $n=100$ temperature-0.9 entropy sweep --- 100 validation
-puzzles, sampled decoding, the same forward passes used for the entropy and
-KL measurements.
+Figure~\ref{fig:mechanism} scores checkpoints of the reported run on the
+$n=100$ temperature-0.9 entropy sweep --- 100 validation puzzles, sampled
+decoding, the same forward passes used for the entropy and KL measurements
+(full per-checkpoint values in Appendix~\ref{app:ckpt}).
 
 \begin{figure}[t]
 \centering
@@ -364,34 +364,15 @@ the GRPO trajectory.}
 \S\ref{sec:ablation} is $n=108$, greedy, denominators of 432. The two are
 different measurements and are never mixed.)
 
-\begin{table}[h]
-\centering
-\caption{The reported 7B run on the $n=100$ temperature-0.9 entropy sweep.
-Structural = fraction of outputs that are a valid partition; semantic = mean
-correct groups / 4. KL is the per-sequence sample-based estimate against the
-SFT initialization.}
-\label{tab:ckpt}
-\begin{tabular}{lcccc}
-\toprule
-Checkpoint & Policy entropy & KL from SFT init & Structural & Semantic \\
-\midrule
-SFT init  & 0.3025 & 0.00  & 0.37 & 0.0325 \\
-Step 50   & 0.2107 & 2.70  & 0.68 & \textbf{0.0950} \\
-Step 100  & 0.1999 & 8.12  & 0.64 & 0.0875 \\
-Step 150  & 0.0158 & 46.42 & 0.95 & 0.0075 \\
-Step 403  & 0.0099 & 47.05 & 0.96 & 0.0100 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
 The semantic peak has a location; the structural climb does not. The
 semantic score rises from 0.0325 at the SFT initialization to 0.0950 at step
 50 (13/400 to 38/400 recovered slots), then falls to 0.0075 by step 150 and
-never recovers. The structural score climbs monotonically across the same
-window and past it: 0.37 at the SFT initialization, 0.68 at step 50, 0.95 at
-step 150, 0.96 thereafter. Of the 0.59 total structural gain, 0.31 is
-already banked by step 50, concurrent with the semantic peak, and 0.28
-arrives afterward.
+never recovers. The structural score --- the fraction of outputs that are a
+valid partition, not shown in Figure~\ref{fig:mechanism} --- climbs
+monotonically across the same window and past it: 0.37 at the SFT
+initialization, 0.68 at step 50, 0.95 at step 150, 0.96 thereafter. Of the
+0.59 total structural gain, 0.31 is already banked by step 50, concurrent
+with the semantic peak, and 0.28 arrives afterward.
 
 The trajectory is therefore not a trade with a turning point at which
 structure begins to be bought and semantics begins to be sold. It is a
@@ -664,5 +645,40 @@ we flag it as open rather than assert it.
 
 \bibliographystyle{plainnat}
 \bibliography{refs}
+
+\appendix
+
+\section{Per-checkpoint values for the entropy sweep}
+\label{app:ckpt}
+
+Table~\ref{tab:ckpt} tabulates the trajectory plotted in
+Figure~\ref{fig:mechanism}, including the structural column discussed in
+Section~\ref{sec:mechanism}. All values are from the $n=100$ temperature-0.9
+entropy sweep of the reported 7B run (seed 0); the artifact is
+\texttt{results-analysis/entropy-kl-7b.json} in the released repository.
+
+\begin{table}[h]
+\centering
+\caption{The reported 7B run on the $n=100$ temperature-0.9 entropy sweep.
+Structural = fraction of outputs that are a valid partition; semantic = mean
+correct groups / 4. KL is the per-sequence sample-based estimate against the
+SFT initialization.}
+\label{tab:ckpt}
+\begin{tabular}{lcccc}
+\toprule
+Checkpoint & Policy entropy & KL from SFT init & Structural & Semantic \\
+\midrule
+SFT init  & 0.3025 & 0.00  & 0.37 & 0.0325 \\
+Step 50   & 0.2107 & 2.70  & 0.68 & \textbf{0.0950} \\
+Step 100  & 0.1999 & 8.12  & 0.64 & 0.0875 \\
+Step 150  & 0.0158 & 46.42 & 0.95 & 0.0075 \\
+Step 200  & 0.0109 & 46.88 & 0.95 & 0.0100 \\
+Step 250  & 0.0102 & 46.96 & 0.96 & 0.0100 \\
+Step 300  & 0.0099 & 47.05 & 0.96 & 0.0100 \\
+Step 350  & 0.0099 & 47.05 & 0.96 & 0.0100 \\
+Step 403  & 0.0099 & 47.05 & 0.96 & 0.0100 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \end{document}
