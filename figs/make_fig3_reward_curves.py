@@ -43,10 +43,15 @@ BASE_REWARD = 0.16543209876543210  # untrained base, same session
 # 0.2525). Drawn as a hollow marker, never joined to the Task D curve:
 HELDOUT_B2 = (100, 0.266358024691358)
 
-assert HELDOUT[0][1] == max(r for _, r in HELDOUT) and HELDOUT[0][1] > BASE_REWARD, \
-    "step 50 must be the held-out reward peak and must exceed base"
-assert HELDOUT[-1][1] < BASE_REWARD, \
-    "the final policy must end BELOW base on held-out reward -- that is the result"
+# Consistency notices, NOT asserts: the figure renders whatever the constants
+# say. A plotting script that refuses to draw a null result would bake the
+# paper's conclusion into its own evidence.
+if not (HELDOUT[0][1] == max(r for _, r in HELDOUT) and HELDOUT[0][1] > BASE_REWARD):
+    print("NOTICE: step 50 is not the held-out peak / does not exceed base in these "
+          "constants. Rendering anyway -- update the paper's prose, not this script.")
+if not HELDOUT[-1][1] < BASE_REWARD:
+    print("NOTICE: the final policy does not end below base in these constants. "
+          "Rendering anyway -- update the paper's prose, not this script.")
 
 
 def load_training_curve():
