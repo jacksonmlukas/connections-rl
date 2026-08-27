@@ -4,7 +4,7 @@
 Figure 3 -- training reward and held-out reward on one axis against training step.
 
 Rebuilt 2026-08-24 from the recovered original, with three fixes against the
-real W&B export (data/wandb_train_reward.csv, run odyc3xnk, raw scan_history):
+real W&B export (data/wandb_train_reward.csv, raw scan_history):
   1. The step column is train/global_step (the optimizer step). W&B's _step is
      a log-call counter (0..11364 for this run) and must never be the x-axis.
   2. The reward column is train/reward exactly; substring matching would hit
@@ -95,24 +95,24 @@ def main():
     ax.plot([s for s, _ in train], [r for _, r in train], "-", lw=1.4, color="#B0B0B0",
             label="Training reward (in sample)", zorder=2)
     ax.axhline(REWARD_CEILING, ls="--", lw=1.0, color="#888888", zorder=1)
-    ax.annotate("reward ceiling, %.1f (reached step %d, zero rollout variance)"
+    ax.annotate("reward ceiling, %.1f (reached step %d)"
                 % (REWARD_CEILING, CEILING_STEP),
                 xy=(max(steps) * 0.985, REWARD_CEILING), xytext=(0, -9),
                 textcoords="offset points", ha="right", va="top",
                 fontsize=6.8, color="#666666")
     ax.plot([s for s, _ in HELDOUT], [r for _, r in HELDOUT], "-o", lw=1.8, ms=5.5,
-            color="#C1440E", label="Held-out reward (162 test puzzles, Task D session)",
+            color="#C1440E", label="Held-out reward (162 test puzzles, single serving session)",
             zorder=4)
     ax.plot([HELDOUT_B2[0]], [HELDOUT_B2[1]], "o", ms=5.5, mfc="none", mec="#C1440E",
             mew=1.4, label="Held-out, step 100 (later session; not joined)", zorder=4)
     ax.axhline(BASE_REWARD, ls=":", lw=1.1, color="#444444", zorder=1)
-    ax.annotate("untrained base, %.3f" % BASE_REWARD, xy=(max(steps) * 0.985, BASE_REWARD),
+    ax.annotate("untrained Instruct, %.3f" % BASE_REWARD, xy=(max(steps) * 0.985, BASE_REWARD),
                 xytext=(0, 4), textcoords="offset points", ha="right", va="bottom",
                 fontsize=6.8, color="#444444")
     ax.annotate("held-out peak\nstep 50, %.3f" % HELDOUT[0][1], xy=HELDOUT[0],
                 xytext=(78, 0.42), fontsize=6.8,
                 arrowprops=dict(arrowstyle="->", lw=0.8, color="k", alpha=0.8))
-    ax.annotate("ends BELOW base\nstep 403, %.3f" % HELDOUT[-1][1], xy=HELDOUT[-1],
+    ax.annotate("ends BELOW Instruct\nstep 403, %.3f" % HELDOUT[-1][1], xy=HELDOUT[-1],
                 xytext=(255, 0.30), fontsize=6.8,
                 arrowprops=dict(arrowstyle="->", lw=0.8, color="k", alpha=0.8))
     ax.set_xlabel("GRPO optimizer step  (Qwen2.5-7B-Instruct)")

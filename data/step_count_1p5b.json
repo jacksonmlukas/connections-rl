@@ -1,6 +1,6 @@
 {
   "final_step": 806,
   "epochs_logged": 2,
-  "wandb_run_url": "https://wandb.ai/jacksonlukas-university-of-california-berkeley/huggingface/runs/8ynmbuda",
-  "verdict": "806 \u2014 settled by summary train/global_step of W&B run connections-rl-grpo-qwen1.5b-v2 (id 8ynmbuda, state finished, project huggingface); chosen over two same-named dead starts (failed, _step 1). W&B _step (22729) is a log-call counter and was not used."
+  "wandb_run_id": "8ynmbuda",
+  "verdict": "806 — settled by summary train/global_step of W&B run connections-rl-grpo-qwen1.5b-v2 (id 8ynmbuda, state finished). W&B _step (22729) is a log-call counter and was not used."
 }
