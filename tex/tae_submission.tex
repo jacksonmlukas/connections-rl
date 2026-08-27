@@ -43,8 +43,8 @@ uniformly drawn valid partition. Step 50 improves on the untrained model by a
 paired $+0.315$ $[+0.204, +0.438]$ on the 0--4 scale; step 403 falls below it
 by $-0.136$ $[-0.191, -0.080]$, a deficit that reproduces across three
 seeds (all three point estimates inside that interval). The
-\emph{training} reward reads the collapse as success: its steepest climb,
-0.99 to its 1.6 ceiling, falls between steps 100 and 125 --- inside the
+\emph{training} reward reads the collapse as success: it climbs 0.99 to
+its 1.6 ceiling between steps 100 and 125 --- inside the
 collapse window --- and across-rollout variance hits zero there on nearly
 every prompt; both in-sample signals bracket the turn, neither signs it.
 The identical reward evaluated out of sample records the
@@ -205,8 +205,8 @@ report both. Two details locate the
 mechanism. Held-out mean reward reads 0.246 at step 50 and 0.125 at step
 403, against base's 0.165, all in one session; in the later session of the
 plateau paragraph below, step 100 reads 0.2664 to a step-50 re-serve's
-0.2525 --- the highest held-out reward we measured: the reward peak, like
-the groups peak, is a plateau. The training reward meanwhile reaches its ceiling by
+0.2525 --- the highest held-out reward the reported run produced: the
+reward peak, like the groups peak, is a plateau. The training reward meanwhile reaches its ceiling by
 step 125 (\S\ref{sec:mechanism}): the same reward ranks the checkpoints
 correctly out of sample and fails to on the training curve, and that
 contrast --- not the reward's determinism --- is this paper's subject. And
@@ -232,7 +232,7 @@ vLLM sessions (0 of 162 differences each). The step-50 checkpoint does not:
 it differed on 2/162 puzzles across sessions (77 vs.\ 80 of 648) and on
 6/162 completions between two greedy passes within one session.
 Mid-training policies sit near argmax ties that batched inference resolves
-inconsistently; converged ones have none left. That is evidence \emph{for}
+inconsistently; converged ones show none. That is evidence \emph{for}
 the entropy account, and it is why every step-50 number in this paper
 carries its serving session. The published headline (77/648) is the
 original single-session evaluation; the plateau comparison above uses the
@@ -369,8 +369,9 @@ intervened on entropy (\S\ref{sec:limitations}).
 
 \paragraph{KL is the budget view, and it is a path length, not a damage
 scale.} The step-50 checkpoint sits 2.70 nats
-from the SFT initialization and is the best policy this run produced on
-held-out data by a wide margin. The run spent 47.05: 77 slots at 5.7\% of
+from the SFT initialization and is, jointly with step 100
+(\S\ref{sec:arc}), the best policy this run produced on
+held-out data. The run spent 47.05: 77 slots at 5.7\% of
 the displacement, 4 at all of it.
 Two qualifications keep this a path description, not a scale.
 Step 50 is the earliest non-initial checkpoint retained (nothing was
@@ -417,7 +418,7 @@ advantage is exactly zero. It rises from 0.0 at step 50 to 1.0 at step 125
 and averages 0.946 over the remainder of training, so from step 125 onward
 the optimizer receives no learning signal on nearly every prompt. Read as
 diagnostics, both in-sample signals bracket the collapse: the mean's
-steepest climb (0.9931 to 1.6000, 41.8\% of its observed range) and the
+climb to ceiling (0.9931 to 1.6000, 41.8\% of its observed range) and the
 variance's fall to zero both land between logged steps 100 and 125. Neither
 supplies a sign --- saturation with zero spread is what mastery and
 degeneracy alike look like --- so held-out evaluation still decides which.
@@ -446,7 +447,7 @@ window. Second, $\beta=0.001$ was numerically inert throughout the
 reported run: at step 50, $\beta \cdot \mathrm{KL} = 0.001 \times 2.70 =
 0.0027$ reward units --- eighteen times smaller than the one-away
 partial-credit term and 0.17\% of the 1.6 maximum --- and at convergence it
-reaches 0.047. The KL reference never restrained the policy at any point
+reaches 0.047. The KL reference never meaningfully restrained the policy
 in the reported run, so this paper contains no evidence about what a KL
 penalty does when it is large enough to matter, and the
 intermediate-$\beta$ sweep remains unrun.
