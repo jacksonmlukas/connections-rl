@@ -1,15 +1,5 @@
-% tae_submission.tex — rebuilt 2026-08-24 from the verified artifact set after
-% the loss of the original source. Structure: SCAFFOLD_GO_BRIEF.md. Prose: the
-% 51 recovered NOW blocks (Aug 20 patch set), with the Aug 24 memo v2 applied
-% on top, in that order. Every number traces to a repo/Hub artifact; sweep and
-% session labels are in the text by rule, not by exception.
-%
-% REQUIRES: neurips_2026.sty from the TAE workshop page (the REAL file, not a
-% stub) placed alongside this file. The template's Times is kept; only the
-% typewriter face is remapped (\ttdefault=lmtt), because the default tt emits Type 3
-% bitmap fonts and arXiv flags the submission.
 \documentclass{article}
-\usepackage[dblblindworkshop]{neurips_2026}
+\usepackage[preprint]{neurips_2026}
 \renewcommand{\ttdefault}{lmtt} % Type 1 typewriter; keeps the template's Times
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
@@ -19,15 +9,14 @@
 \usepackage{xcolor}
 \usepackage{microtype}
 \usepackage{url}
-% Repository URL: anonymized in the double-blind submission build, set to the
-% real URL in the arXiv/camera-ready build.
-\newcommand{\repourl}{\texttt{[repository URL withheld for review]}}
+\newcommand{\repourl}{\url{https://github.com/jacksonmlukas/connections-rl}}
 
 \title{Reliable and Invalid: Anatomy of a Gamed Verifiable Reward}
-% NOTE: \workshoptitle is invisible in submission mode but PRINTS on the
-% camera-ready ([dblblindworkshop, final]) --- set it per venue before any
-% non-TAE build.
-\workshoptitle{Foundations of LLM Post-Training in Changing Environments}
+\workshoptitle{}
+\author{%
+  Jackson Lukas \\
+  \texttt{jlukas3313@gmail.com} \\
+}
 
 \begin{document}
 \maketitle
@@ -693,10 +682,6 @@ untested. The diagnosis is post hoc
 shares the leak (copy rate unmeasured), and the blind judges are
 correlated scorers, not independent votes (\S\ref{sec:judge}).
 
-% Figures are generated fresh from artifacts by figs/make_fig1_entropy.py
-% (input: results-analysis/entropy-kl-7b.json) and
-% figs/make_fig3_reward_curves.py (input: data/wandb_train_reward.csv).
-% Never embed a rendered image whose provenance predates the current numbers.
 
 \bibliographystyle{plainnat}
 \bibliography{refs}

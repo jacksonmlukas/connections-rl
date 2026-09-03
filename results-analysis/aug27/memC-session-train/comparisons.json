@@ -1,0 +1,80 @@
+{
+  "base_vs_sft": {
+    "n_paired": 807,
+    "a_solve_rate": 0.004956629491945477,
+    "b_solve_rate": 0.012391573729863693,
+    "mcnemar_p": 0.1795654296875,
+    "solve_rate_diff_ci": [
+      -0.007434944237918215,
+      -0.01734820322180917,
+      0.0012391573729863693
+    ],
+    "discordant_a_only": 4,
+    "discordant_b_only": 10
+  },
+  "base_vs_grpo-ckpt50": {
+    "n_paired": 807,
+    "a_solve_rate": 0.004956629491945477,
+    "b_solve_rate": 0.030978934324659233,
+    "mcnemar_p": 0.00010371580719947815,
+    "solve_rate_diff_ci": [
+      -0.026022304832713755,
+      -0.03841387856257745,
+      -0.01486988847583643
+    ],
+    "discordant_a_only": 4,
+    "discordant_b_only": 25
+  },
+  "base_vs_grpo-final": {
+    "n_paired": 807,
+    "a_solve_rate": 0.004956629491945477,
+    "b_solve_rate": 0.0012391573729863693,
+    "mcnemar_p": 0.375,
+    "solve_rate_diff_ci": [
+      0.0037174721189591076,
+      -0.0012391573729863693,
+      0.009913258983890954
+    ],
+    "discordant_a_only": 4,
+    "discordant_b_only": 1
+  },
+  "sft_vs_grpo-ckpt50": {
+    "n_paired": 807,
+    "a_solve_rate": 0.012391573729863693,
+    "b_solve_rate": 0.030978934324659233,
+    "mcnemar_p": 0.004077315330505371,
+    "solve_rate_diff_ci": [
+      -0.01858736059479554,
+      -0.030978934324659233,
+      -0.007434944237918215
+    ],
+    "discordant_a_only": 5,
+    "discordant_b_only": 20
+  },
+  "sft_vs_grpo-final": {
+    "n_paired": 807,
+    "a_solve_rate": 0.012391573729863693,
+    "b_solve_rate": 0.0012391573729863693,
+    "mcnemar_p": 0.01171875,
+    "solve_rate_diff_ci": [
+      0.011152416356877323,
+      0.0037174721189591076,
+      0.01982651796778191
+    ],
+    "discordant_a_only": 10,
+    "discordant_b_only": 1
+  },
+  "grpo-ckpt50_vs_grpo-final": {
+    "n_paired": 807,
+    "a_solve_rate": 0.030978934324659233,
+    "b_solve_rate": 0.0012391573729863693,
+    "mcnemar_p": 1.1920928955078125e-07,
+    "solve_rate_diff_ci": [
+      0.02973977695167286,
+      0.01858736059479554,
+      0.042131350681536554
+    ],
+    "discordant_a_only": 24,
+    "discordant_b_only": 0
+  }
+}

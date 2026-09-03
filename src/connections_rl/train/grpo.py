@@ -20,6 +20,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import random
 
 from connections_rl.data.formatting import SYSTEM_PROMPT
 from connections_rl.reward.reward import RewardConfig
@@ -130,6 +131,7 @@ def build_dataset(puzzle_records: list[dict]):
     rows = []
     for rec in puzzle_records:
         words = [w.upper() for g in rec["answers"] for w in g["members"]]
+        random.Random(int(rec.get("puzzle_id", rec.get("id", -1)))).shuffle(words)
         rows.append(
             {
                 "prompt": [

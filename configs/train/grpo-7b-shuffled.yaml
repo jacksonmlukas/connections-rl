@@ -1,0 +1,41 @@
+# aug29 — the leak-free control run. Identical to configs/train/grpo-7b.yaml in
+# every hyperparameter (lr 5e-6, kl_beta 0.001, K=8, temperature 0.9, LoRA r=16,
+# 1 epoch = 403 steps, seed 0); the ONLY difference is that grpo.py::build_dataset
+# now shuffles each board with the same puzzle-seeded RNG used by
+# data/formatting.py::shuffled_words, so GRPO prompts match SFT and every eval.
+#
+# Separate output_dir / ckpt_hub_repo / run_name so this never collides with the
+# reported run's artifacts.
+model_config: configs/model/qwen2.5-7b.yaml
+split_dir: data/splits
+init_adapter: artifacts/sft-7b
+output_dir: artifacts/grpo-7b-shuffled
+seed: 0
+load_in_4bit: true
+gradient_checkpointing: true
+
+lora:
+  r: 16
+  alpha: 32
+
+reward:
+  format_reward: 0.1
+  grouping_weight: 1.0
+  solve_bonus: 0.5
+  one_away_credit: 0.05
+  invalid_penalty: -0.1
+
+num_generations: 8
+temperature: 0.9
+kl_beta: 0.001
+lr: 5.0e-6
+batch_size: 2
+grad_accum: 8
+epochs: 1
+max_prompt_length: 512
+max_completion_length: 512
+logging_steps: 5
+save_steps: 50
+ckpt_hub_repo: connections-rl-grpo-7b-shuffled-ckpt
+wandb: true
+run_name: connections-rl-grpo-qwen7b-shuffled

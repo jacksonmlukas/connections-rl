@@ -1,16 +1,6 @@
-% tae_submission.tex — rebuilt 2026-08-24 from the verified artifact set after
-% the loss of the original source. Structure: SCAFFOLD_GO_BRIEF.md. Prose: the
-% 51 recovered NOW blocks (Aug 20 patch set), with the Aug 24 memo v2 applied
-% on top, in that order. Every number traces to a repo/Hub artifact; sweep and
-% session labels are in the text by rule, not by exception.
-%
-% REQUIRES: neurips_2026.sty from the TAE workshop page (the REAL file, not a
-% stub) placed alongside this file. The template's Times is kept; only the
-% typewriter face is remapped (\ttdefault=lmtt), because the default tt emits Type 3
-% bitmap fonts and arXiv flags the submission.
 \documentclass{article}
 \usepackage[dblblindworkshop]{neurips_2026}
-\renewcommand{\ttdefault}{lmtt} % Type 1 typewriter; keeps the template's Times
+\renewcommand{\ttdefault}{lmtt}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{booktabs}
@@ -18,16 +8,9 @@
 \usepackage{graphicx}
 \usepackage{xcolor}
 \usepackage{microtype}
-\usepackage{url}
-% Repository URL: anonymized in the double-blind submission build, set to the
-% real URL in the arXiv/camera-ready build.
-\newcommand{\repourl}{\texttt{[repository URL withheld for review]}}
 
 \title{Reliable and Invalid: Anatomy of a Gamed Verifiable Reward}
-% NOTE: \workshoptitle is invisible in submission mode but PRINTS on the
-% camera-ready ([dblblindworkshop, final]) --- set it per venue before any
-% non-TAE build.
-\workshoptitle{Foundations of LLM Post-Training in Changing Environments}
+\workshoptitle{TAE (Trust-AI-Eval): Can We Trust AI Evaluation?}
 
 \begin{document}
 \maketitle
@@ -175,18 +158,15 @@ satisfiable --- is the design property this paper studies.
 \section{The arc on held-out data}
 \label{sec:arc}
 
-Table~\ref{tab:arc} reports all four arms of the reported 7B run on the
-162-puzzle test set, greedy decoding, served in a single vLLM session so
-every comparison is within-session. The supervised checkpoint is included
-because it, not the untrained model, is what GRPO was initialized from.
+Table~\ref{tab:arc} reports the three checkpoints of the reported 7B run on
+the 162-puzzle test set, greedy decoding, all three arms served in a single
+vLLM session so every comparison is within-session.
 
 \begin{table}[h]
 \centering
-\caption{7B on the test split (162 puzzles, 648 group slots; all four arms
-in one serving session; greedy). Means on the 0--4 scale are exact ratios of
-the count column. Bootstrap intervals are percentile over puzzles,
-$B=1{,}000$ resamples, seed 0. This is the session \S\ref{sec:control}
-also scores on the training split.}
+\caption{7B on the test split (162 puzzles, 648 group slots; one serving
+session; greedy). Means on the 0--4 scale are exact ratios of the count
+column. Bootstrap intervals are percentile, seed 0.}
 \label{tab:arc}
 \small
 \setlength{\tabcolsep}{4pt}
@@ -195,8 +175,7 @@ also scores on the training split.}
 Arm & Groups correct (0--4) & Groups (of 648) & Invalid & Mean reward & Solves \\
 \midrule
 Instruct (untrained) & 0.1605 $[0.105, 0.222]$ & 26 & 6.8\%  & 0.165 & 0/162 \\
-SFT                  & 0.3210 $[0.216, 0.432]$ & 52 & 22.2\% & 0.191 & 2/162 \\
-\textbf{GRPO, step 50}  & \textbf{0.4938} $[0.383, 0.623]$ & \textbf{80} & \textbf{16.0\%} & \textbf{0.252} & 2/162 \\
+\textbf{GRPO, step 50}  & \textbf{0.4753} $[0.364, 0.599]$ & \textbf{77} & \textbf{16.7\%} & \textbf{0.246} & 2/162 \\
 GRPO, step 403     & 0.0247 $[0.000, 0.056]$ & 4 & 0.6\%  & 0.125 & 0/162 \\
 \bottomrule
 \end{tabular}
@@ -206,45 +185,39 @@ Two reference points frame the table. A uniformly drawn valid partition
 recovers $4 \times 5775/2{,}627{,}625 = 0.0088$ groups per puzzle, or
 \textbf{1.4 slots} across this split; the step-403 endpoint sits at 2.8
 times that floor --- and \S\ref{sec:control} shows why: its copied
-responses implement that chance process. Second, because all four arms sit
-in one session, the stage accounting is paired: $26 \rightarrow 52
-\rightarrow 80 \rightarrow 4$, the supervised stage contributing $+0.1605$
-$[+0.0556, +0.2716]$ and the reinforcement-learning stage $+0.1728$
-$[+0.0741, +0.2840]$ --- near-equal gains, both intervals excluding zero.
+responses implement that chance process. Second, GRPO was initialized from the supervised checkpoint,
+not the untrained model. That checkpoint decodes to 56 slots (0.346)
+in one serving session and 52 (0.321) in another (2 of 162 puzzles;
+Appendix~\ref{app:endpoints}), and step 50 itself decodes to 77 or 80 by
+session (below). The control session of \S\ref{sec:control}, which serves
+all four arms together, settles the stage accounting with paired
+statistics: $26 \rightarrow 52 \rightarrow 80 \rightarrow 4$, the
+supervised stage contributing $+0.1605$ $[+0.0556, +0.2716]$ and the
+reinforcement-learning stage $+0.1728$ $[+0.0741, +0.2840]$ --- near-equal
+gains, both intervals excluding zero.
 
-The method works, then reverses. Both movements are paired within
-Table~\ref{tab:arc}'s session: the climb to step 50 is the two stage gains
-just given, each excluding zero, and step 403 falls below the untrained
-model by $-0.1358$ $[-0.1975, -0.0802]$. The earlier three-arm session read
-$+0.315$ $[+0.204, +0.438]$ and $-0.136$ $[-0.191, -0.080]$ for the same two
-contrasts; means in Table~\ref{tab:arc} are exact ratios of the count
-column. Two details locate the
-mechanism. Held-out mean reward reads 0.252 at step 50 and 0.125 at step
-403 against base's 0.165 (a separate session reads step 100 at
-0.2664 to a step-50 re-serve's 0.2525),
+The method works, then reverses: $+0.315$ $[+0.204, +0.438]$ paired against
+the untrained model at step 50, $-0.136$ $[-0.191, -0.080]$ at step 403, both
+intervals excluding zero; means in Table~\ref{tab:arc} are exact ratios of
+the count column. Two details locate the
+mechanism. Held-out mean reward reads 0.246 at step 50 and 0.125 at step
+403 against base's 0.165 (one session; a later session reads step 100 at
+0.2664 to a step-50 re-serve's 0.2525, the run's held-out maximum),
 while the training reward reaches its ceiling by step 125
 (\S\ref{sec:mechanism}): the same reward ranks the checkpoints correctly
 out of sample and fails to on the training curve --- that contrast, not
 the reward's determinism, is this paper's subject. And
-the step-50 policy is worse than base on structure (16.0\% invalid against
+the step-50 policy is worse than base on structure (16.7\% invalid against
 6.8\%) but \emph{not} worse than its actual initialization, the SFT arm at
 22.2\% --- so what is specific to the phase after step 50 is the semantic
 collapse, not the structural climb, which was already more than half
 complete before the peak (\S\ref{sec:mechanism}).
 
-\paragraph{How wide is the peak?} In a separate serving session, step 100
+\paragraph{The peak is a plateau.} In a separate serving session, step 100
 evaluates at 76/648 against a step-50 re-serve's 80/648, paired difference
-$-0.0247$ $[-0.1481, +0.0927]$ ($n=162$). We read this as uninformative
-rather than as equivalence: the interval's width is comparable to the
-entire step-50 effect, so it is equally consistent with step 100 matching
-the peak and with step 100 having lost a third of it, and we did not
-pre-specify an equivalence margin. The normalization ablation of
-\S\ref{sec:ablation}, this paper's only independent trajectory, argues for
-the second reading --- step 100 reads 17/400 against step 50's 35/400 on
-the entropy sweep and 35/432 against 62/432 on the greedy checkpoint
-sweep, roughly half the peak gone in both. What both sessions agree on is
-narrower and is all we claim: the collapse falls between steps 100 and 150,
-where the validation semantic score drops 35/400 $\to$ 3/400
+$-0.0247$ $[-0.1481, +0.0927]$ ($n=162$) --- indistinguishable. The peak spans at least steps 50--100; the collapse
+falls between 100 and 150, where the validation semantic score drops
+35/400 $\to$ 3/400 on the $n=100$ temperature-0.9 entropy sweep
 (\S\ref{sec:mechanism}).
 
 \paragraph{Reproducibility across serving sessions.} Base and the final
@@ -253,11 +226,8 @@ checkpoint reproduce per-puzzle \emph{exactly} across three vLLM sessions
 leave no argmax ties for batched inference to resolve). Step 50 does not:
 2/162 puzzles across sessions (77 vs.\ 80 of 648), 6/162 within one ---
 mid-training policies sit near ties, which is why every step-50 number in
-this paper carries its serving session. Table~\ref{tab:arc}'s 80/648 is the
-four-arm session used throughout; an earlier three-arm session read 77/648,
-and the SFT arm decodes to 52 there and 56 in a third
-(Appendix~\ref{app:endpoints}). No conclusion in this paper turns on the
-difference.
+this paper carries its serving session; the published headline (77/648) is
+the original single-session evaluation.
 
 \paragraph{Robustness of the endpoint.} Three independent 7B seeds land at
 4, 7 and 11 recovered slots of 648 ($0.045 \pm 0.022$ on the 0--4 scale) ---
@@ -285,17 +255,13 @@ with formatting held fixed.
 Among answers that parse, the converged policy recovers 4 group slots where
 the untrained model recovers 26.
 
-\paragraph{The loss shows no stratum gradient we can resolve.} Relative
-loss from the untrained model to the endpoint runs 67--100\% across all
-four stratum labels (values in Appendix~\ref{app:copy}). We registered
-this, pre-diagnosis, as a failed prediction of a selective-inference story;
-post-diagnosis it is the copy rule's expected signature, since a positional
-rule is blind to stratum (\S\ref{sec:control}). The comparison cannot do
-more than that: the strata hold 21--69 test puzzles each, the untrained
-model's per-stratum base rates run as low as one recovered slot, and we
-report no intervals --- a design with no power to separate uniform loss
-from a gradient. Read it as consistent with stratum-blindness, not as
-evidence for it.
+\paragraph{The loss is uniform across strata.} Relative loss from the
+untrained model to the endpoint runs 67--100\% across all four stratum
+labels (values in Appendix~\ref{app:copy}) --- closer to uniform
+destruction than a gradient. We registered this, pre-diagnosis, as a failed
+prediction of a selective-inference story; post-diagnosis it is the copy
+rule's expected signature, since a positional rule is blind to stratum
+(\S\ref{sec:control}).
 
 \section{The scale contrast at 1.5B}
 \label{sec:scale}
@@ -324,7 +290,7 @@ per-checkpoint values in Appendix~\ref{app:ckpt}); the ablation's
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\linewidth]{figs/fig1_entropy_collapse.pdf}
+\includegraphics[width=\linewidth]{../figs/fig1_entropy_collapse.pdf}
 \caption{The mechanism, on the $n=100$ temperature-0.9 entropy sweep
 (reported 7B run, seed 0). \textbf{Left:} policy entropy against optimizer
 step --- a 30-fold collapse, with the cliff between steps 100 and 150.
@@ -371,7 +337,7 @@ generations (\S\ref{sec:control}).
 scale.} The step-50 checkpoint sits 2.70 nats
 from the SFT initialization and is, jointly with step 100
 (\S\ref{sec:arc}), the best policy this run produced on
-held-out data. The run spent 47.05: 80 slots at 5.7\% of
+held-out data. The run spent 47.05: 77 slots at 5.7\% of
 the displacement, 4 at all of it.
 Two qualifications keep this a path description, not a scale: step 50 is
 the earliest checkpoint retained, so ``at 5.7\%'' means \emph{at or
@@ -386,7 +352,7 @@ high-entropy policy far more than a collapsed one.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\linewidth]{figs/fig3_reward_curves.pdf}
+\includegraphics[width=\linewidth]{../figs/fig3_reward_curves.pdf}
 \caption{The same reward, in sample and held out (reported 7B run, seed
 0). Training reward (gray; sampled $T{=}0.9$, $K{=}8$; TRL 5-step
 averages; measured on the answer-ordered prompts of \S\ref{sec:setup})
@@ -509,12 +475,8 @@ GRPO, step 403 & \textbf{0.0260} $[0.012, 0.041]$ & 21 & 0.0247 $[0.000, 0.056]$
 
 Three results. The endpoint retains nothing --- 21 of 3{,}228 training
 slots, indistinguishable from its own test floor: not a train/test gap, so
-not memorization. SFT does partially memorize, though less than the raw
-numbers suggest: its $+0.191$ train-minus-test gap (0.5118 vs.\ 0.3210
-after three epochs) must be read against the untrained model's own
-$+0.027$ gap on the same chronological splits (0.1871 vs.\ 0.1605), which
-is split difficulty rather than memorization; the adjusted excess is
-$+0.164$. Step 50 inherits essentially all of it ($+0.160$ adjusted) while
+not memorization. SFT does partially memorize (0.5118 train vs.\ 0.3210
+test after three epochs, a gap we report), and step 50 inherits it while
 improving on SFT by the same margin on both splits ($+0.169$ / $+0.173$):
 the peak's gain generalizes. And the shared session yields the
 paired stage split: $26 \rightarrow 52 \rightarrow 80 \rightarrow 4$, SFT $+0.1605$ $[+0.0556, +0.2716]$, RL $+0.1728$
@@ -551,7 +513,7 @@ zero under a paired bootstrap (seed 0; step-50 minus final: $+0.60$
 $[+0.44, +0.78]$ / $+3.25$ $[+2.81, +3.67]$ / $+1.62$ $[+1.33, +1.90]$).
 That ordering rules out the obvious confound: the final policy is the
 \emph{most} well-formed arm on this split (0.6\% invalid against 6.8\% and
-16.0\%), so a shared preference for well-formed text would have placed it
+16.7\%), so a shared preference for well-formed text would have placed it
 first, not last. In hindsight the judges were reading the copy rule: the
 arm they unanimously rank last is the copier (\S\ref{sec:control}).
 Judges do err in
@@ -572,17 +534,7 @@ practitioners actually consult it --- as a training curve, in sample, where
 it reads perfect. The cheap remedy is not a better reward but the same
 reward on data the policy was not updated against --- plus the trainer's
 own in-sample brackets (mean saturation, zero variance), though neither
-signs the turn (\S\ref{sec:mechanism}). Held out, the separation is real
-but not large: paired against the untrained model over the 162 test
-puzzles, mean reward moves $+0.086$ $[+0.045, +0.129]$ at step 50 and
-$-0.040$ $[-0.061, -0.019]$ at the endpoint, both excluding zero
-(percentile bootstrap, $B=1{,}000$, seed 0; SFT at $+0.026$ $[-0.015,
-+0.068]$ does not). We flag the margin because 79\% of the endpoint's
-held-out reward is the cheap structural term: a reward weighted slightly
-differently could have kept the aggregate above base while the construct
-collapsed exactly as it did. The aggregate caught this run; the
-decomposition below is what makes it a diagnostic rather than a
-coincidence.
+signs the turn (\S\ref{sec:mechanism}).
 
 \paragraph{Determinism certifies the scorer, not the task.} Our reward was
 correct on every string it scored, and the run was still gamed --- through
@@ -591,8 +543,7 @@ prompted it: held-out evaluation said there was something to find.
 One function, two measurements: in sample, reliable and invalid --- this
 paper's title; held out, what validity it had.
 
-\paragraph{Report reward components separately, never the aggregate.} This
-is the recommendation we would keep if we could keep only one. The
+\paragraph{Report reward components separately, never the aggregate.} The
 failure is invisible in the sum and obvious in the decomposition, which
 costs nothing: \S\ref{sec:mechanism} reports it for our three arms (52\%,
 27\%, 79\%). It is a standard reward-model diagnostic, simply not applied to
@@ -604,9 +555,8 @@ applies to results that come out well too, including step 50: one seed
 nine-point validation grid (step 100 reads 0.0875 to its 0.0950 at
 $n=100$, inside one standard error). The grid preceded every test
 evaluation of the selected checkpoint --- ordinary validation-based
-selection. Whether step 50 is a point or a shoulder we cannot say:
-\S\ref{sec:arc}'s step-100 evaluation is too wide to separate the two, and
-the ablation trajectory suggests decline has already begun by then.
+selection --- and \S\ref{sec:arc}'s step-100 evaluation shows a plateau,
+not a lucky column.
 
 \section{Related work}
 \label{sec:related}
@@ -638,31 +588,7 @@ their sense against the composed task --- reward plus prompt distribution
 \citet{abahana2026} classifies RLHF failure transitions by directional
 changes in learned reward and judge scores; ours differs in instrument (a
 rule-based reward, exact) and in detection (bracketed by held-out data
-rather than flagged in flight). \citet{krakovna2020specification} catalogue
-specification gaming across RL systems; the entry our run would occupy is
-an ordinary one, and we claim novelty for the trace rather than the
-phenomenon.
-
-\paragraph{Shortcut learning and leakage.} What our policy learned is a
-shortcut in the sense of \citet{geirhos2020shortcut}: a decision rule that
-succeeds on the training distribution and fails off it, because a feature
-of the input --- here, word order --- carried the label. \citet{lapuschkin2019unmasking}
-make the same point for supervised vision models under the name Clever Hans
-prediction. Neither literature is usually applied to RL post-training,
-where the training distribution is regenerated by a trainer rather than
-loaded from a file, and where a leak therefore hides in code rather than in
-data. That is the transfer we are making: a verifiable reward does not
-exempt a run from the failure mode, it only guarantees the shortcut is
-scored accurately.
-
-\paragraph{Abruptness.} \citet{pan2022effects} report phase transitions in
-reward misspecification --- capability thresholds at which behavior shifts
-qualitatively and true reward falls sharply --- in some of the environments
-they study. Our collapse between steps 100 and 150 has that shape, and their
-result is the reason we treat the gap in our checkpoint grid as a real
-limitation (\S\ref{sec:limitations}) rather than an interpolation detail:
-if the turn is a transition rather than a slope, its location is the
-measurement worth having.
+rather than flagged in flight).
 
 \paragraph{Validity in AI evaluation.} Measurement-theoretic critiques of
 ML evaluation \citep{jacobs2021, freiesleben2025} distinguish a measurement
@@ -684,8 +610,8 @@ endpoints at both scales and a trajectory at one, and an endpoint cannot
 rule out a traversed-and-returned 1.5B peak (\S\ref{sec:scale}). No human baseline exists: ``worse than the untrained model'' is
 established, ``bad in absolute terms'' is not. Three-seed evidence covers only the converged endpoint (spread
 0.025--0.068, why we distrust single numbers); the peak's height and
-location may move across seeds, and our step-100 evaluation is too wide to
-establish that it is not a knife edge (\S\ref{sec:arc}). A single $\beta$ is reported alongside one that froze the policy (no
+location may move across seeds, though step 100 shows it is not a knife
+edge. A single $\beta$ is reported alongside one that froze the policy (no
 intermediate run, a learning-rate difference besides, $\beta \cdot
 \mathrm{KL} \le 0.047$ throughout), so a working KL penalty remains
 untested. The diagnosis is post hoc
@@ -693,52 +619,10 @@ untested. The diagnosis is post hoc
 shares the leak (copy rate unmeasured), and the blind judges are
 correlated scorers, not independent votes (\S\ref{sec:judge}).
 
-% Figures are generated fresh from artifacts by figs/make_fig1_entropy.py
-% (input: results-analysis/entropy-kl-7b.json) and
-% figs/make_fig3_reward_curves.py (input: data/wandb_train_reward.csv).
-% Never embed a rendered image whose provenance predates the current numbers.
-
 \bibliographystyle{plainnat}
 \bibliography{refs}
 
 \appendix
-
-\section{The two prompts}
-\label{app:prompts}
-
-The bug of \S\ref{sec:setup} is one line, and it is easiest to see as the
-pair of strings the model actually received. Both are the user turn of the
-same puzzle (id 3, 2023-06-14), under the same system prompt; the answer key
-is \texttt{\{CHEEK, EYE, MOUTH, NOSE\}}, \texttt{\{CHOW, GOBBLE, SCARF,
-WOLF\}}, \texttt{\{LAB, PEKE, PIT, POM\}}, \texttt{\{AMIGO, KING, STOOGE,
-TENOR\}}.
-
-\medskip
-\noindent\textbf{GRPO training prompt, as the reported run consumed it}
-(\texttt{train/grpo.py::build\_dataset}):
-
-{\footnotesize\begin{verbatim}
-Words: CHEEK, EYE, MOUTH, NOSE, CHOW, GOBBLE, SCARF, WOLF,
-       LAB, PEKE, PIT, POM, AMIGO, KING, STOOGE, TENOR
-\end{verbatim}}
-
-\noindent\textbf{SFT data and every evaluation}
-(\texttt{data/formatting.py::shuffled\_words}, a puzzle-seeded permutation):
-
-{\footnotesize\begin{verbatim}
-Words: CHOW, POM, PIT, KING, AMIGO, NOSE, SCARF, CHEEK,
-       EYE, TENOR, STOOGE, GOBBLE, MOUTH, LAB, PEKE, WOLF
-\end{verbatim}}
-
-\medskip
-In the first, emitting the words four at a time in the order given scores
-the full 1.6. In the second it scores what a uniformly drawn valid
-partition scores. Nothing else differs --- same system prompt, same reward,
-same parser --- and the difference is a missing call to the shuffle the
-rest of the codebase already used. The regression test we have since added
-asserts the two paths agree per puzzle, which is the property that would
-have caught this and the weaker ``is not in answer order'' assertion would
-not.
 
 \section{Per-checkpoint values for the entropy sweep}
 \label{app:ckpt}
@@ -750,18 +634,7 @@ structural column discussed in Section~\ref{sec:mechanism}, and the
 off-trajectory untrained Instruct reference. All values are from the $n=100$
 temperature-0.9
 entropy sweep of the reported 7B run (seed 0); the artifact is
-\texttt{results-analysis/entropy-kl-7b.json} in the released repository,
-\repourl{}, which also holds the
-training and evaluation configs, the reward implementation, and the
-generation logs behind every table here.
-
-Unless stated otherwise, all intervals in this paper are percentile
-bootstrap over \emph{puzzles} --- the unit of independent sampling --- with
-$B=1{,}000$ resamples at seed 0; per-slot counts are reported alongside
-means but never resampled independently, since a puzzle's four slots are
-not independent. Where a count is small enough that the bootstrap
-degenerates (Table~\ref{tab:endpoints}), we substitute Clopper--Pearson
-intervals and say so.
+\texttt{results-analysis/entropy-kl-7b.json} in the released repository.
 
 \begin{table}[h]
 \centering

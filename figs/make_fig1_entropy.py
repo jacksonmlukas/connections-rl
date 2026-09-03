@@ -41,7 +41,7 @@ base = next((p for p in pts if p["step"] < 0), None)
 assert traj[0]["step"] == 0 and traj[-1]["step"] == 403, \
     "sweep does not span step 0..403 -- stale or wrong artifact"
 
-fig, axes = plt.subplots(1, 2, figsize=(6.4, 2.9), dpi=300)
+fig, axes = plt.subplots(1, 2, figsize=(6.4, 2.2), dpi=300)
 
 ax = axes[0]
 ax.plot([p["step"] for p in traj], [p["entropy_per_token"] for p in traj],

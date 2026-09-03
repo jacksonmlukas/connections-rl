@@ -96,7 +96,7 @@ def main():
         sys.exit("ERROR: max step %g -- this looks like the _step log counter, not "
                  "the 403-step optimizer axis. Wrong column." % max(steps))
 
-    fig, ax = plt.subplots(figsize=(6.4, 3.5), dpi=300)
+    fig, ax = plt.subplots(figsize=(6.4, 2.6), dpi=300)
     ax.plot([s for s, _ in train], [r for _, r in train], "-", lw=1.4, color="#B0B0B0",
             label="Training reward (in sample)", zorder=2)
     ax.axhline(REWARD_CEILING, ls="--", lw=1.0, color="#888888", zorder=1)
