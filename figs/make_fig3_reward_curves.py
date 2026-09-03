@@ -9,9 +9,12 @@ real W&B export (data/wandb_train_reward.csv, raw scan_history):
      a log-call counter (0..11364 for this run) and must never be the x-axis.
   2. The reward column is train/reward exactly; substring matching would hit
      the profiling/..._calculate_rewards timing column first.
-  3. The held-out anchors are the aug20 Task D session (base/step-50/final);
+  3. The held-out anchors are the aug27 memC control session (the paper's
+     Tables 2/3 session; step-50 anchor 0.2519 there vs 0.2463 in aug20 Task D);
      step 100 exists only in the aug21 evalB session and is drawn as a hollow
-     marker labeled as such -- sessions are never mixed on one curve.
+     marker labeled as such -- sessions are never mixed on one curve. The
+     held-out series is drawn on a twin right axis so its 0.125..0.266 range
+     is legible against the 0.99..1.60 training curve.
 
 Run from the repo root:  python3 figs/make_fig3_reward_curves.py
 Input:  data/wandb_train_reward.csv   Output: figs/fig3_reward_curves.{png,pdf}
@@ -35,9 +38,11 @@ REWARD_CEILING = 1.6  # RewardConfig.max_reward = 0.1 + 1.0 + 0.5
 CEILING_STEP = 125    # first logged step at (1.6000, std 0.0000); memo aug24
 
 # ---- held-out (test, 162 puzzles, greedy) mean reward ----------------------
-# aug20 Task D session (single vLLM session; base and final reproduce other
-# sessions per-puzzle exactly):
-HELDOUT = [(50, 0.2462962962962963), (403, 0.125)]
+# aug27 memC control session (the four-arm session of the paper's Tables 2/3;
+# artifact: results-analysis/aug27/memC-session-test/*/metrics.json). Base and
+# final reproduce the aug20 Task D session per-puzzle exactly; step 50 differs
+# across sessions (0.2463 in aug20 Task D), which is why the session is named:
+HELDOUT = [(50, 0.2518518518518518), (403, 0.125)]
 BASE_REWARD = 0.16543209876543210  # untrained base, same session
 # aug21 evalB session (a DIFFERENT serving session; step-50 re-serves there at
 # 0.2525). Drawn as a hollow marker, never joined to the Task D curve:
@@ -105,26 +110,44 @@ def main():
                 xy=(max(steps) * 0.985, REWARD_CEILING), xytext=(0, -9),
                 textcoords="offset points", ha="right", va="top",
                 fontsize=6.8, color="#666666")
-    ax.plot([s for s, _ in HELDOUT], [r for _, r in HELDOUT], "-o", lw=1.8, ms=5.5,
-            color="#C1440E", label="Held-out reward (162 test puzzles, single serving session)",
-            zorder=4)
-    ax.plot([HELDOUT_B2[0]], [HELDOUT_B2[1]], "o", ms=5.5, mfc="none", mec="#C1440E",
-            mew=1.4, label="Held-out, step 100 (later session; not joined)", zorder=4)
-    ax.axhline(BASE_REWARD, ls=":", lw=1.1, color="#444444", zorder=1)
-    ax.annotate("untrained Instruct, %.3f" % BASE_REWARD, xy=(max(steps) * 0.985, BASE_REWARD),
-                xytext=(0, 4), textcoords="offset points", ha="right", va="bottom",
-                fontsize=6.8, color="#444444")
-    ax.annotate("held-out peak\nstep 50, %.3f" % HELDOUT[0][1], xy=HELDOUT[0],
-                xytext=(78, 0.42), fontsize=6.8,
-                arrowprops=dict(arrowstyle="->", lw=0.8, color="k", alpha=0.8))
-    ax.annotate("ends BELOW Instruct\nstep 403, %.3f" % HELDOUT[-1][1], xy=HELDOUT[-1],
-                xytext=(255, 0.30), fontsize=6.8,
-                arrowprops=dict(arrowstyle="->", lw=0.8, color="k", alpha=0.8))
+    # Held-out reward lives on its own (right) axis: its whole range is
+    # 0.125..0.266, and on the training-reward axis it is an unreadable smear
+    # at the bottom. Twin axes, one x, scales labeled and color-coded.
+    ax2 = ax.twinx()
+    ax2.plot([s for s, _ in HELDOUT], [r for _, r in HELDOUT], "-o", lw=1.8, ms=5.5,
+             color="#C1440E",
+             label="Held-out reward (162 test puzzles, control session; right axis)",
+             zorder=4)
+    ax2.plot([HELDOUT_B2[0]], [HELDOUT_B2[1]], "o", ms=5.5, mfc="none", mec="#C1440E",
+             mew=1.4, zorder=4)
+    ax2.annotate("step 100\n(later session; not joined)", xy=HELDOUT_B2,
+                 xytext=(6, 2), textcoords="offset points", ha="left", va="bottom",
+                 fontsize=6.0, color="#C1440E")
+    ax2.axhline(BASE_REWARD, ls=":", lw=1.1, color="#444444", zorder=1)
+    ax2.annotate("untrained Instruct, %.3f" % BASE_REWARD, xy=(4, BASE_REWARD),
+                 xytext=(0, 4), textcoords="offset points", ha="left", va="bottom",
+                 fontsize=6.8, color="#444444")
+    ax2.annotate("held-out peak\nstep 50, %.3f" % HELDOUT[0][1], xy=HELDOUT[0],
+                 xytext=(8, 0.284), fontsize=6.8, ha="left", va="top",
+                 arrowprops=dict(arrowstyle="->", lw=0.8, color="k", alpha=0.8))
+    ax2.annotate("ends BELOW Instruct\nstep 403, %.3f" % HELDOUT[-1][1], xy=HELDOUT[-1],
+                 xytext=(285, 0.185), fontsize=6.8,
+                 arrowprops=dict(arrowstyle="->", lw=0.8, color="k", alpha=0.8))
+    ax2.set_ylim(0.10, 0.30)
+    ax2.set_ylabel("Held-out mean reward", color="#C1440E")
+    ax2.tick_params(axis="y", colors="#C1440E")
+    ax2.spines["right"].set_color("#C1440E")
+    ax2.spines["top"].set_visible(False)
     ax.set_xlabel("GRPO optimizer step  (Qwen2.5-7B-Instruct)")
-    ax.set_ylabel("Mean reward")
+    ax.set_ylabel("Training mean reward", color="#707070")
+    ax.tick_params(axis="y", colors="#707070")
+    ax.set_ylim(0.0, 1.68)
     ax.set_title("The same reward function, in sample and held out", loc="left", pad=6)
-    ax.legend(loc="center right", frameon=False, fontsize=7.0)
-    ax.spines[["top", "right"]].set_visible(False)
+    h1, l1 = ax.get_legend_handles_labels()
+    h2, l2 = ax2.get_legend_handles_labels()
+    ax.legend(h1 + h2, l1 + l2, loc="lower center", frameon=False, fontsize=6.6,
+              bbox_to_anchor=(0.44, 0.0))
+    ax.spines["top"].set_visible(False)
     fig.tight_layout()
     os.makedirs(OUT, exist_ok=True)
     for ext in ("png", "pdf"):

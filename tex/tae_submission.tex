@@ -42,18 +42,14 @@ slots), scored in one serving session, capability runs $26 \rightarrow 52
 \rightarrow 80 \rightarrow 4$ slots across the untrained Instruct model,
 supervised fine-tuning, GRPO step 50, and the GRPO endpoint: paired stage
 gains of $+0.161$ and $+0.173$ on the
-0--4 scale, then a fall to the 1.4-slot floor of a uniformly drawn valid
-partition, $-0.136$ $[-0.198, -0.080]$ below the untrained model,
+0--4 scale, then a fall to within $3\times$ of the 1.4-slot chance floor of a uniformly drawn valid partition, $-0.136$ $[-0.198, -0.080]$ below the untrained model,
 reproduced across three seeds. The \emph{training} reward reads the
 destruction as mastery: it reaches its 1.6 ceiling by step 125 with zero
 across-rollout variance and stays there. Scoring the endpoint offline on
 its own training puzzles --- 21 of 3{,}228 slots --- rules out memorization
 and exposes the cause: a one-line bug in our GRPO data loader presented
 each board's sixteen words in answer-key order, so the training task, as
-presented, was solvable by copying the words four at a time. The collapsed
-policy does exactly that on 91.4\% of training boards and 92.4\% of test
-boards; a copy of a shuffled board is a random valid partition, which is
-why the endpoint lands on the chance floor. Entropy collapse, cross-seed
+presented, was solvable by copying the words four at a time. The collapsed policy does exactly that --- 91.4\% of the groups it emits on training boards, and 92.4\% on test boards, are consecutive quadruples of its prompt; a copy of a shuffled board is a random valid partition, which is why the endpoint lands near the chance floor. Entropy collapse, cross-seed
 convergence, and the reward ceiling are signatures of one deterministic
 copy rule; the structural climb is older, over half of it predating any
 measurable copying. The reward function was correct
@@ -98,7 +94,7 @@ endpoint on its own training puzzles returned 21 of 3{,}228 slots --- not
 memorization --- and led to the mechanism: our GRPO data loader, unlike our
 SFT and evaluation code, presented each board's words in answer-key order,
 and the converged policy simply copies the prompt four words at a time
-(91--92\% of boards; \S\ref{sec:control}). The failure is not in the reward
+(91--92\% of emitted groups; \S\ref{sec:control}). The failure is not in the reward
 function, which is correct; it is in what the training distribution let
 the reward certify, and in the practice of reading the certificate in
 sample.
@@ -107,7 +103,7 @@ sample.
 improves and then destroys the target construct, ending below the untrained
 model across three seeds (\S\ref{sec:arc}); a complete post-hoc diagnosis:
 an answer-ordered prompt bug made the training task gameable, and the
-converged policy is a prompt-order copier on 91--92\% of boards
+converged policy is a prompt-order copier on 91--92\% of its emitted groups
 (\S\ref{sec:control}); an account in which entropy collapse, the reward
 ceiling, and cross-seed convergence are signatures of that one rule
 (\S\ref{sec:mechanism}), surviving a
@@ -141,9 +137,7 @@ this paper present each board's sixteen words deterministically shuffled
 loader did not: a one-line bug built training prompts from the answer key,
 so during reinforcement learning --- only there --- the words arrived
 grouped, positions 1--4 the first group, and so on: every GRPO prompt was
-solvable by a positional copy rule worth the full 1.6. Discovered post
-hoc (\S\ref{sec:control}); disclosed here because it causes everything
-the training-time sections describe. Held-out
+solvable by a positional copy rule worth the full 1.6. Discovered post hoc (\S\ref{sec:control}); disclosed here because nothing in the training-time sections can be read without it. Held-out
 measurements are unaffected: evaluation prompts were always shuffled.
 
 \paragraph{The reward.} Table~\ref{tab:reward} is the crux of the paper.
@@ -204,9 +198,7 @@ GRPO, step 403     & 0.0247 $[0.000, 0.056]$ & 4 & 0.6\%  & 0.125 & 0/162 \\
 
 Two reference points frame the table. A uniformly drawn valid partition
 recovers $4 \times 5775/2{,}627{,}625 = 0.0088$ groups per puzzle, or
-\textbf{1.4 slots} across this split; the step-403 endpoint sits at 2.8
-times that floor --- and \S\ref{sec:control} shows why: its copied
-responses implement that chance process. Second, because all four arms sit
+\textbf{1.4 slots} across this split; the step-403 endpoint sits at 2.8 times that floor --- and \S\ref{sec:control} shows why: its copied responses score at chance, and the excess over the floor rides on the few responses that are not copies. Second, because all four arms sit
 in one session, the stage accounting is paired: $26 \rightarrow 52
 \rightarrow 80 \rightarrow 4$, the supervised stage contributing $+0.1605$
 $[+0.0556, +0.2716]$ and the reinforcement-learning stage $+0.1728$
@@ -355,17 +347,14 @@ $\to$ 46.42 nats) --- so the descent is interpolated, not measured.
 falls 12.7-fold; by step 150 the policy is effectively deterministic. With
 \S\ref{sec:control}'s diagnosis in hand the reading is direct: a positional
 copy rule is deterministic, blind to the board's content, and reliably
-well-formed: entropy collapse and semantic destruction are two views of
-one convergence. The structural climb is not --- over half of it ($0.37
-\to 0.68$ by step 50) predates measurable copying (0.3\% at step 50,
-Appendix~\ref{app:copy}): format gains the rule later locks in. What the collapse
+well-formed: entropy collapse and semantic destruction read as two views of one convergence --- a reading made after the diagnosis, not before it. The structural climb is not --- over half of it ($0.37
+\to 0.68$ by step 50) predates measurable copying (0.3\% at step 50 by the strict all-four-quadruples rule of Appendix~\ref{app:copy}; a graded partial-adherence statistic could date copying earlier, which is why we write \emph{measurable}): format gains the rule later locks in. What the collapse
 removes is within-prompt variation --- nothing new to sample (the pass@16
 result), no group-relative learning signal (the zero-advantage fraction).
 And what survives on held-out boards is measured twice over: the cheap
 structural term ($0.1(1-2\cdot\text{invalid})$, Table~\ref{tab:arc}) is
 52\% / 27\% / 79\% of held-out reward across base / step 50 / endpoint,
-and the copy rule itself is visible in 92.4\% of the endpoint's test
-generations (\S\ref{sec:control}).
+and the copy rule itself is visible in 90.7\% of the endpoint's test generations (92.4\% of their emitted groups; \S\ref{sec:control}).
 
 \paragraph{KL is the budget view, and it is a path length, not a damage
 scale.} The step-50 checkpoint sits 2.70 nats
@@ -391,31 +380,19 @@ high-entropy policy far more than a collapsed one.
 0). Training reward (gray; sampled $T{=}0.9$, $K{=}8$; TRL 5-step
 averages; measured on the answer-ordered prompts of \S\ref{sec:setup})
 first touches its 1.6 ceiling at step 125, averaging 1.5814 thereafter.
-Held-out mean reward (162 test puzzles; solid markers; greedy; one
-session) peaks at step 50 in its session and ends below the untrained
-model; the hollow step-100 point is a later session (0.2664, vs.\ a
-step-50 re-serve at 0.2525) and is not joined.}
+Held-out mean reward (162 test puzzles; solid markers; greedy; the control session of Table~\ref{tab:control}; right axis, note the scale) peaks at 0.252 at step 50 and ends at 0.125, below the untrained model's 0.165; the hollow step-100 point is a later session (0.2664, vs.\ a step-50 re-serve at 0.2525) and is not joined.}
 \label{fig:rewards}
 \end{figure}
 
 \paragraph{The training signal, read from the trainer's own logs.} Figure
 \ref{fig:rewards} shows the paper's central contrast on one axis: the
 training reward first touches the reward function's ceiling of 1.6000 at step
-125 and averages 1.5814 over the logged points from then on, with
-excursions that shrink as training proceeds: the deepest is 1.4300 at
-step 155, the halves average 1.5663 then 1.5960, and the trend is real by a
-nonparametric test (Mann--Kendall $z=2.95$, $p=0.003$; bounded metric, no
-line fit) --- the copy behavior keeps sharpening
-long after the group-relative signal is mostly gone. What the figure cannot show is TRL's own
+125 and averages 1.5814 over the logged points from then on, with excursions that thin as training proceeds: the deepest is 1.4300 at step 155, the two halves of the 57 post-125 logged points average 1.5663 then 1.5960, and the count of points at exactly 1.6000 rises from 14 of 28 to 24 of 29. We describe this sharpening rather than test it --- the series is autocorrelated and the metric bounded, so no trend statistic we computed is identifiable here, and part of the rise is the instrument (below). What the figure cannot show is TRL's own
 \texttt{frac\_reward\_zero\_std} diagnostic: the fraction of prompts whose
 eight sampled rewards are identical --- zero group-relative
 advantage. It rises from 0.0 at step 50 to 1.0 at step 125
 and averages 0.946 over the remainder of training, so from step 125 onward
-the optimizer receives no learning signal on nearly every prompt. The
-ceiling now has a cause: on answer-ordered prompts (\S\ref{sec:setup}) the
-copy rule earns 1.6 on every board, seen or unseen --- which is why
-saturation begins mid-epoch, on first-visit batches, and why variance
-vanishes. Read as
+the optimizer receives no learning signal on nearly every prompt. The saturation is legible under the diagnosis: on answer-ordered prompts (\S\ref{sec:setup}) a copy rule earns 1.6 on every board, seen or unseen --- consistent with saturation beginning mid-epoch, on first-visit batches, and with the vanishing variance. Read as
 diagnostics, both in-sample signals bracket the collapse --- the mean's
 climb to ceiling (0.9931 $\to$ 1.6000) and the variance's fall to zero both land between logged steps 100 and 125 ---
 and neither signs it: saturation with zero spread is what mastery and
@@ -531,13 +508,7 @@ such groups on 91.4\% of training boards and 92.4\% of test boards, with
 step 50 sit at 0.3\%, below even the untrained model's weak bias
 (4.9\% / 2.6\%). The converged policy is a prompt-order copier. On training
 prompts, where order was the answer, copying earns 1.6; on shuffled prompts
-a copy is a fixed valid partition of a random order --- exactly the
-uniformly drawn valid partition behind \S\ref{sec:arc}'s 1.4-slot floor,
-and its pure-copy responses measurably are that process: 2 slots against
-6.25 chance-expected on train. The aggregate sits above chance (21 vs.\
-7.1 expected, $p \approx 2\times10^{-5}$; 4 vs.\ 1.4 on test, same
-direction) --- an excess carried entirely by the 4--9\% of responses that
-are not copies: residual solving the rule has not displaced.
+a copy is a fixed valid partition of a random order --- exactly the uniformly drawn valid partition behind \S\ref{sec:arc}'s 1.4-slot floor. Its pure-copy responses score no better than that process: 2 training slots against 6.25 chance-expected --- a three-fold deficit, if anything, and certainly not an excess (we attach no test to it: a puzzle's four slots are not independent, Appendix~\ref{app:ckpt}). What sits above chance is the aggregate --- 21 slots against 7.1 expected; Table~\ref{tab:control}'s puzzle-level interval, $[0.012, 0.041]$ on the 0--4 scale, excludes the chance mean of 0.0088, and test reads 4 against 1.4, same direction, interval not resolving --- and it is carried almost entirely by responses that are \emph{not} pure copies (35 non-copies recover 16 of the 21 slots; 60 partial copies, 3; 711 pure copies, 2): residual solving the rule has not displaced, not copying that works.
 
 \section{The reversal is legible from outside the reward}
 \label{sec:judge}
@@ -558,9 +529,7 @@ Judges do err in
 correlated ways \citep{kohli2026}, so we read this as three correlated
 readings of one external signal rather than three independent
 confirmations; per-item Pearson $r$ is 0.456 / 0.587 / 0.626 across the
-judge pairs (486 items), lowest on the final arm (0.200--0.433); the nine
-comparisons are one uncorrected family, all excluding zero by margins no
-standard correction would close.
+judge pairs (486 items), lowest on the final arm (0.200--0.433); the nine comparisons are one uncorrected family, all excluding zero by margins no standard correction would close. One further limit: the judges score whether the groupings are right --- the reward's semantic component through a different instrument --- so this corroborates the held-out reading rather than adding a second construct.
 
 \section{Implications for evaluation practice}
 \label{sec:implications}
@@ -575,9 +544,7 @@ own in-sample brackets (mean saturation, zero variance), though neither
 signs the turn (\S\ref{sec:mechanism}). Held out, the separation is real
 but not large: paired against the untrained model over the 162 test
 puzzles, mean reward moves $+0.086$ $[+0.045, +0.129]$ at step 50 and
-$-0.040$ $[-0.061, -0.019]$ at the endpoint, both excluding zero
-(percentile bootstrap, $B=1{,}000$, seed 0; SFT at $+0.026$ $[-0.015,
-+0.068]$ does not). We flag the margin because 79\% of the endpoint's
+$-0.040$ $[-0.061, -0.019]$ at the endpoint, both excluding zero (SFT, at $+0.026$ $[-0.015, +0.068]$, does not). We flag the margin because 79\% of the endpoint's
 held-out reward is the cheap structural term: a reward weighted slightly
 differently could have kept the aggregate above base while the construct
 collapsed exactly as it did. The aggregate caught this run; the
@@ -623,12 +590,9 @@ mode; here it guaranteed only that the shortcut was scored accurately.
 
 \paragraph{RL for reasoning and entropy collapse.} Verifiable-reward RL
 underlies recent reasoning systems \citep{deepseekr1, deepseekmath};
-\citet{yue2025} ask whether it extends capability beyond the base model's
-pass@$k$ ceiling, and here RLVR, initialized from an instruction-tuned
-stack, ends below \emph{both} of its own antecedents on the construct.
+\citet{yue2025} ask whether it extends capability beyond the base model's pass@$k$ ceiling, and here RLVR, initialized from an instruction-tuned stack, ends below \emph{both} of its own antecedents on the construct. \citet{shao2025spurious} show Qwen2.5 models gaining on MATH-500 under RLVR with random or incorrect rewards, by amplifying latent base-model behaviors; part of our step-50 gain, obtained under a corrupted signal, may be that phenomenon --- the peak is not evidence the signal was sound.
 \citet{cui2025} document entropy collapse as a central dynamic of RL for
-reasoning; here the collapse signals convergence onto a leaked shortcut, not an
-independent cause (\S\ref{sec:control}). \citet{drgrpo} critique group-level advantage normalization;
+reasoning; here the collapse coincides with convergence onto a leaked shortcut, and we read it as symptom rather than independent cause --- a post-hoc reading the shuffled-prompt rerun can test (\S\ref{sec:control}, \S\ref{sec:limitations}). \citet{drgrpo} critique group-level advantage normalization;
 \S\ref{sec:ablation} shows the phenomenon does not depend on it.
 
 \paragraph{Reward hacking and its taxonomy.} \citet{skalse2022}
@@ -648,21 +612,9 @@ shortcut in the sense of \citet{geirhos2020shortcut}: a decision rule that
 succeeds on the training distribution and fails off it, because a feature
 of the input --- here, word order --- carried the label. \citet{lapuschkin2019unmasking}
 make the same point for supervised vision models under the name Clever Hans
-prediction. Neither literature is usually applied to RL post-training,
-where the training distribution is regenerated by a trainer rather than
-loaded from a file, and where a leak therefore hides in code rather than in
-data. That is the transfer we are making: a verifiable reward does not
-exempt a run from the failure mode, it only guarantees the shortcut is
-scored accurately.
+prediction. Neither literature is usually applied to RL post-training, where the training distribution is regenerated by a trainer, so a leak hides in code rather than in data. That is the transfer we are making.
 
-\paragraph{Abruptness.} \citet{pan2022effects} report phase transitions in
-reward misspecification --- capability thresholds at which behavior shifts
-qualitatively and true reward falls sharply --- in some of the environments
-they study. Our collapse between steps 100 and 150 has that shape, and their
-result is the reason we treat the gap in our checkpoint grid as a real
-limitation (\S\ref{sec:limitations}) rather than an interpolation detail:
-if the turn is a transition rather than a slope, its location is the
-measurement worth having.
+\paragraph{Abruptness.} \citet{pan2022effects} report phase transitions in reward misspecification --- capability thresholds at which true reward falls sharply --- in some environments they study. Our collapse between steps 100 and 150 has that shape, which is why the gap in our checkpoint grid is a real limitation (\S\ref{sec:limitations}), not an interpolation detail: if the turn is a transition, its location is the measurement worth having.
 
 \paragraph{Validity in AI evaluation.} Measurement-theoretic critiques of
 ML evaluation \citep{jacobs2021, freiesleben2025} distinguish a measurement

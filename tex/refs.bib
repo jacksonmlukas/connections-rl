@@ -1,38 +1,4 @@
-% refs.bib — connections-rl
-% Rebuilt 2026-08-24 after the loss of the original file.
-% Every entry below was re-verified this session against the publisher's own
-% page (PMLR / NeurIPS Proceedings / Nature / ACM) or, where no peer-reviewed
-% version exists, against the arXiv abstract page. Nothing here is retyped
-% from memory.
-%
-% VERIFICATION STATUS
-%   gao2023scaling   PMLR v202 BibTeX, transcribed verbatim from the publisher
-%   stiennon2020     NeurIPS 33 proceedings page  ** see TITLE TRAP below **
-%   skalse2022       NeurIPS 35 proceedings page  ** see TITLE TRAP below **
-%   agarwal2021      NeurIPS 34 proceedings page
-%   yue2025          NeurIPS 38 proceedings page
-%   chehbouni2025    arXiv PDF p.1 + NeurIPS 2025 poster listing
-%   deepseekr1       arXiv abs page; NOW PUBLISHED IN NATURE — see note
-%   jacobs2021       arXiv PDF p.1 (venue line + DOI in the copyright footer)
-%   deepseekmath     arXiv abs page
-%   drgrpo           arXiv abs page
-%   cui2025          arXiv abs page
-%   freiesleben2025  arXiv abs page
-%   abahana2026      arXiv abs page + HTML v1
-%
-% TWO TITLE TRAPS — the published title differs from the arXiv title:
-%   stiennon2020  arXiv: "...summarize FROM human feedback"
-%                 NeurIPS 33: "...summarize WITH human feedback"
-%   skalse2022    arXiv: "Defining and Characterizing Reward HACKING"
-%                 NeurIPS 35: "Defining and Characterizing Reward GAMING"
-%   Both entries below carry the PUBLISHED title, with the arXiv title in the
-%   note field. If the prose names either paper by its arXiv title, the prose
-%   is what needs changing, not the entry.
-%
-% DO NOT CITE: 2605.11491. Its arXiv page returned nothing readable and it was
-% deliberately excluded. It must not reappear in this file.
 
-% ---------------------------------------------------------------- RL / method
 
 @article{deepseekr1,
   title   = {DeepSeek-R1: Incentivizing Reasoning Capability in {LLM}s via Reinforcement Learning},
@@ -96,7 +62,6 @@
   note          = {Submitted 28 May 2025}
 }
 
-% ------------------------------------------------- reward hacking / proxy failure
 
 @inproceedings{gao2023scaling,
   title     = {Scaling Laws for Reward Model Overoptimization},
@@ -146,7 +111,6 @@
                    version as of 24 Aug 2026}
 }
 
-% ----------------------------------------- measurement, validity, eval practice
 
 @inproceedings{jacobs2021,
   title     = {Measurement and Fairness},
@@ -189,12 +153,6 @@
   note      = {Outstanding Paper. arXiv:2108.13264}
 }
 
-% ---------------------------------------------------------------------------
-% NOT IN THE LOST FILE — added 2026-08-24. Directly relevant to the JUDGe row
-% (three judges, all nine pairwise differences excluding zero). Unused entries
-% are harmless: BibTeX emits only what is \cite'd. Read the caution in
-% BIB-REBUILD-NOTES.md before deciding.
-% ---------------------------------------------------------------------------
 
 @article{kohli2026,
   title         = {Nine Judges, Two Effective Votes: Correlated Errors Undermine
@@ -206,4 +164,55 @@
   archivePrefix = {arXiv},
   primaryClass  = {cs.CL},
   note          = {Submitted 28 May 2026}
+}
+
+@article{geirhos2020shortcut,
+  author  = {Geirhos, Robert and Jacobsen, J{\"o}rn-Henrik and Michaelis, Claudio
+             and Zemel, Richard and Brendel, Wieland and Bethge, Matthias
+             and Wichmann, Felix A.},
+  title   = {Shortcut learning in deep neural networks},
+  journal = {Nature Machine Intelligence},
+  volume  = {2},
+  number  = {11},
+  pages   = {665--673},
+  year    = {2020},
+}
+
+@article{lapuschkin2019unmasking,
+  author  = {Lapuschkin, Sebastian and W{\"a}ldchen, Stephan and Binder, Alexander
+             and Montavon, Gr{\'e}goire and Samek, Wojciech and M{\"u}ller, Klaus-Robert},
+  title   = {Unmasking {Clever Hans} predictors and assessing what machines really learn},
+  journal = {Nature Communications},
+  volume  = {10},
+  number  = {1},
+  pages   = {1096},
+  year    = {2019},
+}
+
+@misc{krakovna2020specification,
+  author       = {Krakovna, Victoria and Uesato, Jonathan and Mikulik, Vladimir
+                  and Rahtz, Matthew and Everitt, Tom and Kumar, Ramana
+                  and Kenton, Zac and Leike, Jan and Legg, Shane},
+  title        = {Specification gaming: the flip side of {AI} ingenuity},
+  howpublished = {DeepMind blog},
+  year         = {2020},
+}
+
+@inproceedings{pan2022effects,
+  author    = {Pan, Alexander and Bhatia, Kush and Steinhardt, Jacob},
+  title     = {The Effects of Reward Misspecification: Mapping and Mitigating
+               Misaligned Models},
+  booktitle = {International Conference on Learning Representations (ICLR)},
+  year      = {2022},
+}
+
+@article{shao2025spurious,
+  author  = {Shao, Rulin and Li, Shuyue Stella and Xin, Rui and Geng, Scott
+             and Wang, Yiping and Oh, Sewoong and Du, Simon Shaolei
+             and Lambert, Nathan and Min, Sewon and Krishna, Ranjay
+             and Tsvetkov, Yulia and Hajishirzi, Hannaneh and Koh, Pang Wei
+             and Zettlemoyer, Luke},
+  title   = {Spurious Rewards: Rethinking Training Signals in {RLVR}},
+  journal = {arXiv preprint arXiv:2506.10947},
+  year    = {2025},
 }
