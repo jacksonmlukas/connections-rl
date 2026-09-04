@@ -1,0 +1,19 @@
+puzzles: data/splits/puzzles_test.json
+out_dir: results-analysis/aug29/leakfree-session-test
+n_resamples: 1000
+seed: 0
+capture_generations: true
+
+arms:
+  - name: base
+    model: Qwen/Qwen2.5-7B-Instruct
+    temperature: 0.0
+  - name: sft
+    model: connections-rl-sft-7b
+    temperature: 0.0
+  - name: shuffled-peak
+    model: shuffled-ckpt-300
+    temperature: 0.0
+  - name: shuffled-final
+    model: shuffled-final
+    temperature: 0.0

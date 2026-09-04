@@ -1,0 +1,30 @@
+batch_size: 2
+ckpt_hub_repo: connections-rl-grpo-7b-shuffled-ckpt
+epochs: 1
+grad_accum: 8
+gradient_checkpointing: true
+init_adapter: artifacts/sft-7b
+kl_beta: 0.001
+load_in_4bit: true
+logging_steps: 5
+lora:
+  alpha: 32
+  r: 16
+lr: 5.0e-06
+max_completion_length: 512
+max_prompt_length: 512
+model_config: configs/model/qwen2.5-7b.yaml
+num_generations: 8
+output_dir: artifacts/grpo-7b-shuffled
+reward:
+  format_reward: 0.1
+  grouping_weight: 1.0
+  invalid_penalty: -0.1
+  one_away_credit: 0.05
+  solve_bonus: 0.5
+run_name: connections-rl-grpo-qwen7b-v1
+save_steps: 50
+seed: 0
+split_dir: data/splits
+temperature: 0.9
+wandb: true
