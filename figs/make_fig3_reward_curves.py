@@ -114,9 +114,14 @@ def main():
     # 0.125..0.266, and on the training-reward axis it is an unreadable smear
     # at the bottom. Twin axes, one x, scales labeled and color-coded.
     ax2 = ax.twinx()
-    ax2.plot([s for s, _ in HELDOUT], [r for _, r in HELDOUT], "-o", lw=1.8, ms=5.5,
-             color="#C1440E",
-             label="Held-out reward (162 test puzzles, control session; right axis)",
+    # The segment between the two anchors is UNMEASURED (no held-out eval exists
+    # between steps 50 and 403 in this session): drawn dashed, never solid, so the
+    # figure cannot imply a measured monotone descent the text disclaims.
+    ax2.plot([s for s, _ in HELDOUT], [r for _, r in HELDOUT], "--", lw=1.6,
+             dashes=(4, 3), color="#C1440E", zorder=3)
+    ax2.plot([s for s, _ in HELDOUT], [r for _, r in HELDOUT], "o", ms=5.5,
+             color="#C1440E", linestyle="none",
+             label="Held-out reward (162 test puzzles, control session; right axis;\ndashed span unmeasured)",
              zorder=4)
     ax2.plot([HELDOUT_B2[0]], [HELDOUT_B2[1]], "o", ms=5.5, mfc="none", mec="#C1440E",
              mew=1.4, zorder=4)

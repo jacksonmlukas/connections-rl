@@ -37,10 +37,7 @@ across-rollout variance and stays there. Scoring the endpoint offline on
 its own training puzzles --- 21 of 3{,}228 slots --- rules out memorization
 and exposes the cause: a one-line bug in our GRPO data loader presented
 each board's sixteen words in answer-key order, so the training task, as
-presented, was solvable by copying the words four at a time. The collapsed policy does exactly that --- 91.4\% of the groups it emits on training boards, and 92.4\% on test boards, are consecutive quadruples of its prompt; a copy of a shuffled board is a random valid partition, which is why the endpoint lands near the chance floor. Entropy collapse, cross-seed
-convergence, and the reward ceiling are signatures of one deterministic
-copy rule; the structural climb is older, over half of it predating any
-measurable copying. The reward function was correct
+presented, was solvable by copying the words four at a time. The collapsed policy does exactly that --- 91.4\% of the groups it emits on training boards, and 92.4\% on test boards, are consecutive quadruples of its prompt; a copy of a shuffled board scores at or below the chance floor, which is why the endpoint's score collapses, and its small margin above that floor comes from the residual non-copy responses. Entropy collapse, cross-seed convergence, and the reward ceiling are signatures of one deterministic copy rule. The reward function was correct
 on every string it scored; the task presentation was gameable, and every
 in-sample signal read the gaming as mastery. The same reward held out, and three blind LLM judges, catch the reversal; four lines of string matching identify the rule; and rerunning the identical recipe with the one-line fix, the same reward trains the best policy in this study --- 148 of 648 slots, $5.7\times$ the untrained model and nearly double the leaked run's transient peak, with no collapse, no copying, and every in-sample signal reading honestly. Determinism certifies the scorer, not the construct: hold the reward out.
 \end{abstract}
@@ -68,8 +65,7 @@ Instruct model, the supervised checkpoint GRPO is initialized from, and
 step 50 --- paired stage gains of $+0.161$ $[+0.056, +0.272]$ and $+0.173$
 $[+0.074, +0.284]$, the reinforcement-learning stage contributing as much
 as supervised fine-tuning (\S\ref{sec:control}). Over the following
-353 steps the same run falls to 4 slots, below the untrained model and onto
-the 1.4-slot floor of a uniformly drawn valid partition, while
+353 steps the same run falls to 4 slots, below the untrained model and to within $3\times$ of the 1.4-slot floor of a uniformly drawn valid partition, while
 the invalid-output rate falls by an order of magnitude and the training
 reward reaches its 1.6 maximum and averages 1.5814 thereafter, with
 zero variance across the $K=8$ rollouts on $\sim$95\% of prompts. A
@@ -175,7 +171,7 @@ GRPO, step 403     & 0.0247 $[0.000, 0.056]$ & 4 & 0.6\%  & 0.125 & 0/162 \\
 
 Two reference points frame the table. A uniformly drawn valid partition
 recovers $4 \times 5775/2{,}627{,}625 = 0.0088$ groups per puzzle, or
-\textbf{1.4 slots} across this split; the step-403 endpoint sits at 2.8 times that floor --- and \S\ref{sec:control} shows why: its copied responses score at chance, and the excess over the floor rides on the few responses that are not copies. Second, because all four arms sit
+\textbf{1.4 slots} across this split; the step-403 endpoint sits at 2.8 times that floor --- and \S\ref{sec:control} shows why: its copied responses score at or below chance, and the excess over the floor rides on the few responses that are not copies. Second, because all four arms sit
 in one session, the stage accounting is paired: $26 \rightarrow 52
 \rightarrow 80 \rightarrow 4$, the supervised stage contributing $+0.1605$
 $[+0.0556, +0.2716]$ and the reinforcement-learning stage $+0.1728$
@@ -282,7 +278,7 @@ $\to$ 46.42 nats) --- so the descent is interpolated, not measured.
 falls 12.7-fold; by step 150 the policy is effectively deterministic. With
 \S\ref{sec:control}'s diagnosis in hand the reading is direct: a positional
 copy rule is deterministic, blind to the board's content, and reliably
-well-formed: entropy collapse and semantic destruction read as two views of one convergence --- a reading made after the diagnosis, and since confirmed by intervention: with the leak removed, entropy never collapses (\S\ref{sec:leakfree}). The structural climb is not --- over half of it ($0.37
+well-formed: entropy collapse and semantic destruction read as two views of one convergence --- a reading made after the diagnosis, and tested by intervention: remove the leak and entropy never collapses (\S\ref{sec:leakfree}) --- which establishes the leak's necessity, not this finer reading. The structural climb is not --- over half of it ($0.37
 \to 0.68$ by step 50) predates measurable copying (0.3\% at step 50 by the strict all-four-quadruples rule of Appendix~\ref{app:copy}; a graded partial-adherence statistic could date copying earlier, which is why we write \emph{measurable}): format gains the rule later locks in. What the collapse
 removes is within-prompt variation --- nothing new to sample (the pass@16
 result), no group-relative learning signal (the zero-advantage fraction).
@@ -315,7 +311,7 @@ high-entropy policy far more than a collapsed one.
 0). Training reward (gray; sampled $T{=}0.9$, $K{=}8$; TRL 5-step
 averages; measured on the answer-ordered prompts of \S\ref{sec:setup})
 first touches its 1.6 ceiling at step 125, averaging 1.5814 thereafter.
-Held-out mean reward (162 test puzzles; solid markers; greedy; the control session of Table~\ref{tab:control}; right axis, note the scale) peaks at 0.252 at step 50 and ends at 0.125, below the untrained model's 0.165; the hollow step-100 point is a later session and is not joined.}
+Held-out mean reward (162 test puzzles; markers; greedy; the control session of Table~\ref{tab:control}; right axis, note the scale) peaks at 0.252 at step 50 and ends at 0.125, below the untrained model's 0.165 --- the dashed span between the anchors is unmeasured; the hollow step-100 point is a later session and is not joined.}
 \label{fig:rewards}
 \end{figure}
 
@@ -415,9 +411,7 @@ numbers suggest: its $+0.191$ train-minus-test gap (0.5118 vs.\ 0.3210
 after three epochs) must be read against the untrained model's own
 $+0.027$ gap on the same chronological splits (0.1871 vs.\ 0.1605), which
 is split difficulty rather than memorization; the adjusted excess is
-$+0.164$. Step 50 inherits essentially all of it ($+0.160$ adjusted) while
-improving on SFT by the same margin on both splits ($+0.169$ / $+0.173$):
-the peak's gain generalizes. And the shared session yields the
+$+0.164$. Step 50's adjusted excess is $+0.160$ to SFT's $+0.164$ --- a gap far inside the split-difference's uncertainty, so inheritance anywhere from none to all is consistent --- while it improves on SFT by the same margin on both splits ($+0.169$ / $+0.173$): the peak's gain generalizes. And the shared session yields the
 paired stage split: $26 \rightarrow 52 \rightarrow 80 \rightarrow 4$, SFT $+0.1605$ $[+0.0556, +0.2716]$, RL $+0.1728$
 $[+0.0741, +0.2840]$, endpoint $-0.1358$ $[-0.1975, -0.0802]$ vs.\ the
 untrained model (the original session read $-0.136$ $[-0.191, -0.080]$).
@@ -435,9 +429,7 @@ a copy is a fixed valid partition of a random order --- exactly the uniformly dr
 \section{The rerun with the fix: the collapse was the leak}
 \label{sec:leakfree}
 
-We reran the reported recipe identically --- same SFT warm start,
-hyperparameters, seed, trainer version, one epoch of 403 steps --- with the
-one-line fix applied, so GRPO prompts pass through the same puzzle-seeded
+We reran the reported recipe identically --- same SFT warm start, hyperparameters, seed, trainer version, one epoch of 403 steps; only the logging cadence differs (Appendix~\ref{app:leakfree}) --- with the one-line fix applied, so GRPO prompts pass through the same puzzle-seeded
 shuffle as SFT data and every evaluation; the constructed training set was
 verified shuffled before any optimizer step. Everything this paper diagnoses
 disappears (Table~\ref{tab:leakfree}).
@@ -482,10 +474,7 @@ session (52--56 elsewhere; \S\ref{sec:arc}); no conclusion turns on either.
 
 The 162 leaked-run test generations from base, step 50 and the final policy were scored blind (board words and completion only) by three LLM judges (gpt-5-mini, gemini-2.5-flash, claude-sonnet-4-5) on a 1--10 scale; 1458/1458 parsed. All three rank step 50 above base
 above the final policy, all nine pairwise per-puzzle differences excluding zero under a paired bootstrap (seed 0; per-judge step-50-minus-final gaps $+0.60$ to $+3.25$).
-That ordering rules out the obvious confound: the final policy is the
-\emph{most} well-formed arm on this split (0.6\% invalid against 6.8\% and
-16.0\%), so a shared preference for well-formed text would have placed it
-first, not last. In hindsight the judges were reading the copy rule: the
+That ordering rules out the obvious confound: the final policy is the \emph{most} well-formed arm on this split (0.6\% invalid against 6.8\% and 16.0\%): a shared preference for well-formed text would have placed it first, not last. In hindsight the judges were reading the copy rule: the
 arm they unanimously rank last is the copier (\S\ref{sec:control}).
 Judges do err in correlated ways \citep{kohli2026}, so we read this as three correlated readings of one external signal, not three independent confirmations; the nine comparisons are one uncorrected family, all excluding zero by margins no correction would close. One further limit: the judges score whether the groupings are right --- the reward's semantic component through a different instrument --- corroboration, not a second construct.
 
@@ -493,10 +482,7 @@ Judges do err in correlated ways \citep{kohli2026}, so we read this as three cor
 \label{sec:implications}
 
 \paragraph{Distinguish in-sample from held-out proxy metrics before
-concluding a proxy has failed.} Evaluated on held-out data, our reward
-ranks the three checkpoints correctly; it fails only in the form
-practitioners actually consult it --- as a training curve, in sample, where
-it reads perfect. The cheap remedy is not a better reward but the same reward on data the policy was not updated against (\S\ref{sec:mechanism}'s in-sample brackets do not sign the turn). Held out, the separation is real but not large: paired against the untrained model, mean reward moves $+0.086$ at step 50 and $-0.040$ at the endpoint, both intervals excluding zero (SFT's does not). We flag the margin because 79\% of the endpoint's
+concluding a proxy has failed.} Evaluated on held-out data, our reward ranks the three checkpoints correctly; it fails only in the form practitioners consult --- the in-sample training curve, where it reads perfect. The cheap remedy is not a better reward but the same reward on data the policy was not updated against (\S\ref{sec:mechanism}'s in-sample brackets do not sign the turn). Held out, the separation is real but not large: paired against the untrained model, mean reward moves $+0.086$ at step 50 and $-0.040$ at the endpoint, both intervals excluding zero (SFT's does not). We flag the margin because 79\% of the endpoint's
 held-out reward is the cheap structural term: a reward weighted slightly differently could have kept the aggregate above base while the construct collapsed exactly as it did; the decomposition below is what makes the catch a diagnostic rather than a coincidence.
 
 \paragraph{Determinism certifies the scorer, not the task.} Our reward was correct on every string it scored, and the run was still gamed --- through the prompt distribution. Nothing in-sample prompted the four-line audit: held-out evaluation said there was something to find.
@@ -515,7 +501,7 @@ costs nothing: \S\ref{sec:mechanism} reports it for our three arms (52\%,
 \label{sec:related}
 
 \paragraph{Reward-model overoptimization.} \citet{gao2023scaling}
-established this curve shape for \emph{learned} reward models --- gold-standard performance rising then declining with KL --- where the explanation is Goodhart against an approximation \citep{stiennon2020}. Our reward is a program: it approximates nothing, and the gaming ran through the prompt distribution (\S\ref{sec:setup}) --- a channel a better reward model does not touch. Determinism is the feature cited to argue verifiable rewards escape this failure mode; here it guaranteed only that the shortcut was scored accurately.
+established this curve shape for \emph{learned} reward models --- gold-standard performance rising then declining with KL --- where the explanation is Goodhart against an approximation \citep{stiennon2020}. Our reward is a program: it approximates nothing, and the gaming ran through the prompt distribution (\S\ref{sec:setup}) --- a channel a better reward model does not touch. Determinism is the feature cited to argue verifiable rewards escape this failure mode; here it only guaranteed the shortcut was scored accurately.
 
 \paragraph{RL for reasoning and entropy collapse.} Verifiable-reward RL
 underlies recent reasoning systems \citep{deepseekr1, deepseekmath};
@@ -525,18 +511,18 @@ underlies recent reasoning systems \citep{deepseekr1, deepseekmath};
 
 \paragraph{Reward hacking and its taxonomy.} \citet{skalse2022}
 formalize the failure mode (as \emph{reward gaming}); ours is gaming of the composed task --- reward plus prompt distribution --- not of the reward function, which was exact.
-\citet{abahana2026} classifies RLHF failure transitions by directional changes in learned reward and judge scores; ours differs in instrument and in detection. \citet{krakovna2020specification} catalogue specification gaming across RL systems; our run's entry is ordinary, and we claim novelty for the trace, not the phenomenon.
+\citet{krakovna2020specification} catalogue specification gaming across RL systems; our run's entry is ordinary, and we claim novelty for the trace, not the phenomenon.
 
-\paragraph{Shortcut learning and leakage.} What the leaked policy learned is a shortcut in the sense of \citet{geirhos2020shortcut}: a rule that succeeds on the training distribution because a feature of the input --- word order --- carried the label; \citet{lapuschkin2019unmasking} make the same point for vision models as Clever Hans prediction. Neither literature is usually applied to RL post-training, where the training distribution is regenerated by a trainer, so a leak hides in code rather than in data; that is the transfer.
+\paragraph{Shortcut learning and leakage.} What the leaked policy learned is a shortcut in the sense of \citet{geirhos2020shortcut}: a rule that succeeds in training because a feature of the input --- word order --- carried the label; \citet{lapuschkin2019unmasking} call the same thing, in vision, Clever Hans prediction. Neither literature is usually applied to RL post-training, where the training distribution is regenerated by a trainer, so a leak hides in code rather than in data --- our transfer.
 
-\paragraph{Abruptness.} \citet{pan2022effects} report phase transitions in reward misspecification; the leaked run's collapse between steps 100 and 150 has that shape, which is why the checkpoint-grid gap there is a real limitation (\S\ref{sec:limitations}).
+\paragraph{Abruptness.} \citet{pan2022effects} report phase transitions in reward misspecification; the leaked run's collapse between steps 100 and 150 has that shape, one reason the checkpoint-grid gap there is a real limitation (\S\ref{sec:limitations}).
 
-\paragraph{Validity in AI evaluation.} Measurement-theoretic critiques of ML evaluation \citep{jacobs2021, freiesleben2025, chehbouni2025} distinguish a measurement from the construct it operationalizes; ours is a case where the measurement is maximally reliable and the validity gap does the damage anyway (\citet{agarwal2021} motivate our statistical practice).
+\paragraph{Validity in AI evaluation.} Measurement-theoretic critiques of ML evaluation \citep{jacobs2021, freiesleben2025, chehbouni2025} distinguish a measurement from its construct; ours is maximally reliable and the validity gap does the damage anyway (\citet{agarwal2021} motivate our statistical practice).
 
 \section{Limitations}
 \label{sec:limitations}
 
-The leak-free rerun of \S\ref{sec:leakfree} is one seed, so the repaired recipe's variance is unmeasured; every \emph{other} training run here consumed the answer-ordered prompts. One task, one reward design, no human baseline: ``worse than untrained'' is established, ``bad in absolute terms'' is not, and an endpoint cannot rule out a traversed-and-returned 1.5B peak (\S\ref{sec:scale}). Three-seed evidence covers only the leaked endpoint, the leaked peak may move across seeds (\S\ref{sec:arc}), and a meaningful KL penalty remains untested ($\beta=0.001$ was inert; the only other configuration froze the policy). The 1.5B loader shares the leak (copy rate unmeasured), and the blind judges are correlated scorers, not independent votes (\S\ref{sec:judge}).
+The leak-free rerun of \S\ref{sec:leakfree} is one seed --- its variance is unmeasured --- and every other training run here consumed the answer-ordered prompts. One task, one reward design, no human baseline: ``worse than untrained'' is established, ``bad in absolute terms'' is not, and an endpoint cannot rule out a traversed-and-returned 1.5B peak (\S\ref{sec:scale}). Three-seed evidence covers only the leaked endpoint, whose peak may move across seeds (\S\ref{sec:arc}), and a meaningful KL penalty remains untested ($\beta=0.001$ was inert; the alternative froze the policy). The 1.5B loader shares the leak (copy rate unmeasured), and the blind judges are correlated scorers, not independent votes (\S\ref{sec:judge}).
 
 
 \bibliographystyle{plainnat}
@@ -646,11 +632,7 @@ single-seed, read as illustrative only.
 
 \begin{table}[h]
 \centering
-\caption{7B endpoints across three seeds (separate serving session from
-Table~\ref{tab:arc}; the SFT arm decodes to 0.346/56 in the
-Table~\ref{tab:arc} session's configuration and 0.321/52 here, differing on
-2 of 162 puzzles; the untrained and final-checkpoint anchor arms reproduce
-across sessions exactly).}
+\caption{7B endpoints across three seeds (separate serving session from Table~\ref{tab:arc}; the SFT arm decodes to 0.321/52 both here and in the Table~\ref{tab:arc} control session, and to 0.346/56 in a third session; the untrained and final-checkpoint anchor arms reproduce across sessions exactly).}
 \label{tab:endpoints}
 \small
 \setlength{\tabcolsep}{4pt}
@@ -735,7 +717,7 @@ Step & Structural & Semantic (0--1) & Solve rate & Mean reward \\
 Training-signal summary over the 160 logged rows (single T4, QLoRA,
 $1.8\times10^{4}$\,s for 403 steps): reward min/mean/max
 0.123/0.371/0.705, rising 0.30 $\to$ 0.44 by halves;
-\texttt{frac\_reward\_zero\_std} max 0.2, mean 0.031; across-rollout reward std is never zero on any logged row; trainer-logged policy entropy 0.116--0.212 and KL at most 0.22 (trainer instruments, not directly comparable to the \S\ref{sec:mechanism} sweep estimates).
+\texttt{frac\_reward\_zero\_std} max 0.2, mean 0.031; across-rollout reward std is never zero on any logged row; trainer-logged policy entropy 0.116--0.212 and KL at most 0.22 (trainer instruments, not directly comparable to the \S\ref{sec:mechanism} sweep estimates). One nonsubstantive difference from the leaked run: logging cadence (5-step averages there, 160 rows over 403 steps here), so cross-run in-sample extrema are extrema over differently smoothed series.
 
 \section{1.5B test-split table}
 \label{app:small}
