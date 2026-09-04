@@ -99,13 +99,27 @@ def resume_from_hub(repo: str, output_dir: str, token: str | None = None) -> Non
         print(f"[grpo] downloaded checkpoint-{latest} from {repo}")
 
 
-def make_hub_sync_callback(repo: str, token: str | None = None):
-    """TrainerCallback that mirrors each saved checkpoint to the Hub."""
+def make_hub_sync_callback(
+    repo: str, token: str | None = None, keep_local_steps: list[int] | None = None
+):
+    """TrainerCallback that mirrors each saved checkpoint to the Hub.
+
+    ``keep_local_steps`` (config key ``keep_local_ckpt_steps``): when set, a
+    checkpoint whose step is NOT in the list is deleted locally after its Hub
+    upload SUCCEEDS -- it stays on the Hub, just not on disk. Dense cadences
+    (save_steps: 10 is ~40 checkpoints x ~0.5 GB with optimizer state) overrun
+    Kaggle's ~20 GB working quota around step 200 otherwise, and the failure
+    surfaces downstream as a missing-checkpoint assert rather than as
+    "disk full". Default None preserves the old behavior exactly.
+    """
     from transformers import TrainerCallback
+
+    keep = set(keep_local_steps) if keep_local_steps is not None else None
 
     class HubCheckpointSync(TrainerCallback):
         def on_save(self, args, state, control, **kwargs):
             import os as _os
+            import shutil as _shutil
 
             from huggingface_hub import HfApi
 
@@ -120,6 +134,13 @@ def make_hub_sync_callback(repo: str, token: str | None = None):
                     print(f"[grpo] synced checkpoint-{state.global_step} -> {repo}")
                 except Exception as e:  # never kill training over a sync hiccup
                     print(f"[grpo] hub sync failed (continuing): {e}")
+                    return  # sync failed: keep the local copy, whatever the step
+                if keep is not None and state.global_step not in keep:
+                    try:
+                        _shutil.rmtree(ckpt)
+                        print(f"[grpo] pruned local checkpoint-{state.global_step} (kept on Hub)")
+                    except Exception as e:
+                        print(f"[grpo] prune failed (continuing): {e}")
 
     return HubCheckpointSync()
 
@@ -318,7 +339,9 @@ def main(argv: list[str] | None = None) -> None:
 
             ckpt_repo = f"{HfApi().whoami()['name']}/{ckpt_repo}"
         resume_from_hub(ckpt_repo, cfg["output_dir"])
-        callbacks.append(make_hub_sync_callback(ckpt_repo))
+        callbacks.append(
+            make_hub_sync_callback(ckpt_repo, keep_local_steps=cfg.get("keep_local_ckpt_steps"))
+        )
 
     trainer = GRPOTrainer(
         model=model,
