@@ -23,7 +23,7 @@
 % real URL in the arXiv/camera-ready build.
 \newcommand{\repourl}{\texttt{[repository URL withheld for review]}}
 
-\title{Reliable and Invalid: Anatomy of a Gamed Verifiable Reward}
+\title{Reliable and Invalid: Anatomy of a Gamed Training Task}
 % NOTE: \workshoptitle is invisible in submission mode but PRINTS on the
 % camera-ready ([dblblindworkshop, final]) --- set it per venue before any
 % non-TAE build.
@@ -502,9 +502,7 @@ untrained model (the original session read $-0.136$ $[-0.191, -0.080]$).
 training reward against 21 recovered training slots forced a look at the
 training prompts, where the bug of \S\ref{sec:setup} was found. The behavioral test counts emitted groups
 equal, as sets, to consecutive quadruples of the prompt's word order
-(definition and full counts in Appendix~\ref{app:copy}). The endpoint emits
-such groups on 91.4\% of training boards and 92.4\% of test boards, with
-88.2\% and 90.7\% of its responses pure four-quadruple copies; SFT and
+(definition and full counts in Appendix~\ref{app:copy}). Such quadruples are 91.4\% of the groups the endpoint emits on training boards and 92.4\% on test boards; 88.2\% and 90.7\% of its responses are pure four-quadruple copies; SFT and
 step 50 sit at 0.3\%, below even the untrained model's weak bias
 (4.9\% / 2.6\%). The converged policy is a prompt-order copier. On training
 prompts, where order was the answer, copying earns 1.6; on shuffled prompts
@@ -842,4 +840,149 @@ GRPO & 0.0062 $[0.0002, 0.0343]$ & 1 & 2.5\% $[0.6, 5.6]$ & 0.113 & 0.0\% \\
 \end{tabular}
 \end{table}
 
+
+\clearpage
+\section*{NeurIPS Paper Checklist}
+
+\begin{enumerate}
+
+\item \textbf{Claims}\\
+Question: Do the main claims made in the abstract and introduction accurately
+reflect the paper's contributions and scope?\\
+Answer: \answerYes{}\\
+Justification: The abstract's numbers ($26 \rightarrow 52 \rightarrow 80
+\rightarrow 4$, $+0.161$/$+0.173$, $-0.136$, 91.4\%/92.4\%, 21 of 3{,}228) are
+\S\ref{sec:arc} and \S\ref{sec:control}'s measured results; the diagnosis is
+stated as post hoc where it is one, and \S\ref{sec:limitations} bounds the
+scope claimed (no leak-free run exists).
+
+\item \textbf{Limitations}\\
+Question: Have the authors discussed the limitations of their work?\\
+Answer: \answerYes{}\\
+Justification: \S\ref{sec:limitations} is a dedicated section and leads with
+the largest limitation (no leak-free run); it also covers the single-task
+design, the single-seed trajectory, the absent human baseline, correlated
+judges, and the untested KL regime.
+
+\item \textbf{Theory, Assumptions and Proofs}\\
+Question: Did you state the full set of assumptions of all theoretical results,
+and include complete proofs?\\
+Answer: \answerNA{}\\
+Justification: No theoretical results. The 1.4-slot chance floor is an exact
+combinatorial count ($4 \times 5775/2{,}627{,}625$), stated where used
+(\S\ref{sec:arc}).
+
+\item \textbf{Experimental Result Reproducibility}\\
+Question: Does the paper fully disclose all the information needed to reproduce
+the main experimental results?\\
+Answer: \answerYes{}\\
+Justification: The released repository (\repourl{}) holds the training and
+evaluation configs, the reward implementation, the data-split construction,
+generation logs, and the control-session outputs behind every table;
+Appendix~\ref{app:ckpt} names the artifact file for each sweep and the
+statistical conventions.
+
+\item \textbf{Open Access to Data and Code}\\
+Question: Does the paper provide open access to the data and code, with
+sufficient instructions to faithfully reproduce the main experimental results?\\
+Answer: \answerYes{}\\
+Justification: The repository (\repourl{}, withheld for double-blind review)
+contains code, configs, the evaluation harness with one-command entry points,
+and the regression test for the disclosed bug; adapters and result logs are
+released with documentation cards.
+
+\item \textbf{Experimental Setting/Details}\\
+Question: Does the paper specify all the training and test details necessary to
+understand the results?\\
+Answer: \answerYes{}\\
+Justification: \S\ref{sec:setup} gives the pipeline (rank-16 LoRA, three SFT
+epochs, $K=8$ at temperature 0.9, $\beta=0.001$, learning rate
+$5\times10^{-6}$, 403 optimizer steps); decoding and serving sessions are
+named per table by rule; the exact configs are in the repository.
+
+\item \textbf{Experiment Statistical Significance}\\
+Question: Does the paper report error bars or other appropriate information
+about the statistical significance of the experiments?\\
+Answer: \answerYes{}\\
+Justification: All intervals are percentile bootstrap over puzzles (the unit
+of independent sampling), $B=1{,}000$, seed 0, stated once in
+Appendix~\ref{app:ckpt}; degenerate counts use Clopper--Pearson and say so;
+contrasts are paired within single serving sessions.
+
+\item \textbf{Experiments Compute Resources}\\
+Question: Does the paper provide sufficient information on the compute
+resources needed to reproduce the experiments?\\
+Answer: \answerTODO{}\\
+Justification: [Author to confirm before submission: hardware and wall-clock
+for the reported 7B GRPO run, the three seed runs, and the ablation. The
+control-session and copy-rule evaluations ran on $2\times$T4 16GB.]
+
+\item \textbf{Code of Ethics}\\
+Question: Does the research conform, in every respect, with the NeurIPS Code
+of Ethics?\\
+Answer: \answerYes{}\\
+Justification: The work involves no human subjects, no personal data, and no
+high-risk artifacts; the failure mode studied is disclosed in full, including
+the bug that caused it.
+
+\item \textbf{Broader Impacts}\\
+Question: Does the paper discuss both potential positive and negative societal
+impacts of the work performed?\\
+Answer: \answerNA{}\\
+Justification: A measurement-validity case study on a word-puzzle task that
+releases no new capabilities (the studied endpoint performs below the
+untrained base model on the construct). Its practical import is an
+evaluation-practice recommendation (\S\ref{sec:implications}).
+
+\item \textbf{Safeguards}\\
+Question: Does the paper describe safeguards for responsible release of assets
+with high risk for misuse?\\
+Answer: \answerNA{}\\
+Justification: The released models are LoRA adapters for NYT Connections; no
+high-misuse-risk asset is released.
+
+\item \textbf{Licenses for Existing Assets}\\
+Question: Are the creators or original owners of assets used in the paper
+properly credited, and are the license and terms of use explicitly mentioned
+and properly respected?\\
+Answer: \answerYes{}\\
+Justification: Qwen2.5 models (Apache 2.0) and the TRL/vLLM/PEFT stack
+(Apache 2.0) are cited and used under their licenses. The words and answer
+keys of published NYT Connections puzzles are used for research evaluation;
+the repository documents their provenance, and NYT retains all rights in the
+underlying puzzles.
+
+\item \textbf{New Assets}\\
+Question: Are new assets introduced in the paper well documented, and is the
+documentation provided alongside the assets?\\
+Answer: \answerYes{}\\
+Justification: The released code and configs are documented in the repository
+README; released adapters and result sets carry documentation cards stating
+training provenance and research-only intended use, including the disclosed
+prompt-order bug.
+
+\item \textbf{Crowdsourcing and Research with Human Subjects}\\
+Question: Does the paper include the full text of instructions given to
+participants, screenshots, and details about compensation?\\
+Answer: \answerNA{}\\
+Justification: No crowdsourcing and no human subjects.
+
+\item \textbf{IRB Approvals}\\
+Question: Does the paper describe potential risks to study participants and
+whether IRB approvals were obtained?\\
+Answer: \answerNA{}\\
+Justification: No human subjects.
+
+\item \textbf{Declaration of LLM Usage}\\
+Question: Does the paper describe the usage of LLMs if it is an important,
+original, or non-standard component of the core methods?\\
+Answer: \answerYes{}\\
+Justification: LLM judges are a declared component of the method:
+\S\ref{sec:judge} names the three models (gpt-5-mini, gemini-2.5-flash,
+claude-sonnet-4-5), the blind scoring protocol, and their correlated-scorer
+limitation.
+
+\end{enumerate}
+
 \end{document}
+

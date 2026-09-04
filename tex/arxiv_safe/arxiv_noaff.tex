@@ -11,7 +11,7 @@
 \usepackage{url}
 \newcommand{\repourl}{\url{https://github.com/jacksonmlukas/connections-rl}}
 
-\title{Reliable and Invalid: Anatomy of a Gamed Verifiable Reward}
+\title{Reliable and Invalid: Anatomy of a Gamed Training Task}
 \workshoptitle{}
 \author{%
   Jackson Lukas \\
@@ -491,9 +491,7 @@ untrained model (the original session read $-0.136$ $[-0.191, -0.080]$).
 training reward against 21 recovered training slots forced a look at the
 training prompts, where the bug of \S\ref{sec:setup} was found. The behavioral test counts emitted groups
 equal, as sets, to consecutive quadruples of the prompt's word order
-(definition and full counts in Appendix~\ref{app:copy}). The endpoint emits
-such groups on 91.4\% of training boards and 92.4\% of test boards, with
-88.2\% and 90.7\% of its responses pure four-quadruple copies; SFT and
+(definition and full counts in Appendix~\ref{app:copy}). Such quadruples are 91.4\% of the groups the endpoint emits on training boards and 92.4\% on test boards; 88.2\% and 90.7\% of its responses are pure four-quadruple copies; SFT and
 step 50 sit at 0.3\%, below even the untrained model's weak bias
 (4.9\% / 2.6\%). The converged policy is a prompt-order copier. On training
 prompts, where order was the answer, copying earns 1.6; on shuffled prompts
