@@ -1,0 +1,44 @@
+{
+ "note": "aligned = consecutive quadruple (positions 1-4/5-8/9-12/13-16) of the served shuffled presentation equals a true group as a set; uniform_expectation = boards * 16/1820 (= 4 positions x 4/C(16,4))",
+ "train": {
+  "n_boards": 807,
+  "aligned_quadruples_realized": 3,
+  "uniform_expectation": 7.095,
+  "aligned_boards": [
+   {
+    "puzzle_id": 274,
+    "aligned_quadruples": 1
+   },
+   {
+    "puzzle_id": 491,
+    "aligned_quadruples": 1
+   },
+   {
+    "puzzle_id": 646,
+    "aligned_quadruples": 1
+   }
+  ]
+ },
+ "val": {
+  "n_boards": 108,
+  "aligned_quadruples_realized": 1,
+  "uniform_expectation": 0.949,
+  "aligned_boards": [
+   {
+    "puzzle_id": 866,
+    "aligned_quadruples": 1
+   }
+  ]
+ },
+ "test": {
+  "n_boards": 162,
+  "aligned_quadruples_realized": 1,
+  "uniform_expectation": 1.424,
+  "aligned_boards": [
+   {
+    "puzzle_id": 1066,
+    "aligned_quadruples": 1
+   }
+  ]
+ }
+}
