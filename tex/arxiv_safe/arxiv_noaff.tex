@@ -222,7 +222,7 @@ per-checkpoint values in Appendix~\ref{app:ckpt}); the ablation's
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.6\linewidth]{figs/fig1_entropy_collapse.pdf}
+\includegraphics[width=0.55\linewidth]{figs/fig1_entropy_collapse.pdf}
 \caption{The mechanism, on the $n=100$ temperature-0.9 entropy sweep
 (reported 7B run, seed 0). \textbf{Left:} policy entropy against optimizer
 step --- a 30-fold collapse, with the cliff between steps 100 and 150.
@@ -274,7 +274,7 @@ high-entropy policy far more than a collapsed one.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.68\linewidth]{figs/fig3_reward_curves.pdf}
+\includegraphics[width=0.62\linewidth]{figs/fig3_reward_curves.pdf}
 \caption{The same reward, in sample and held out (reported 7B run, seed
 0). Training reward (gray; sampled $T{=}0.9$, $K{=}8$; TRL 5-step
 averages; measured on the answer-ordered prompts of \S\ref{sec:setup})
@@ -374,7 +374,7 @@ equal, as sets, to consecutive quadruples of the prompt's word order
 step 50 sit at 0.3\%, below even the untrained model's weak bias
 (4.9\% / 2.6\%). The converged policy is a prompt-order copier. On training
 prompts, where order was the answer, copying earns 1.6; on shuffled prompts
-a copy is a fixed valid partition of a random order --- exactly the uniformly drawn valid partition behind \S\ref{sec:arc}'s 1.4-slot floor. The realized shuffles set a copier's exact ceiling (artifact \texttt{results-analysis/sep06/empirical\_floor.json}): 3 of 807 training boards and 1 of 162 test boards contain an aligned quadruple, against uniform expectations 7.1 and 1.4 --- the puzzle-seeded draw is fixed, so the realized counts, not the expectations, bound a copier. The 711 pure copies recover 2 of that ceiling of 3, and \S\ref{sec:leakfree}'s perfect copier recovers exactly the 1 test slot available, on the one aligned board: copies harvest the alignments that exist and nothing else (no test attached: a puzzle's four slots are not independent). What sits above chance is the aggregate --- 21 slots against 7.1 expected; Table~\ref{tab:control}'s puzzle-level interval, $[0.012, 0.041]$ on the 0--4 scale, excludes the chance mean of 0.0088, and test reads 4 against 1.4, same direction, interval not resolving --- and it is carried almost entirely by responses that are \emph{not} pure copies (35 non-copies recover 16 of the 21 slots; 60 partial copies, 3; 711 pure copies, 2): residual solving the rule has not displaced, not copying that works.
+a copy is a fixed valid partition of a random order --- exactly the uniformly drawn valid partition behind \S\ref{sec:arc}'s 1.4-slot floor. The realized shuffles set a copier's exact ceiling (artifact \texttt{results-analysis/sep06/empirical\_floor.json}): 3 of 807 training boards and 1 of 162 test boards contain an aligned quadruple, against uniform expectations 7.1 and 1.4 --- the puzzle-seeded draw is fixed, so the realized counts, not the expectations, bound a copier. The 711 pure copies recover 2 of that ceiling of 3, and \S\ref{sec:leakfree}'s perfect copier recovers exactly the 1 test slot available, on the one aligned board: copies harvest the alignments that exist and nothing else (no test attached: a puzzle's four slots are not independent). And the counts are an ordinary draw, not non-exchangeability: Poisson tails read 0.077/0.58/0.76 (train/test/validation) --- the enumeration bounds a copier; the tails certify the floor. What sits above chance is the aggregate --- 21 slots against 7.1 expected; Table~\ref{tab:control}'s puzzle-level interval, $[0.012, 0.041]$ on the 0--4 scale, excludes the chance mean of 0.0088, and test reads 4 against 1.4, same direction, interval not resolving --- and it is carried almost entirely by responses that are \emph{not} pure copies (35 non-copies recover 16 of the 21 slots; 60 partial copies, 3; 711 pure copies, 2): residual solving the rule has not displaced, not copying that works.
 
 \section{Reruns with the fix, and the leak without RL}
 \label{sec:leakfree}
@@ -404,7 +404,7 @@ SFT on leaked prompts & 0.0062 $[0.000, 0.019]$ & 1 & 0.0\% & 0.118 & \textbf{10
 \end{tabular}
 \end{table}
 
-The final checkpoint is the best policy in this study: 148 of 648 held-out slots --- $5.7\times$ the untrained model --- at $+0.7531$ $[+0.6111, +0.9074]$ paired against base and $+0.5802$ $[+0.4444, +0.7407]$ against SFT. Read as a recipe, not only a control: 7B QLoRA GRPO, one T4, about five hours; three seeds read 148/135/129 of 648, fully solving 10/7/6 of 162. And it is the
+The final checkpoint is the best policy in this study: 148 of 648 held-out slots --- $5.7\times$ the untrained model --- at $+0.7531$ $[+0.6111, +0.9074]$ paired against base and $+0.5802$ $[+0.4444, +0.7407]$ against SFT. Read as a recipe: 7B QLoRA GRPO, one T4, about five hours; three seeds read 148/135/129 of 648, fully solving 10/7/6 of 162. And it is the
 \emph{endpoint}: the validation curve climbs from 0.1065 at step 50 to
 0.1944 at step 300 and plateaus (all nine checkpoints in
 Appendix~\ref{app:leakfree}); final vs.\ validation peak is $+0.0247$
@@ -430,30 +430,30 @@ Judges err in correlated ways \citep{kohli2026}: three correlated readings of on
 
 \paragraph{Determinism certifies the scorer, not the task.} Our reward was correct on every string it scored and the run was still gamed --- through the prompt distribution; nothing in-sample prompted the four-line audit. One function, two measurements: in sample, reliable and invalid --- this paper's title; held out, what validity it had.
 
-\paragraph{Report reward components separately, never the aggregate.} The one recommendation we would keep, and it costs nothing: \S\ref{sec:mechanism} reports it for our three arms (52\%, 27\%, 79\%) --- a standard reward-model diagnostic, simply not applied to deterministic rewards.
+\paragraph{Report reward components separately, never the aggregate.} The one recommendation we would keep, and it costs nothing: \S\ref{sec:mechanism} reports it for our three arms (52\%, 27\%, 79\%) --- a standard reward-model diagnostic, just not applied to deterministic rewards.
 
 \paragraph{Assert prompt-path parity.} The regression test that would have caught this bug asserts every prompt-constructing code path yields the identical string per example (Appendix~\ref{app:prompts}); ``not in answer order'' would not have. The training distribution is code, so this parity check --- not a dataset audit --- is the shortcut-learning defense that transfers.
 
-\paragraph{Treat single-seed RL results as uninterpretable.} It applies to results that come out well: the leaked run's step 50 is one seed, the argmax of a nine-point validation grid selected before any test scoring (tabulated in Appendix~\ref{app:ckpt}); the repaired three seeds are the caution heeded (\S\ref{sec:leakfree}).
+\paragraph{Treat single-seed RL results as uninterpretable.} It applies to results that come out well: the leaked run's step 50 is one seed, the argmax of a nine-point validation grid, frozen before any test scoring (Appendix~\ref{app:ckpt}); the repaired three seeds are the caution heeded (\S\ref{sec:leakfree}).
 
 \section{Related work}
 \label{sec:related}
 
 \paragraph{Overoptimization, reasoning RL, and reward hacking.} \citet{gao2023scaling}
-established the rise-then-fall curve for \emph{learned} reward models as Goodhart against an approximation \citep{stiennon2020}; \citet{karwowski2024goodhart} treat the curve formally for RL against proxies; \citet{pan2022effects} report phase transitions shaped like the leaked 100--150 collapse (why that grid gap matters, \S\ref{sec:mechanism}). Our reward is a program that approximates nothing; the gaming ran through the prompt distribution (\S\ref{sec:setup}), a channel a better reward model does not touch.
+established the rise-then-fall curve for \emph{learned} reward models as Goodhart against an approximation \citep{stiennon2020}; \citet{karwowski2024goodhart} treat the curve formally for RL against proxies; \citet{pan2022effects} report phase transitions shaped like the leaked 100--150 collapse. Our reward is a program that approximates nothing; the gaming ran through the prompt distribution (\S\ref{sec:setup}), a channel a better reward model does not touch.
 
 Verifiable-reward RL underlies recent reasoning systems \citep{deepseekr1};
-\citet{yue2025} ask whether it extends capability beyond the base model's pass@$k$ ceiling; our leaked run ends below both its antecedents, the repaired runs above them (\S\ref{sec:leakfree}). \citet{shao2025spurious} show Qwen2.5 gaining on MATH-500 under RLVR with random or incorrect rewards; part of the leaked step-50 gain may be that phenomenon.
+\citet{yue2025} ask whether it extends capability beyond the base model's pass@$k$ ceiling; the leaked run ends below both antecedents, the repaired runs above (\S\ref{sec:leakfree}). \citet{shao2025spurious} show Qwen2.5 gaining on MATH-500 under RLVR with random or incorrect rewards; part of the leaked step-50 gain may be that phenomenon.
 \citet{cui2025} document entropy collapse as central to RL for reasoning; here it is symptom, not cause: leak removed, entropy never collapses (\S\ref{sec:leakfree}). \citet{drgrpo} critique group-level normalization; \S\ref{sec:ablation} shows independence from it.
 
-\citet{skalse2022} formalize the failure mode (as \emph{reward gaming}); ours is gaming of the composed task --- reward plus prompt distribution --- not of the reward function, which was exact. \citet{baker2025monitoring} show frontier reasoning models hacking verifiable rewards and obfuscating under monitoring; \citet{krakovna2020specification} catalogue specification gaming --- our entry is ordinary, the trace the novelty.
+\citet{skalse2022} formalize the failure mode (as \emph{reward gaming}); ours games the composed task --- reward plus prompt distribution --- not the exact reward function. \citet{baker2025monitoring} show frontier reasoning models hacking verifiable rewards and obfuscating under monitoring; \citet{krakovna2020specification} catalogue specification gaming --- our entry is ordinary, the trace the novelty.
 
 \paragraph{Shortcut learning, leakage, and validity.} What the leaked policy learned is a shortcut \citep{geirhos2020shortcut}: a rule that succeeds in training because an input feature --- word order --- carried the label. The nearest analogues are NLI's annotation artifacts --- hypothesis-only models that pass \citep{gururangan2018, poliak2018}, heuristics that masquerade as inference \citep{mccoy2019} --- and \citet{lapuschkin2019unmasking}'s Clever Hans; \citet{kapoor2023} taxonomize leakage for ML-based science. None usually reaches RL post-training, where the leak hides in code (\S\ref{sec:implications}) --- our transfer. Measurement-theoretic critiques \citep{jacobs2021, freiesleben2025, chehbouni2025, manheim2018categorizing} distinguish a measurement from its construct; ours is maximally reliable and the validity gap does the damage anyway.
 
 \section{Limitations}
 \label{sec:limitations}
 
-The leaked-SFT cell (\S\ref{sec:leakfree}) is one seed; every run shares one task and reward; no human baseline exists (only ``worse than untrained'' is established). An endpoint cannot rule out a traversed 1.5B peak (\S\ref{sec:scale}); the leaked peak may move across seeds (\S\ref{sec:arc}); a meaningful KL penalty is untested; the 1.5B loader shares the leak, copy rate unmeasured; the judges are correlated scorers (\S\ref{sec:judge}).
+The leaked-SFT cell is one seed (\S\ref{sec:leakfree}); every run shares one task and reward; no human baseline exists --- only ``worse than untrained'' is established. An endpoint cannot rule out a traversed 1.5B peak; the leaked peak may move across seeds; a meaningful KL penalty is untested; the 1.5B loader shares the leak, copy rate unmeasured; the judges are correlated scorers (\S\ref{sec:judge}).
 
 
 \bibliographystyle{plainnat}

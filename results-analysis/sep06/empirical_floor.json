@@ -4,6 +4,7 @@
   "n_boards": 807,
   "aligned_quadruples_realized": 3,
   "uniform_expectation": 7.095,
+  "poisson_p_at_or_below_realized": 0.077,
   "aligned_boards": [
    {
     "puzzle_id": 274,
@@ -23,6 +24,7 @@
   "n_boards": 108,
   "aligned_quadruples_realized": 1,
   "uniform_expectation": 0.949,
+  "poisson_p_at_or_below_realized": 0.7543,
   "aligned_boards": [
    {
     "puzzle_id": 866,
@@ -34,6 +36,7 @@
   "n_boards": 162,
   "aligned_quadruples_realized": 1,
   "uniform_expectation": 1.424,
+  "poisson_p_at_or_below_realized": 0.5835,
   "aligned_boards": [
    {
     "puzzle_id": 1066,

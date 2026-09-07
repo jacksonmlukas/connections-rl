@@ -30,10 +30,14 @@ for split in ["train", "val", "test"]:
         total += c
         if c:
             boards.append({"puzzle_id": p.puzzle_id, "aligned_quadruples": c})
+    import math
+    lam = len(puzzles) * 16 / 1820
+    p_le = sum(math.exp(-lam) * lam**i / math.factorial(i) for i in range(total + 1))
     out[split] = {
         "n_boards": len(puzzles),
         "aligned_quadruples_realized": total,
-        "uniform_expectation": round(len(puzzles) * 16 / 1820, 3),
+        "uniform_expectation": round(lam, 3),
+        "poisson_p_at_or_below_realized": round(p_le, 4),
         "aligned_boards": boards,
     }
     print(split, out[split]["n_boards"], "boards -> realized", total,
