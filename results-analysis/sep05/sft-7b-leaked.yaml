@@ -1,0 +1,17 @@
+model_config: configs/model/qwen2.5-7b.yaml
+train_data: data/splits/train_leaked.jsonl
+output_dir: artifacts/sft-7b-leaked
+seed: 0
+lora:
+  r: 16
+  alpha: 32
+  dropout: 0.05
+  target_modules: all-linear
+epochs: 3
+batch_size: 2
+grad_accum: 8
+lr: 0.0001
+logging_steps: 10
+save_steps: 100
+wandb: true
+run_name: connections-rl-sft-qwen7b-leaked

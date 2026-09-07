@@ -1,0 +1,22 @@
+puzzles: data/splits/puzzles_test.json
+out_dir: results-analysis/sep05/finals-session-test
+n_resamples: 1000
+seed: 0
+capture_generations: true
+
+arms:
+  - name: base
+    model: Qwen/Qwen2.5-7B-Instruct
+    temperature: 0.0
+  - name: sft
+    model: connections-rl-sft-7b
+    temperature: 0.0
+  - name: sft-leaked
+    model: connections-rl-sft-7b-leaked
+    temperature: 0.0
+  - name: s1-final
+    model: s1-final
+    temperature: 0.0
+  - name: s2-final
+    model: s2-final
+    temperature: 0.0

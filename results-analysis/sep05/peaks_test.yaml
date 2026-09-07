@@ -1,0 +1,16 @@
+puzzles: data/splits/puzzles_test.json
+out_dir: results-analysis/sep05/peaks-session-test
+n_resamples: 1000
+seed: 0
+capture_generations: true
+
+arms:
+  - name: base
+    model: Qwen/Qwen2.5-7B-Instruct
+    temperature: 0.0
+  - name: s1-peak
+    model: s1-peak
+    temperature: 0.0
+  - name: s2-peak
+    model: s2-peak
+    temperature: 0.0
