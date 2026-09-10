@@ -1,0 +1,25 @@
+puzzles: data/splits/puzzles_test.json
+out_dir: results-analysis/sep07/step50-session-test
+n_resamples: 1000
+seed: 0
+capture_generations: true
+
+arms:
+  - name: base
+    model: Qwen/Qwen2.5-7B-Instruct
+    temperature: 0.0
+  - name: sft
+    model: connections-rl-sft-7b
+    temperature: 0.0
+  - name: leaked-s1-ckpt50
+    model: leaked-s1-ckpt50
+    temperature: 0.0
+  - name: leaked-s2-ckpt50
+    model: leaked-s2-ckpt50
+    temperature: 0.0
+  - name: leaked-s1-final
+    model: leaked-s1-final
+    temperature: 0.0
+  - name: leaked-s2-final
+    model: leaked-s2-final
+    temperature: 0.0
