@@ -18,7 +18,6 @@ dependencies = [
 dev = [
     "ruff>=0.5",
     "pytest>=8",
-    "datasets",
     "mypy>=1.8",
     "types-PyYAML",
     "httpx>=0.27",
