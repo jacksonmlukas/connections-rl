@@ -23,6 +23,10 @@ dev = [
     "httpx>=0.27",
     "fastapi>=0.111",
     "pydantic>=2",
+    # tests/test_grpo_prompts.py imports grpo.build_dataset, which builds a
+    # datasets.Dataset. Without this the leak regression tests error out under
+    # a plain `pip install -e ".[dev]"` (which is what CI runs).
+    "datasets>=2.19",
 ]
 serve = [
     "fastapi>=0.111",
