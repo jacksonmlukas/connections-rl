@@ -1,0 +1,43 @@
+{
+  "arm": "grpo-ckpt100",
+  "n_puzzles": 162,
+  "scale": "0-4 groups-correct per puzzle",
+  "session": "aug21 evalB-session (single vLLM session; not comparable across sessions)",
+  "groups_correct_mean": 0.4691358024691358,
+  "groups_correct_ci95": [
+    0.35185185185185186,
+    0.6049382716049383
+  ],
+  "recovered_groups_count": 76,
+  "recovered_groups_denominator": 648,
+  "invalid_rate": 0.09876543209876543,
+  "invalid_count": 16,
+  "reward_mean": 0.266358024691358,
+  "solve_count": 3,
+  "bootstrap": {
+    "n_resamples": 1000,
+    "seed": 0
+  },
+  "groups_correct_distribution": {
+    "0": 107,
+    "1": 40,
+    "2": 12,
+    "3": 0,
+    "4": 3
+  },
+  "source": [
+    "results-analysis/aug21/evalB-session/grpo-ckpt100/metrics.json",
+    "results-analysis/aug21/evalB-session/grpo-ckpt100/records.jsonl"
+  ],
+  "paired_vs_base": [
+    0.30864197530864196,
+    0.18518518518518517,
+    0.4322530864197529
+  ],
+  "paired_vs_step50": [
+    -0.024691358024691357,
+    -0.14814814814814814,
+    0.09274691358024677
+  ],
+  "paired_note": "paired bootstrap on 0-4 groups-correct, seed 0, within the aug21 session; from evalB-session/paired_groups.json"
+}

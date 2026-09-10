@@ -1,0 +1,32 @@
+{
+  "arm": "noscale-final",
+  "n_puzzles": 162,
+  "scale": "0-4 groups-correct per puzzle",
+  "session": "aug21 evalB-session (single vLLM session; not comparable across sessions)",
+  "groups_correct_mean": 0.043209876543209874,
+  "groups_correct_ci95": [
+    0.012345679012345678,
+    0.0804012345679011
+  ],
+  "recovered_groups_count": 7,
+  "recovered_groups_denominator": 648,
+  "invalid_rate": 0.030864197530864196,
+  "invalid_count": 5,
+  "reward_mean": 0.12407407407407409,
+  "solve_count": 0,
+  "bootstrap": {
+    "n_resamples": 1000,
+    "seed": 0
+  },
+  "groups_correct_distribution": {
+    "0": 156,
+    "1": 5,
+    "2": 1,
+    "3": 0,
+    "4": 0
+  },
+  "source": [
+    "results-analysis/aug21/evalB-session/noscale-final/metrics.json",
+    "results-analysis/aug21/evalB-session/noscale-final/records.jsonl"
+  ]
+}

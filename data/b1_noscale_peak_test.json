@@ -1,0 +1,34 @@
+{
+  "arm": "noscale-peak",
+  "n_puzzles": 162,
+  "scale": "0-4 groups-correct per puzzle",
+  "session": "aug21 evalB-session (single vLLM session; not comparable across sessions)",
+  "groups_correct_mean": 0.5370370370370371,
+  "groups_correct_ci95": [
+    0.413425925925926,
+    0.6668209876543209
+  ],
+  "recovered_groups_count": 87,
+  "recovered_groups_denominator": 648,
+  "invalid_rate": 0.08024691358024691,
+  "invalid_count": 13,
+  "reward_mean": 0.2916666666666667,
+  "solve_count": 3,
+  "bootstrap": {
+    "n_resamples": 1000,
+    "seed": 0
+  },
+  "groups_correct_distribution": {
+    "0": 99,
+    "1": 45,
+    "2": 15,
+    "3": 0,
+    "4": 3
+  },
+  "source": [
+    "results-analysis/aug21/evalB-session/noscale-peak/metrics.json",
+    "results-analysis/aug21/evalB-session/noscale-peak/records.jsonl"
+  ],
+  "peak_step": 50,
+  "peak_selection": "argmax of validation semantic score on ckpt-curve-7b-noscale.json, frozen before any test puzzle was scored"
+}

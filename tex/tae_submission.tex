@@ -50,7 +50,7 @@ and exposes the cause: a one-line bug in our GRPO data loader presented
 each board's sixteen words in answer-key order, so the training task, as
 presented, was solvable by copying the words four at a time. The collapsed policy does exactly that --- 91.4\% of the groups it emits on training boards, and 92.4\% on test boards, are consecutive quadruples of its prompt; a copy of a shuffled board scores at or below the chance floor, which is why the endpoint's score collapses, and its small margin above that floor comes from the residual non-copy responses. Entropy collapse, cross-seed convergence, and the reward ceiling are signatures of one deterministic copy rule. The reward function was correct
 on every string it scored; the task presentation was gameable, and every
-in-sample signal read the gaming as mastery. The same reward held out, and three blind LLM judges, catch the reversal; four lines of string matching identify the rule; and rerunning the recipe with the one-line fix, the same reward trains the best policies in this study --- 148, 135 and 129 of 648 slots across three seeds, each about five times the untrained model, with no collapse, no copying, and every in-sample signal reading honestly. Supervised fine-tuning on the leaked prompts alone converges to a perfect copier: the gameable object was the task, and it gamed every learner we gave it. Determinism certifies the scorer, not the construct: hold the construct out, not just the reward.
+reward-derived training signal read the gaming as mastery. The same reward held out, and three blind LLM judges, catch the reversal; four lines of string matching identify the rule; and rerunning the recipe with the one-line fix, the same reward trains the best policies in this study --- 148, 135 and 129 of 648 slots across three seeds, each about five times the untrained model, with no collapse, no copying, and every in-sample signal reading honestly. Supervised fine-tuning on the leaked prompts alone converges to a perfect copier: the gameable object was the task, and it gamed every learner we gave it. Determinism certifies the scorer, not the construct: hold the construct out, not just the reward.
 \end{abstract}
 
 \section{Introduction}
@@ -96,7 +96,7 @@ converged policy is a prompt-order copier on 91--92\% of its emitted groups
 (\S\ref{sec:control}); an account in which entropy collapse, the reward
 ceiling, and cross-seed convergence are signatures of that one rule
 (\S\ref{sec:mechanism}), surviving a
-normalization ablation (\S\ref{sec:ablation}); the lesson demonstrated end to end: every in-sample signal read gaming as mastery; the reward held out, and three blind judges, caught it (\S\ref{sec:control}--\S\ref{sec:judge}); and the diagnosis closed by intervention: with the fix, the recipe trains to 148/135/129 across three seeds with no collapse, while SFT on the leaked prompts alone converges to a perfect copier --- the attractor is the task's, not the algorithm's (\S\ref{sec:leakfree}).
+normalization ablation (\S\ref{sec:ablation}); the lesson demonstrated end to end: every reward-derived training signal read gaming as mastery; the reward held out, and three blind judges, caught it (\S\ref{sec:control}--\S\ref{sec:judge}); and the diagnosis closed by intervention: with the fix, the recipe trains to 148/135/129 across three seeds with no collapse, while SFT on the leaked prompts alone converges to a perfect copier --- the attractor is the task's, not the algorithm's (\S\ref{sec:leakfree}).
 
 \section{Task, pipeline, and the reward's asymmetry}
 \label{sec:setup}
@@ -304,7 +304,7 @@ advantage. It rises from 0.0 at step 50 to 1.0 at step 125
 and averages 0.946 over the remainder of training, so from step 125 onward
 the optimizer receives no learning signal on nearly every prompt. The saturation is legible under the diagnosis: on answer-ordered prompts (\S\ref{sec:setup}) a copy rule earns 1.6 on every board, seen or unseen --- consistent with saturation beginning mid-epoch, on first-visit batches, and with the vanishing variance. Read as
 diagnostics, both in-sample signals bracket the collapse --- the mean's
-climb to ceiling (0.9931 $\to$ 1.6000) and the variance's fall to zero both land between logged steps 100 and 125 ---
+climb to ceiling (0.9931 $\to$ 1.6000) and the variance's fall to zero both complete between steps 100 and 125, resolved at the log's five-step cadence ---
 and neither signs it: saturation with zero spread is what mastery and
 degeneracy alike look like. Part of the climb is the instrument: as entropy
 collapses, temperature-0.9 sampling converges on greedy, so some of the
@@ -332,7 +332,7 @@ reward scaling disabled, the resolved value read back off the constructed
 trainer configuration. The signature is unchanged on the greedy
 $n=108$ checkpoint sweep: validation semantic score rises to 62/432 at step
 50, falls to 35/432 by step 100 and 4/432 by step 150, while structural
-validity climbs 0.70 to 0.96. The validation-selected peak (step 50, frozen
+validity on the same sweep climbs 0.91 to 0.95. The validation-selected peak (step 50, frozen
 before any test puzzle was scored) recovers 87/648 on test,
 $+0.377$ $[+0.247, +0.506]$ paired against base; the final policy 7/648,
 below base by $-0.117$ $[-0.179, -0.056]$ paired and within $+0.019$ of
@@ -385,7 +385,7 @@ equal, as sets, to consecutive quadruples of the prompt's word order
 step 50 sit at 0.3\%, below even the untrained model's weak bias
 (4.9\% / 2.6\%). The converged policy is a prompt-order copier. On training
 prompts, where order was the answer, copying earns 1.6; on shuffled prompts
-a copy is a fixed valid partition of a random order --- exactly the uniformly drawn valid partition behind \S\ref{sec:arc}'s 1.4-slot floor. The realized shuffles set a copier's exact ceiling (artifact \texttt{results-analysis/sep06/empirical\_floor.json}): 3 of 807 training boards and 1 of 162 test boards contain an aligned quadruple, against uniform expectations 7.1 and 1.4 --- the draw is fixed, so the realized counts bound a copier. The 711 pure copies recover 2 of that ceiling of 3, and \S\ref{sec:leakfree}'s perfect copier recovers exactly the 1 test slot available, on the one aligned board: copies harvest the alignments that exist and nothing else (no test attached: a puzzle's four slots are not independent). The counts are an ordinary draw, not non-exchangeability: Poisson tails read 0.077/0.58/0.76 (train/test/validation) --- the enumeration bounds a copier; the tails certify the floor. What sits above chance is the aggregate --- 21 slots against 7.1 expected; Table~\ref{tab:control}'s puzzle-level interval, $[0.012, 0.041]$ on the 0--4 scale, excludes the chance mean of 0.0088, and test reads 4 against 1.4, same direction, interval not resolving --- and it is carried almost entirely by responses that are \emph{not} pure copies (35 non-copies recover 16 of the 21 slots; 60 partial copies, 3; 711 pure copies, 2): residual solving the rule has not displaced, not copying that works.
+a copy is a fixed valid partition of a random order --- exactly the uniformly drawn valid partition behind \S\ref{sec:arc}'s 1.4-slot floor. The realized shuffles set a copier's exact ceiling (artifact \texttt{results-analysis/sep06/empirical\_floor.json}): 3 of 807 training boards and 1 of 162 test boards contain an aligned quadruple, against uniform expectations 7.1 and 1.4 --- the draw is fixed, so the realized counts bound a copier. The 711 pure copies recover 2 of that ceiling of 3, and \S\ref{sec:leakfree}'s perfect copier recovers exactly the 1 test slot available, on the one aligned board: copies harvest the alignments that exist and nothing else (no test attached: a puzzle's four slots are not independent). The counts are an ordinary draw, not non-exchangeability: Poisson tails read 0.077/0.58/0.75 (train/test/validation) --- the enumeration bounds a copier; the tails certify the floor. What sits above chance is the aggregate --- 21 slots against 7.1 expected; Table~\ref{tab:control}'s puzzle-level interval, $[0.012, 0.041]$ on the 0--4 scale, excludes the chance mean of 0.0088, and test reads 4 against 1.4, same direction, interval not resolving --- and it is carried almost entirely by responses that are \emph{not} pure copies (35 non-copies recover 16 of the 21 slots; 60 partial copies, 3; 711 pure copies, 2): residual solving the rule has not displaced, not copying that works.
 
 \section{Reruns with the fix, and the leak without RL}
 \label{sec:leakfree}
@@ -415,7 +415,7 @@ SFT on leaked prompts & 0.0062 $[0.000, 0.019]$ & 1 & 0.0\% & 0.118 & \textbf{10
 \end{tabular}
 \end{table}
 
-The final checkpoint is the best policy in this study: 148 of 648 held-out slots --- $5.7\times$ the untrained model --- at $+0.7531$ $[+0.6111, +0.9074]$ paired against base and $+0.5802$ $[+0.4444, +0.7407]$ against SFT. Read as a recipe: 7B QLoRA GRPO, one T4, about five hours; three seeds read 148/135/129 of 648. And it is the
+The final checkpoint is the best policy in this study (a cross-session superlative; each session's base anchor decodes 26 exactly): 148 of 648 held-out slots --- $5.7\times$ the untrained model --- at $+0.7531$ $[+0.6111, +0.9074]$ paired against base and $+0.5802$ $[+0.4444, +0.7407]$ against SFT. Read as a recipe: 7B QLoRA GRPO, one T4, about five hours; three seeds read 148/135/129 of 648. And it is the
 \emph{endpoint}: the validation curve climbs 0.1065 to 0.1944 (steps 50 to 300) and plateaus (all nine checkpoints in
 Appendix~\ref{app:leakfree}); final vs.\ validation peak is $+0.0247$
 $[-0.0309, +0.0926]$ --- there is no collapse to locate. Ten of 162 test puzzles are fully solved --- the study's first meaningful solve rate --- and the copy rule is gone (1 of 648 emitted groups, zero pure copies).
@@ -428,7 +428,7 @@ rows the reward never touches 1.6 --- never 1.0 (maximum 0.705); \texttt{frac\_r
 \section{The reversal is legible from outside the reward}
 \label{sec:judge}
 
-The leaked-run test generations from base, step 50 and the final policy were scored blind (board words and completion only) by three LLM judges (gpt-5-mini, gemini-2.5-flash, claude-sonnet-4-5), 1--10 scale, 1458/1458 parsed. All three rank step 50 above base
+The leaked-run test generations from base, step 50 and the final policy (aug21 serving session) were scored blind (board words and completion only) by three LLM judges (gpt-5-mini, gemini-2.5-flash, claude-sonnet-4-5), 1--10 scale, 1458/1458 parsed. All three rank step 50 above base
 above the final policy, all nine pairwise per-puzzle differences excluding zero under a paired bootstrap (seed 0; per-judge step-50-minus-final gaps $+0.60$ to $+3.25$).
 That ordering rules out the obvious confound --- the final policy is the \emph{most} well-formed arm on this split (0.6\% invalid against 6.8\% and 16.0\%), so a preference for well-formed text would have placed it first --- in hindsight, they were reading the copy rule (\S\ref{sec:control}).
 Judges err in correlated ways \citep{kohli2026}: three correlated readings of one signal --- corroboration, not independent confirmation. The nine comparisons are one uncorrected family, all excluding zero by margins no correction would close.
@@ -573,7 +573,7 @@ single-seed, read as illustrative only.
 
 \begin{table}[h]
 \centering
-\caption{7B endpoints across three seeds (separate serving session from Table~\ref{tab:arc}; across the four observed sessions the SFT arm decodes 52--56; the untrained arm, seed 0's final, and seed 2's final reproduce per-puzzle exactly, while seed 1's final decodes 7 here and 5 in the sep07 session, one puzzle resolving differently).}
+\caption{7B endpoints across three seeds (separate serving session from Table~\ref{tab:arc}; across the four observed sessions the SFT arm decodes 52--56; the untrained row is imported from the control session (base reproduces per-puzzle exactly, so its values are session-invariant); the untrained arm, seed 0's final, and seed 2's final reproduce per-puzzle exactly, while seed 1's final decodes 7 here and 5 in the sep07 session, one puzzle resolving differently).}
 \label{tab:endpoints}
 \small
 \setlength{\tabcolsep}{4pt}
@@ -582,7 +582,7 @@ single-seed, read as illustrative only.
 Arm & Groups correct (0--4) & Groups (of 648) & Invalid & Mean reward \\
 \midrule
 Instruct (untrained) & 0.160 & 26 & 6.8\% $[3.1, 11.1]$ & 0.165 \\
-SFT   & 0.321 & 52 & 22.2\% & 0.197 \\
+SFT   & 0.321 & 52 & 22.8\% & 0.189 \\
 GRPO (3 seeds) & $0.045 \pm 0.022$ & 4 / 7 / 11 & $1.2 \pm 0.6$\% & $0.132 \pm 0.008$ \\
 \bottomrule
 \end{tabular}
