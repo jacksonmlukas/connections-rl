@@ -16,7 +16,11 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "ruff>=0.5",
+    # Exact pin: CI runs `ruff format --check`, and ruff's formatter style can
+    # change between releases, so an unpinned ruff turns an upstream release
+    # into a red build on an untouched tree. src/ and tests/ are formatted under
+    # exactly this version. Bump deliberately: reformat and commit in one go.
+    "ruff==0.16.6",
     "pytest>=8",
     "mypy>=1.8",
     "types-PyYAML",
