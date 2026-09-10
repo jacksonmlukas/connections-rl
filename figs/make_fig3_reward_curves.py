@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Figure 3 -- training reward and held-out reward on one axis against training step.
+Figure 3 -- training reward and held-out reward, two stacked panels, shared step axis.
 
 Rebuilt 2026-08-24 from the recovered original, with three fixes against the
 real W&B export (data/wandb_train_reward.csv, raw scan_history):
@@ -101,59 +101,56 @@ def main():
         sys.exit("ERROR: max step %g -- this looks like the _step log counter, not "
                  "the 403-step optimizer axis. Wrong column." % max(steps))
 
-    fig, ax = plt.subplots(figsize=(6.4, 2.3), dpi=300)
-    ax.plot([s for s, _ in train], [r for _, r in train], "-", lw=1.4, color="#B0B0B0",
-            label="Training reward (in sample)", zorder=2)
-    ax.axhline(REWARD_CEILING, ls="--", lw=1.0, color="#888888", zorder=1)
-    ax.annotate("reward ceiling, %.1f (reached step %d)"
-                % (REWARD_CEILING, CEILING_STEP),
-                xy=(max(steps) * 0.985, REWARD_CEILING), xytext=(0, -9),
-                textcoords="offset points", ha="right", va="top",
-                fontsize=6.8, color="#666666")
-    # Held-out reward lives on its own (right) axis: its whole range is
-    # 0.125..0.266, and on the training-reward axis it is an unreadable smear
-    # at the bottom. Twin axes, one x, scales labeled and color-coded.
-    ax2 = ax.twinx()
-    # The segment between the two anchors is UNMEASURED (no held-out eval exists
-    # between steps 50 and 403 in this session): drawn dashed, never solid, so the
-    # figure cannot imply a measured monotone descent the text disclaims.
-    ax2.plot([s for s, _ in HELDOUT], [r for _, r in HELDOUT], "--", lw=1.6,
-             dashes=(4, 3), color="#C1440E", zorder=3)
-    ax2.plot([s for s, _ in HELDOUT], [r for _, r in HELDOUT], "o", ms=5.5,
-             color="#C1440E", linestyle="none",
-             label="Held-out reward (162 test puzzles, control session; right axis;\ndashed span unmeasured)",
-             zorder=4)
-    ax2.plot([HELDOUT_B2[0]], [HELDOUT_B2[1]], "o", ms=5.5, mfc="none", mec="#C1440E",
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(6.4, 2.05), dpi=300, sharex=True,
+                                   gridspec_kw=dict(height_ratios=[0.85, 1], hspace=0.13))
+    # Top panel: the in-sample story on its own scale. No twin axes anywhere --
+    # the two measurements of the same reward get one honest scale each, and the
+    # vertical stack makes the contrast readable at a glance.
+    ax1.plot([s for s, _ in train], [r for _, r in train], "-", lw=1.5, color="#909090")
+    ax1.axhline(REWARD_CEILING, ls="--", lw=1.0, color="#888888")
+    ax1.annotate("ceiling %.1f, reached step %d" % (REWARD_CEILING, CEILING_STEP),
+                 xy=(400, REWARD_CEILING), xytext=(0, -3), textcoords="offset points",
+                 ha="right", va="top", fontsize=8.2, color="#666666")
+    ax1.set_ylim(0.0, 1.82)
+    ax1.set_yticks([0, 0.8, 1.6])
+    ax1.set_ylabel("Training\nreward", fontsize=9.5)
+    ax1.tick_params(labelsize=9)
+    ax1.spines["top"].set_visible(False)
+    ax1.spines["right"].set_visible(False)
+    # Bottom panel: held out. The segment between the two anchors is UNMEASURED
+    # (no held-out eval exists between steps 50 and 403 in this session): drawn
+    # dashed and faded, labeled, never solid.
+    ax2.plot([s for s, _ in HELDOUT], [r for _, r in HELDOUT], "--", lw=1.3,
+             dashes=(4, 3), color="#C1440E", alpha=0.5, zorder=2)
+    ax2.plot([s for s, _ in HELDOUT], [r for _, r in HELDOUT], "o", ms=6,
+             color="#C1440E", linestyle="none", zorder=4)
+    ax2.plot([HELDOUT_B2[0]], [HELDOUT_B2[1]], "o", ms=6, mfc="none", mec="#C1440E",
              mew=1.4, zorder=4)
-    ax2.annotate("step 100\n(later session; not joined)", xy=HELDOUT_B2,
-                 xytext=(6, 2), textcoords="offset points", ha="left", va="bottom",
-                 fontsize=6.0, color="#C1440E")
     ax2.axhline(BASE_REWARD, ls=":", lw=1.1, color="#444444", zorder=1)
-    ax2.annotate("untrained Instruct, %.3f" % BASE_REWARD, xy=(4, BASE_REWARD),
-                 xytext=(0, 4), textcoords="offset points", ha="left", va="bottom",
-                 fontsize=6.8, color="#444444")
-    ax2.annotate("held-out peak\nstep 50, %.3f" % HELDOUT[0][1], xy=HELDOUT[0],
-                 xytext=(8, 0.284), fontsize=6.8, ha="left", va="top",
-                 arrowprops=dict(arrowstyle="->", lw=0.8, color="k", alpha=0.8))
-    ax2.annotate("ends BELOW Instruct\nstep 403, %.3f" % HELDOUT[-1][1], xy=HELDOUT[-1],
-                 xytext=(285, 0.185), fontsize=6.8,
-                 arrowprops=dict(arrowstyle="->", lw=0.8, color="k", alpha=0.8))
-    ax2.set_ylim(0.10, 0.30)
-    ax2.set_ylabel("Held-out mean reward", color="#C1440E")
-    ax2.tick_params(axis="y", colors="#C1440E")
-    ax2.spines["right"].set_color("#C1440E")
+    ax2.annotate("untrained Instruct, %.3f" % BASE_REWARD, xy=(8, BASE_REWARD),
+                 xytext=(0, 2), textcoords="offset points", ha="left", va="bottom",
+                 fontsize=8.2, color="#444444")
+    ax2.annotate("%.3f" % HELDOUT[0][1], xy=(50, HELDOUT[0][1]), xytext=(-8, 0),
+                 textcoords="offset points", ha="right", va="center",
+                 fontsize=8.4, color="#C1440E")
+    ax2.annotate("%.3f  (later session)" % HELDOUT_B2[1], xy=HELDOUT_B2, xytext=(8, 0),
+                 textcoords="offset points", ha="left", va="center",
+                 fontsize=8.0, color="#C1440E")
+    ax2.annotate("%.3f" % HELDOUT[-1][1], xy=HELDOUT[-1], xytext=(-2, 9),
+                 textcoords="offset points", ha="right", va="bottom",
+                 fontsize=8.4, color="#C1440E")
+    ax2.annotate("dashed span unmeasured", xy=(150, 0.194), ha="left", va="top",
+                 fontsize=7.6, color="#8a3006", style="italic")
+    ax2.set_ylim(0.095, 0.305)
+    ax2.set_yticks([0.10, BASE_REWARD, 0.25])
+    ax2.set_yticklabels(["0.10", "0.165", "0.25"])
+    ax2.set_ylabel("Held-out\nreward", fontsize=9.5)
+    ax2.tick_params(labelsize=9)
+    ax2.set_xlabel("GRPO optimizer step  (Qwen2.5-7B-Instruct)", fontsize=9.5)
     ax2.spines["top"].set_visible(False)
-    ax.set_xlabel("GRPO optimizer step  (Qwen2.5-7B-Instruct)")
-    ax.set_ylabel("Training mean reward", color="#707070")
-    ax.tick_params(axis="y", colors="#707070")
-    ax.set_ylim(0.0, 1.68)
-    ax.set_title("The same reward function, in sample and held out", loc="left", pad=6)
-    h1, l1 = ax.get_legend_handles_labels()
-    h2, l2 = ax2.get_legend_handles_labels()
-    ax.legend(h1 + h2, l1 + l2, loc="lower center", frameon=False, fontsize=6.6,
-              bbox_to_anchor=(0.44, 0.0))
-    ax.spines["top"].set_visible(False)
-    fig.tight_layout()
+    ax2.spines["right"].set_visible(False)
+    # no in-figure title: the LaTeX caption carries it
+
     os.makedirs(OUT, exist_ok=True)
     for ext in ("png", "pdf"):
         fig.savefig(os.path.join(OUT, "fig3_reward_curves." + ext), bbox_inches="tight")
