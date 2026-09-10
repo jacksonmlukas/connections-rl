@@ -1,86 +1,167 @@
 # connections-rl
 
-**GRPO post-training a small open model on NYT Connections, measured with leakage-aware evaluation.**
+**Artifact record for *Reliable and Invalid: Anatomy of a Gamed Training Task*** — a
+GRPO run on NYT Connections whose every in-sample signal read as mastery, and
+which a one-line data-loader bug had made trivially gameable.
 
-**Key finding: verifiable-reward RL transfers exactly what the reward can verify — and whether that helps depends on model scale.** At 1.5B, GRPO cut invalid outputs **74.1% → 2.5%** on held-out puzzles (pure gain: the model had no grouping ability to lose). At 7B, the *same* training flipped net-harmful: best format validity of any arm (0.6% invalid) but grouping collapsed below the untrained base, while SFT alone delivered the first held-out solves. In both cases training reward saturated at its theoretical maximum with policy entropy → 0 — memorization of the 807 training answers. **Replicated over 3 GRPO seeds per scale**, with the direction of the effect identical in all six runs. A measured, two-scale case study in reward over-optimization: bootstrap CIs, McNemar paired tests, per-seed variance, and a strictly chronological held-out test set.
+📄 **Paper:** [`tex/tae_submission.pdf`](tex/tae_submission.pdf) (NeurIPS 2026,
+Foundations of LLM Post-Training workshop). Every table in it traces to a file in
+this repo; the map is [below](#artifact-map).
 
-![Invalid-output rate by arm](invalid_rate.png)
+MIT license covers **this repository's code only** — not the puzzle content. See
+[Data provenance](#data-provenance-and-license).
 
-**How much of a multi-agent system's gain can a single small open model recover with RL post-training?**
+![Training reward against held-out score](figs/fig3_reward_curves.png)
 
-My [ACL 2025 paper](https://aclanthology.org/2025.realm-1.16/) (REALM Workshop; equal-contribution co-author) showed a multi-agent GPT-4o loop solves NYT Connections at 98%, and [gvc-local](https://github.com/jacksonmlukas/gvc-local) pushed an open 8B model to 60% with multi-agent prompting. This repo answers the follow-up: post-train small open models (**Qwen2.5-1.5B and 7B**) directly with GRPO (verifiable-reward RL, DeepSeek-R1 style) and measure them against those baselines with a production-grade evaluation stack.
+## The finding
 
-## Results
+A one-line bug in the GRPO data loader presented each board's sixteen words in
+answer-key order — positions 1–4 were group 1, 5–8 group 2, and so on. The
+training task became solvable by copying words four at a time, and the policy
+learned exactly that. Every in-sample signal read the gaming as mastery: training
+reward saturated at its theoretical ceiling of 1.6 (0.1 format + 1.0 grouping +
+0.5 solve bonus, per [`configs/train/grpo-7b.yaml`](configs/train/grpo-7b.yaml)),
+across-rollout variance went to zero, and policy entropy collapsed. Held-out
+evaluation reversed the verdict: the endpoint scores **4 of 648 group slots**
+against the untrained model's **26** ([`results-analysis/aug27/memC-session-test/`](results-analysis/aug27/memC-session-test/),
+paper Table 2).
 
-Held-out test set: 162 puzzles, strictly *after* every training date (2025-12-15 → 2026-05-29).
+**This is not memorization.** A memorizing policy would score well on the boards
+it trained on; scored on those same 807 training boards with shuffled prompts,
+the endpoint gets **21 of 3,228 slots**
+([`results-analysis/aug27/memC-session-train/grpo-final/metrics.json`](results-analysis/aug27/memC-session-train/grpo-final/metrics.json)).
+What it learned is a *positional copy rule*: on answer-ordered training prompts
+it emits consecutive quadruples at a **91.4% group-level rate** (2,946 of 3,224
+groups, [`results-analysis/aug27/copy_rule_results.json`](results-analysis/aug27/copy_rule_results.json),
+paper §7 and Table 7). The rule is worth full reward on leaked prompts and worth
+almost nothing on shuffled ones.
+
+The gameable object was the **task**, not the algorithm. Supervised fine-tuning on
+the leaked prompts alone — no RL at all — converges to a perfect copier: **1 of
+648 slots at a copy rate of 1.000**
+([`results-analysis/sep05/finals_summary.json`](results-analysis/sep05/finals_summary.json),
+arm `sft-leaked`).
+
+## The repaired recipe
+
+One line fixes it: seed the board shuffle from the puzzle id, so GRPO prompts
+match what SFT and every eval already used
+([`src/connections_rl/train/grpo.py`](src/connections_rl/train/grpo.py),
+regression-locked by [`tests/test_grpo_prompts.py`](tests/test_grpo_prompts.py)).
+
+With that single change and **the same reward, trainer, and hyperparameters**,
+the run produces the best policies in the study — no collapse:
+
+| Seed | Held-out group slots (of 648) | Source |
+|---|---|---|
+| 0 | **148** | [`results-analysis/aug29/leakfree_summary.json`](results-analysis/aug29/leakfree_summary.json) (`shuffled-final`) |
+| 1 | **135** | [`results-analysis/sep05/finals_summary.json`](results-analysis/sep05/finals_summary.json) (`s1-final`) |
+| 2 | **129** | [`results-analysis/sep05/finals_summary.json`](results-analysis/sep05/finals_summary.json) (`s2-final`) |
+| — untrained reference | 26 | same sessions, arm `base` |
+
+That is roughly **5× the untrained model** on the same held-out split, from the
+recipe that looked like a failure until the loader was fixed.
+
+## Artifact map
+
+Every path below exists in this repo. Paper table and figure numbers are as
+rendered in [`tex/tae_submission.pdf`](tex/tae_submission.pdf).
+
+| Paper element | Artifact |
+|---|---|
+| Table 2 (7B test split) and Table 3 (control session) | [`results-analysis/aug27/memC-session-test/`](results-analysis/aug27/memC-session-test/), [`memC-session-train/`](results-analysis/aug27/memC-session-train/) |
+| Table 4 (leak-free session) | [`results-analysis/aug29/leakfree-session-test/`](results-analysis/aug29/leakfree-session-test/) |
+| Figure 1 + Table 5 (entropy/KL sweep, Appendix B) | [`results-analysis/entropy-kl-7b.json`](results-analysis/entropy-kl-7b.json) |
+| Figure 2 (reward in sample vs held out) | [`data/wandb_train_reward.csv`](data/wandb_train_reward.csv) → [`figs/make_fig3_reward_curves.py`](figs/make_fig3_reward_curves.py) |
+| Table 6 (7B endpoints, three seeds) | [`results-seeds-7b/`](results-seeds-7b/) |
+| Table 7 (copy-rule rates) | [`results-analysis/aug27/copy_rule_results.json`](results-analysis/aug27/copy_rule_results.json) |
+| Table 8 (1.5B test split) | [`results/`](results/) |
+| Appendix E (full training log) | [`results-analysis/aug29/leakfree-kaggle-run.log`](results-analysis/aug29/leakfree-kaggle-run.log) |
+| Leaked run's validation grid | [`results-analysis/ckpt-curve-7b.json`](results-analysis/ckpt-curve-7b.json) |
+| Seeds 1–2 + leaked-SFT session | [`results-analysis/sep05/`](results-analysis/sep05/) |
+| Empirical copier ceiling | [`results-analysis/sep06/empirical_floor.json`](results-analysis/sep06/empirical_floor.json), regenerate with [`scripts/empirical_copy_floor.py`](scripts/empirical_copy_floor.py) |
+| Step-50 replication session | [`results-analysis/sep07/`](results-analysis/sep07/) |
+| 1.5B scale contrast | [`results-seeds-1.5b/`](results-seeds-1.5b/), [`results-analysis/passk-1.5b.json`](results-analysis/passk-1.5b.json) |
+
+How often would a copy rule win *by chance* on properly shuffled boards? Realized
+aligned quadruples: **3 of 807** training boards and **1 of 162** test boards,
+against uniform expectations of 7.10 and 1.42 (Poisson tail p = 0.077 and 0.58) —
+[`results-analysis/sep06/empirical_floor.json`](results-analysis/sep06/empirical_floor.json).
+
+Each results directory carries its own README describing its session and which
+table cites it. Those files are an immutable record: regenerate elsewhere, never
+edit in place.
+
+## Historical results (pre-diagnosis notes: superseded by the paper)
+
+The tables below were written before the leak was found. **The numbers stand —
+they are the leaked run, measured correctly — but the original framing did not.**
+The GRPO arms here are gamed-task artifacts, not evidence about GRPO or about
+reward over-optimization at these scales. Where this section and the paper
+disagree, the paper wins. The same applies to the lab notes in
+[`report/`](report/), which are kept verbatim and carry a banner to that effect.
+
+Held-out test set: 162 puzzles, strictly *after* every training date
+(2025-12-15 → 2026-05-29).
+
+**1.5B** — source [`results/{base,sft,grpo}/metrics.json`](results/):
 
 | Arm | n | Solve rate (95% CI) | Invalid rate (95% CI) | Mean reward |
 | --- | --- | --- | --- | --- |
-| gvc-local basic (8B, reference) | 10 | 20.0% [0.0, 50.0] | — | — |
-| gvc-local GVC multi-agent (8B, reference) | 10 | 60.0% [30.0, 90.0] | — | — |
 | base (Qwen2.5-1.5B) | 162 | 0.0% [0.0, 0.0] | 32.1% [24.7, 38.9] | 0.049 |
 | SFT (LoRA) | 162 | 0.0% [0.0, 0.0] | 74.1% [67.3, 80.2] | −0.038 |
-| **GRPO** (seed 0) | 162 | 0.0% [0.0, 0.0] | **2.5% [0.6, 5.6]** | **0.113** |
+| GRPO (seed 0, leaked) | 162 | 0.0% [0.0, 0.0] | 2.5% [0.6, 5.6] | 0.113 |
 
-**Headline finding (honest negative result):** at 1.5B, no arm solves any held-out puzzle. GRPO transfers exactly what the verifiable reward can verify. Training reward saturated at the theoretical maximum (1.6: perfect format + all four groups + solve bonus) with policy entropy collapsing to ~0, i.e. the model *memorized* the 807 training answers. On unseen boards the grouping ability doesn't transfer, but the format/board-grounding discipline does: invalid outputs (hallucinated words, malformed answers) drop from 74.1% (SFT) and 32.1% (base) to **2.5%**, and the paired per-puzzle reward gain is significant (+0.152 vs SFT, 95% CI [0.133, 0.169]; +0.064 vs base, [0.046, 0.082]). Full narrative in [`report/`](https://github.com/jacksonmlukas/connections-rl/blob/main/report).
+**7B** — source [`results-7b/{base,sft,grpo}/metrics.json`](results-7b/).
+`Groups correct` is a mean count on a 0–4 scale; divide by 4 for percent.
 
-### Scale ablation: Qwen2.5-7B (same data, same reward, same protocol)
-
-`Groups correct` is a mean count on a **0-4** scale (as stored in `results-7b/metrics.json`); divide by 4 for the percentage of groups solved.
-
-| Arm | n | Solve rate | Groups correct (0-4) | % of groups | Invalid rate (95% CI) | Mean reward |
-|---|---|---|---|---|---|---|
-| base (Qwen2.5-7B) | 162 | 0.0% | 0.160 | 4.0% | 6.8% [3.1, 11.1] | 0.165 |
-| SFT (QLoRA) | 162 | **1.2%** (2/162) | **0.346** | **8.6%** | 22.2% [16.0, 28.4] | **0.197** |
-| GRPO (seed 0) | 162 | 0.0% | 0.025 | 0.6% | **0.6% [0.0, 1.9]** | 0.125 |
-
-Scale unlocks real competence (base solves 4.0% of groups; SFT more than doubles it and produces the first held-out solves), but **GRPO flips from net-positive to net-harmful**: it achieves the best format validity of any arm at any scale (0.6% invalid) while collapsing grouping ability *below the untrained base* — mean reward drops under base. Same memorization mechanism as 1.5B; at 7B there was actual semantic ability to trade away. The cross-scale conclusion: GRPO against this reward optimizes exactly what the reward verifies (structure) at the expense of what it can't (semantics), and whether that trade helps or hurts depends on how much semantic ability the starting policy had.
-
-### Sampling budget: pass@16
-
-Wider search does not close the gap. The best-of-16 eval draws **16 samples per puzzle at temperature 0.9** (n = 16, all 162 test puzzles, GRPO = seed 0), scores every sample with the same reward function as the greedy tables, and takes the per-puzzle maximum of groups correct. All values below are **percent of groups**; the two source files use different native scales, converted per the note under the table.
-
-| Arm (7B) | pass@1, greedy (% of groups) | best-of-16, temp 0.9 (% of groups) |
-|---|---|---|
-| base | 4.0% | 11.4% |
-| SFT | 8.6% | **25.2%** |
-| GRPO (seed 0) | 0.6% | 2.2% |
-
-Sixteen samples roughly triple every arm, and the ordering does not move: GRPO at a 16-sample budget (2.2%) remains below the untrained base at a *single* greedy sample (4.0%) and far below base at the same budget (11.4%). Degradation is not a decoding artifact, and it does not wash out with a wider search. (Whole-puzzle solves under best-of-16 — a different, all-or-nothing predicate: SFT 7/162, GRPO 2/162, base 0/162, reported as counts, not rates; reconciliation in [`report/findings.md`](report/findings.md).)
-
-*Scale conversion: pass@1 = `groups_correct` (0–4 count) from `results-7b/{base,sft,grpo}/metrics.json` ÷ 4; best-of-16 = `best_of_k_groups_correct` (0–1 fraction) from `results-analysis/passk-7b.json` × 100.*
-
-### Seed replication (3 GRPO seeds per scale)
-
-Each seed re-runs GRPO from the same SFT warm start, isolating RL run-to-run variance. Held-out test split, greedy decoding, n=162. Measured in the seed-eval serving session (`results-seeds-*/`); `groups correct` is again a 0-4 count.
-
-| Scale | Metric | seed 0 | seed 1 | seed 2 | mean ± sd |
+| Arm | n | Solve rate | Groups correct (0–4) | Invalid rate (95% CI) | Mean reward |
 |---|---|---|---|---|---|
-| 7B | groups correct | 0.025 | 0.043 | 0.068 | 0.045 ± 0.022 |
-| 7B | invalid rate | 0.006 | 0.019 | 0.012 | 0.012 ± 0.006 |
-| 7B | mean reward | 0.125 | 0.129 | 0.141 | 0.132 ± 0.008 |
-| 1.5B | groups correct | 0.006 | 0.000 | 0.000 | 0.002 ± 0.004 |
-| 1.5B | invalid rate | 0.025 | 0.031 | 0.037 | 0.031 ± 0.006 |
-| 1.5B | mean reward | 0.113 | 0.110 | 0.109 | 0.111 ± 0.002 |
+| base (Qwen2.5-7B) | 162 | 0.0% | 0.160 | 6.8% [3.1, 11.1] | 0.165 |
+| SFT (QLoRA) | 162 | 1.2% (2/162) | 0.346 | 22.2% [16.0, 28.4] | 0.197 |
+| GRPO (seed 0, leaked) | 162 | 0.0% | 0.025 | 0.6% [0.0, 1.9] | 0.125 |
 
-Both headline effects replicate in every run. At 7B, all three seeds fall below base on grouping (max 0.068 vs base 0.160) and below base on reward (max 0.141 vs 0.165); paired bootstrap of SFT − GRPO on groups correct gives +0.296 [0.191, 0.407], +0.278 [0.173, 0.389], +0.253 [0.148, 0.364] — three independent CIs excluding zero, computed against this session's SFT baseline (0.321; the main-run table above measures the same adapter at 0.346, a documented serving-config difference of 2 puzzles out of 162, detailed in [`report/results.md`](report/results.md)). At 1.5B, all three seeds hold invalid rate near 3% (vs SFT 74.1%) with reward above base. Seed 0, the originally published run, is the *least* favorable 7B draw on grouping, so the headline table understates GRPO rather than cherry-picking.
+Note this 7B table is a *different serving session* from the paper's Table 2: the
+SFT row reads 0.346 (56/648) here and 0.321 (52/648) there. Base and GRPO agree
+exactly. Across the four observed sessions the SFT arm decodes 52–56 slots; see
+[`results-7b/README.md`](results-7b/README.md).
 
-**Mechanism: entropy collapse and the over-optimization curve.** Measuring policy entropy and KL from the RL initialization on every 7B checkpoint locates the failure precisely. Entropy falls **12.7x in the single step 100 to 150 interval** (30.6x over the run), exactly the interval in which held-out semantics collapses, and **98.7% of the total KL displacement is spent by step 150** so the final 253 steps perform no meaningful optimization. Plotting held-out score against KL gives the classic inverted U: semantics peaks at 0.095 at **KL 2.70 nats/sequence** and falls 9.5x by KL 47. The useful budget for this reward was under about 10 nats/sequence and the run spent 47, which makes "reward over-optimization" a measured claim here rather than a label. See [`results-analysis/entropy-kl-7b.png`](results-analysis/entropy-kl-7b.png) and [`report/findings.md`](report/findings.md).
+**Sampling budget (pass@16, 7B).** Wider search does not rescue the leaked arm:
+base 4.0% → 11.4% of groups, SFT 8.6% → 25.2%, GRPO 0.6% → 2.2%. Sources:
+pass@1 = `groups_correct` ÷ 4 from [`results-7b/`](results-7b/); best-of-16 =
+`best_of_k_groups_correct` × 100 from
+[`results-analysis/passk-7b.json`](results-analysis/passk-7b.json).
 
-**Weight-space convergence.** Independent seeds do not merely agree behaviorally — they move the policy in the same direction. Cosine similarity between seeds' RL-induced LoRA updates is **+0.67 to +0.69 at 7B** and **+0.78 to +0.80 at 1.5B**, against a random-direction expectation of ~1e−5 and a near-zero control against the SFT update direction (so this is not an artifact of the shared warm start). Update magnitudes agree within 4%, and the largest changes concentrate in the same mid-layer MLP `up_proj`/`gate_proj` modules at both scales. The collapse is a systematic attractor of this reward under this optimizer, not seed noise. See [`results-seeds/`](https://github.com/jacksonmlukas/connections-rl/tree/main/results-seeds).
+**Seed replication and weight-space convergence.** Three GRPO seeds per scale,
+each re-run from the same SFT warm start
+([`results-seeds-7b/`](results-seeds-7b/), [`results-seeds-1.5b/`](results-seeds-1.5b/)).
+Cosine similarity between seeds' RL-induced LoRA updates is +0.67 to +0.69 at 7B
+and +0.78 to +0.80 at 1.5B, against a random-direction expectation of ~1e−5
+([`results-seeds/weight_space_7b.txt`](results-seeds/weight_space_7b.txt),
+[`weight_space_1.5b.txt`](results-seeds/weight_space_1.5b.txt)). Read now, this
+says the seeds all found the same copy rule — a property of the gamed task, not
+an attractor of the optimizer.
 
-All arms are evaluated on the same **leakage-aware, date-split held-out test set** with bootstrap CIs, McNemar significance tests between arms, and per-stratum breakdowns. CI re-runs the eval smoke and a release gate (GRPO must not regress vs. SFT beyond the CI) on every push.
+## Data provenance and license
 
-## How it works
+The puzzle data originates from the [gvc-local](https://github.com/jacksonmlukas/gvc-local)
+pipeline (`data/puzzles/tagged_connections.json`), whose records come from the
+public community archive
+[Eyefyre/NYT-Connections-Answers](https://github.com/Eyefyre/NYT-Connections-Answers),
+augmented there with heuristic stratum tags and stable ids.
 
-1. **Data** — reuses gvc-local's tagged puzzle DB (1,078 puzzles, 2023-06 → 2026-05). Splits are strictly chronological: everything trained on predates everything tested on.
-2. **Reward** (`connections_rl/reward`) — deterministic and unit-tested: format validity (all 16 board words, 4×4, once each), fully-correct groups / 4, a solve bonus, optional one-away shaping, and a penalty for malformed output.
-3. **SFT warm start** (`make train-sft`) — rank-16 LoRA on the train split.
-4. **GRPO** (`make train-grpo`) — K=8 completions per puzzle, group-relative advantage, KL penalty to the SFT reference. Single-GPU on a free Colab/Kaggle T4; QLoRA for 7B. Checkpoints sync to the Hub so runs resume across ephemeral sessions. Seed replicates via `--seed/--output-dir/--ckpt-hub-repo` overrides (`notebooks/kaggle_seed_run.ipynb`). Exact normalization settings are recorded in [`report/implementation_notes.md`](report/implementation_notes.md).
-5. **Eval** (`make eval`) — stratified sampling, bootstrap CIs, paired significance tests, reliability/ECE utilities. Beyond the main table: `eval/passk.py` (best-of-k sampling), `eval/checkpoint_curve.py` (structure/semantics decomposition over training), `eval/entropy_kl.py` (per-checkpoint policy entropy and KL from the SFT init and base), and `scripts/analyze_seed_weightspace.py` (cross-seed weight-space convergence). All results committed under `results*/`.
-6. **Serving** (`make serve`) — FastAPI over vLLM with `/solve`, `/compare` (base vs. GRPO on the same board), `/health`, `/metrics`. `docker compose up` runs the full stack.
+**The New York Times retains all rights in the Connections puzzles themselves.**
+This work exists to support non-commercial research reproducibility. It is not an
+authorized republication, and **nothing in this repository's MIT license applies
+to the puzzle content** — the MIT grant covers this repository's code only. If
+you are the rights holder and would like this data removed, open an issue and it
+will be taken down.
 
-## Quickstart
+Downstream users: credit NYT Connections as the source of the puzzles, do not
+redistribute the puzzle data under a permissive license, and do not use it
+commercially.
+
+## Reproduction
 
 ```
 git clone https://github.com/jacksonmlukas/connections-rl && cd connections-rl
@@ -88,48 +169,42 @@ make setup                 # pip install -e ".[dev]"
 export CONNECTIONS_PUZZLES=path/to/gvc-local/data/puzzles/tagged_connections.json
 make data                  # leakage-aware splits + SFT chat data
 make test lint             # unit tests + ruff + mypy
-make eval-smoke            # end-to-end harness check, no GPU needed
+make eval-smoke            # end-to-end harness check, no GPU (rewrites results/smoke/)
 ```
 
-Training (GPU): open `notebooks/colab_grpo.ipynb` on Colab, or:
+`make data` needs `CONNECTIONS_PUZZLES` pointing at gvc-local's puzzle DB and
+network access; the test suite runs offline on bundled fixtures without it.
 
-```
-pip install -e ".[train]"
-make train-sft && make train-grpo
-```
+Training (GPU): open [`notebooks/colab_grpo.ipynb`](notebooks/colab_grpo.ipynb),
+or `pip install -e ".[train]"` then `make train-sft && make train-grpo`.
+Serving: `docker compose up` brings up vLLM + the FastAPI app (`make serve`).
 
-Serving:
+**Published adapters.** Eight LoRA/QLoRA adapters plus the raw-results dataset are
+on the Hub under `jacksonlukas/`; the cards committed here are the source of
+truth for what each one is: [`hub_cards/`](hub_cards/).
 
-```
-docker compose up          # vLLM + API
-curl -X POST localhost:8080/compare -H 'content-type: application/json' \
-  -d '{"words": ["HAIL","RAIN","SLEET","SNOW","BUCKS","HEAT","JAZZ","NETS","OPTION","RETURN","SHIFT","TAB","KAYAK","LEVEL","MOM","RACECAR"]}'
-```
+### Notebook era map
 
-## Repo map
+Notebooks were written across four eras; they are not interchangeable.
 
-```
-configs/        model / train / eval / accelerate configs (incl. 7B + per-seed eval)
-src/connections_rl/
-  data/         puzzle loading, date splits, chat formatting
-  reward/       verifiable reward (the RL core)
-  train/        sft.py (LoRA/QLoRA), grpo.py (TRL GRPOTrainer + seed overrides)
-  eval/         harness, bootstrap/McNemar/ECE stats, release gate,
-                passk.py, checkpoint_curve.py, entropy_kl.py
-  serve/        FastAPI + vLLM serving, request monitoring
-  report/       results table + plots
-scripts/        weight-space seed analysis, model-card push
-notebooks/      Colab/Kaggle runbooks: training, 7B, analysis, seed runs, seed eval
-hub_cards/      model cards for the 8 published adapters
-results/        1.5B main results          results-7b/     7B main results
-results-seeds*/ per-seed metrics + weight-space convergence
-results-analysis/ pass@k, checkpoint decomposition, entropy + KL curves
-report/         technical writeup, results tables, implementation notes
-```
+- [`notebooks/`](notebooks/) — original 1.5B/7B era (training, eval, seed runs, analysis).
+- [`results-analysis/aug29/leakfree_kaggle.ipynb`](results-analysis/aug29/leakfree_kaggle.ipynb) — leak-free rerun, seed 0.
+- [`results-analysis/sep05/seeds_leakedsft_kaggle.ipynb`](results-analysis/sep05/seeds_leakedsft_kaggle.ipynb) — leak-free seeds 1–2 plus the leaked-SFT arm.
+- [`results-analysis/sep07/step50_seeds_kaggle.ipynb`](results-analysis/sep07/step50_seeds_kaggle.ipynb) — step-50 replication on the leaked seeds.
+- [`results-analysis/sep04/answer_ordered_kaggle.ipynb`](results-analysis/sep04/answer_ordered_kaggle.ipynb) — answer-ordered eval: **queued, not yet run**, no outputs committed.
+
+## How it works
+
+1. **Data** — reuses gvc-local's tagged puzzle DB (1,078 puzzles, 2023-06 → 2026-05). Splits are strictly chronological: everything trained on predates everything tested on.
+2. **Reward** ([`src/connections_rl/reward/`](src/connections_rl/reward/)) — deterministic and unit-tested: format validity (all 16 board words, 4×4, once each), fully-correct groups / 4, a solve bonus, optional one-away shaping, and a penalty for malformed output.
+3. **SFT warm start** (`make train-sft`) — rank-16 LoRA on the train split.
+4. **GRPO** (`make train-grpo`) — K=8 completions per puzzle, group-relative advantage, KL penalty to the SFT reference. Single-GPU on a free Colab/Kaggle T4; QLoRA for 7B. Normalization settings are recorded in [`report/implementation_notes.md`](report/implementation_notes.md).
+5. **Eval** (`make eval`) — stratified sampling, bootstrap CIs, paired significance tests, plus `eval/passk.py`, `eval/checkpoint_curve.py`, `eval/entropy_kl.py`.
+6. **Serving** (`make serve`) — FastAPI over vLLM with `/solve`, `/compare`, `/health`, `/metrics`.
 
 ## Related
 
-- [gvc-local](https://github.com/jacksonmlukas/gvc-local) — multi-agent prompting predecessor; source of the puzzle DB and the 60% baseline.
+- [gvc-local](https://github.com/jacksonmlukas/gvc-local) — multi-agent prompting predecessor; source of the puzzle DB.
 - [Snap Out of It (ACL 2025, REALM Workshop)](https://aclanthology.org/2025.realm-1.16/) — multi-agent GPT-4o loop at 98%; equal-contribution co-author.
 
-MIT license.
+MIT license (code only — see [Data provenance](#data-provenance-and-license)).
