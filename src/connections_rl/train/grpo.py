@@ -256,6 +256,7 @@ def main(argv: list[str] | None = None) -> None:
 
     if "scale_rewards" in cfg:
         import inspect
+
         if "scale_rewards" not in inspect.signature(GRPOConfig.__init__).parameters:
             raise RuntimeError(
                 "config sets scale_rewards but this TRL version's GRPOConfig "
@@ -311,10 +312,13 @@ def main(argv: list[str] | None = None) -> None:
     )
     if "scale_rewards" in cfg:
         import trl
+
         _requested = cfg["scale_rewards"]
         _resolved = getattr(grpo_config, "scale_rewards", "<attribute missing>")
-        print(f"[B1 scale_rewards] trl={trl.__version__}  "
-              f"requested={_requested!r}  resolved on GRPOConfig={_resolved!r}")
+        print(
+            f"[B1 scale_rewards] trl={trl.__version__}  "
+            f"requested={_requested!r}  resolved on GRPOConfig={_resolved!r}"
+        )
         # TRL >= bool->str migration normalizes in GRPOConfig.__post_init__:
         #   {True: "group", False: "none"}  (verified verbatim in trl v1.10.0
         #   trl/trainer/grpo_config.py). That documented pair is the ONLY

@@ -73,9 +73,7 @@ def run_full(config_path: str) -> None:
         # scores — records.jsonl keeps scores only and the text is otherwise
         # discarded.
         capture_path = (
-            out_root / arm["name"] / "generations.jsonl"
-            if cfg.get("capture_generations")
-            else None
+            out_root / arm["name"] / "generations.jsonl" if cfg.get("capture_generations") else None
         )
         res = evaluate_arm(arm["name"], solver, puzzles, capture_path=capture_path)
         res.save(Path(cfg.get("out_dir", "results")) / arm["name"], cfg.get("n_resamples", 1000))
