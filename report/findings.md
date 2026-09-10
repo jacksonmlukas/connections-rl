@@ -1,3 +1,5 @@
+*Historical lab notes (August 2026, written before the leak was diagnosed). Where these notes conflict with the paper — in particular any 'memorization' framing — the paper supersedes them. Kept verbatim as a record of what the in-sample signals looked like from inside.*
+
 # GRPO on NYT Connections: what verifiable-reward RL actually transfers
 
 *A two-scale (1.5B / 7B), three-seed study on free-tier GPUs. Sections below run

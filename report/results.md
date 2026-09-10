@@ -1,3 +1,5 @@
+*Historical lab notes (August 2026, written before the leak was diagnosed). Where these notes conflict with the paper — in particular any 'memorization' framing — the paper supersedes them. Kept verbatim as a record of what the in-sample signals looked like from inside.*
+
 # Results
 
 All arms evaluated on the same held-out test split: **162 puzzles, 2025-12-15 →

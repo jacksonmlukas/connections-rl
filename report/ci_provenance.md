@@ -1,3 +1,5 @@
+*Historical lab notes (August 2026, written before the leak was diagnosed). Where these notes conflict with the paper — in particular any 'memorization' framing — the paper supersedes them. Kept verbatim as a record of what the in-sample signals looked like from inside.*
+
 # CI provenance — decision memo (2026-08-04, revised 2026-08-06 and
 2026-08-10; card locations re-verified on disk 2026-08-10 after the owner's
 2026-08-06 card rebuild — the `hub_cards/` sweep now covers 9 files including
